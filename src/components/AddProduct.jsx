@@ -1,4 +1,4 @@
-import React, { useState } from 'react'; // Import statement corrected
+import { useState } from 'react'; // Import statement corrected
 import axios from 'axios'; // Import statement added
 
 const AddProduct = () => {
@@ -15,7 +15,7 @@ const AddProduct = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const res = await axios.post('http://localhost:8080/products', product);
+            const res = await axios.post('/api/products', product);
             console.log(res.data);
         } catch (error) {
             console.error('Error while submitting product:', error);

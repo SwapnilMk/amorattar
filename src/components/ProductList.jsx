@@ -6,7 +6,7 @@ const ProductList = () => {
     const [product, setProduct] = useState([]);
 
     const getProducts = async () => {
-        const res = await axios.get("http://localhost:8080/products");
+        const res = await axios.get("/api/products");
         const data = res.data;
         setProduct(data);
     };
@@ -16,7 +16,7 @@ const ProductList = () => {
     }, []);
 
     return (
-        <div className="grid grid-cols-3 container m-auto">
+        <div className="container grid grid-cols-3 m-auto">
             <Products product={product} />
         </div>
     )

@@ -5,7 +5,7 @@ const Products = ({product}) => {
 
   const handleDelete= async(e)=>{
     const id = e.target.id;
-  const res = await axios.delete(`http://localhost:8080/products/${id}`)
+  const res = await axios.delete(`/api/products/${id}`)
   console.log(res.data)
   }
 
@@ -15,22 +15,22 @@ const Products = ({product}) => {
         {product.map((value, index)=>(
             <div
             key={index}
-            className="w-auto border-black border-2 m-4 bg-white shadow-md rounded-xl duration-500 hover:scale-105 hover:shadow-xl"
+            className="w-auto m-4 duration-500 bg-white border-2 border-black shadow-md rounded-xl hover:scale-105 hover:shadow-xl"
           >
             <img
               src={value.images[0]}
               alt="Product"
-              className="h-80 w-auto object-cover rounded-t-xl flex content-center align-middle justify-center"
+              className="flex content-center justify-center object-cover w-auto align-middle h-80 rounded-t-xl"
             />
-            <div className="px-4 py-3 w-auto">
-              <span className="text-gray-400 mr-3 uppercase text-lg">
+            <div className="w-auto px-4 py-3">
+              <span className="mr-3 text-lg text-gray-400 uppercase">
                 {value.title}
               </span>
-              <p className="text-lg font-bold text-black truncate block capitalize">
+              <p className="block text-lg font-bold text-black capitalize truncate">
                 {value.description}
               </p>
               <div className="flex items-center">
-                <p className="text-lg font-semibold text-black cursor-auto my-3">
+                <p className="my-3 text-lg font-semibold text-black cursor-auto">
                   ${value.price}
                 </p>
 
