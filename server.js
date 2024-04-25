@@ -13,11 +13,11 @@ const __dirname = dirname(__filename);
 
 
 // Serve static files from the 'dist' directory
-app.use(express.static(path.resolve(__dirname, 'build')));
+app.use(express.static(path.resolve(__dirname, 'dist')));
 
 // Define a route to serve your React app
 app.get('*', (req, res) => {
-    res.sendFile(path.resolve(__dirname, 'build', 'index.html'));
+    res.sendFile(path.resolve(__dirname, 'dist', 'index.html'));
 });
 
 // Start the server
