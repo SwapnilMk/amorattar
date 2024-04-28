@@ -269,7 +269,7 @@ const Navbar = () => {
                 </Dialog>
             </Transition.Root>
 
-            <header className="relative bg-white">
+            <header className="z-50 bg-white ">
                 <p className="flex items-center justify-center h-10 px-4 text-sm font-medium text-white bg-indigo-600 sm:px-6 lg:px-8">
                     Get free delivery on orders over $100
                 </p>

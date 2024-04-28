@@ -1,5 +1,5 @@
 import MainLayout from "../layouts/MainLayout"
-import ProductList from "../features/productList/ProductList"
+import ProductList from "@/src/features/product/components/ProductList"
 
 const Home = () => {
   return (
