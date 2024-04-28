@@ -5,6 +5,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/src/components/ui/select"
+import { Link, useNavigate } from "react-router-dom"
 
 
 const products = [
@@ -29,14 +30,12 @@ const products = [
         imageAlt:
             'Front of satchel with blue canvas body, black straps and handle, drawstring top, and front zipper pouch.',
     },
-    // More products...
+    // More products..
 ]
 
 
-
-
-
 const Cart = () => {
+    const navigate = useNavigate();
 
     return (
         <div className='px-4 mx-auto mt-20 max-w-7xl sm:px-6 lg:px-8'>
@@ -65,8 +64,8 @@ const Cart = () => {
                                     </div>
                                     <div className="flex items-end justify-between flex-1 text-sm">
                                         <div className="flex items-center justify-center">
-                                        <p className="text-gray-500">Qty
-                                        </p>
+                                            <p className="text-gray-500">Qty
+                                            </p>
                                             <Select>
                                                 <SelectTrigger className="w-auto">
                                                     <SelectValue placeholder="1" />
@@ -100,12 +99,12 @@ const Cart = () => {
                 </div>
                 <p className="mt-0.5 text-sm text-gray-500">Shipping and taxes calculated at checkout.</p>
                 <div className="mt-6">
-                    <a
-                        href="#"
+                    <Link
+                        to="/checkout"
                         className="flex items-center justify-center px-6 py-3 text-base font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700"
                     >
                         Checkout
-                    </a>
+                    </Link>
                 </div>
                 <div className="flex justify-center mt-6 text-sm text-center text-gray-500">
                     <p>
@@ -113,6 +112,7 @@ const Cart = () => {
                         <button
                             type="button"
                             className="font-medium text-indigo-600 hover:text-indigo-500"
+                            onClick={() => navigate('/')}
                         >
                             Continue Shopping
                             <span aria-hidden="true"> &rarr;</span>
@@ -121,7 +121,6 @@ const Cart = () => {
                 </div>
             </div>
         </div>
-
     )
 }
 

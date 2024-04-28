@@ -252,14 +252,14 @@ const Navbar = () => {
 
                                 <div className="px-4 py-6 space-y-6 border-t border-gray-200">
                                     <div className="flow-root">
-                                        <a href="#" className="block p-2 -m-2 font-medium text-gray-900">
+                                        <Link to="/login" className="block p-2 -m-2 font-medium text-gray-900">
                                             Sign in
-                                        </a>
+                                        </Link>
                                     </div>
                                     <div className="flow-root">
-                                        <a href="#" className="block p-2 -m-2 font-medium text-gray-900">
+                                        <Link to="/signup" className="block p-2 -m-2 font-medium text-gray-900">
                                             Create account
-                                        </a>
+                                        </Link>
                                     </div>
                                 </div>
 
