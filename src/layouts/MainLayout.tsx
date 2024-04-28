@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react'
-import Navbar from '../components/Navbar/Navbar'
-import Footer from '../components/Footer/Footer';
-import { ThemeProvider } from '../theme/theme-provider';
+import Navbar from '../features/Navbar'
+import Footer from '../features/Footer';
+
 
 interface MainLayoutProps {
   children: ReactNode;
@@ -13,11 +13,11 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
 
 
     <>
-      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+     
         <Navbar />
         <div>{children}</div>
         <Footer />
-      </ThemeProvider>
+ 
     </>
   )
 }

@@ -1,6 +1,8 @@
 import { fontFamily } from "tailwindcss/defaultTheme";
 import flattenColorPalette from "tailwindcss/lib/util/flattenColorPalette";
 import tailwindcssAnimate from "tailwindcss-animate";
+import tailwindcssAspectRatio from '@tailwindcss/aspect-ratio';
+import tailwindcssForms from '@tailwindcss/forms';
 
 
 const addVariablesForColors = ({ addBase, theme }) => {
@@ -104,6 +106,8 @@ const tailwindConfig = {
     },
   },
   plugins: [
+    tailwindcssForms,
+    tailwindcssAspectRatio,
     ({ addBase, theme }) => {
 
       addVariablesForColors({ addBase, theme });

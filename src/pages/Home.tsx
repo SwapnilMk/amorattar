@@ -1,9 +1,10 @@
 import MainLayout from "../layouts/MainLayout"
+import ProductList from "../features/productList/ProductList"
 
 const Home = () => {
   return (
     <MainLayout>
-    <div>page Home</div>
+    <div><ProductList/></div>
     </MainLayout>
   )
 }
