@@ -31,7 +31,7 @@ export default function AdminLoginForm() {
             if (result?.error) {
                 setError("Invalid credentials");
             } else {
-                router.push("/admin");
+                router.push("/dashboard");
             }
         } catch (error) {
             setError("An error occurred. Please try again.");
