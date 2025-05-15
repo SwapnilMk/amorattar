@@ -6,10 +6,15 @@ import React, { useState } from "react";
 import ProductDetailsContent from "./ProductDetailsContent";
 import ReviewsContent from "./ReviewsContent";
 import FaqContent from "./FaqContent";
+import { Product } from "@/types/product.types";
 
 type TabBtn = {
   id: number;
   label: string;
+};
+
+type TabsProps = {
+  data: Product;
 };
 
 const tabBtnData: TabBtn[] = [
@@ -27,7 +32,7 @@ const tabBtnData: TabBtn[] = [
   },
 ];
 
-const Tabs = () => {
+const Tabs = ({ data }: TabsProps) => {
   const [active, setActive] = useState<number>(1);
 
   return (
@@ -51,7 +56,7 @@ const Tabs = () => {
         ))}
       </div>
       <div className="mb-12 sm:mb-16">
-        {active === 1 && <ProductDetailsContent />}
+        {active === 1 && <ProductDetailsContent data={data} />}
         {active === 2 && <ReviewsContent />}
         {active === 3 && <FaqContent />}
       </div>
