@@ -1,6 +1,5 @@
 "use client";
 
-import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -19,27 +18,31 @@ export default function AdminLoginForm() {
         setLoading(true);
 
         const formData = new FormData(e.currentTarget);
-        const email = formData.get("email") as string;
-        const password = formData.get("password") as string;
+        const data = {
+            email: formData.get("email") as string,
+            password: formData.get("password") as string,
+        };
 
         try {
-            const result = await signIn("credentials", {
-                email,
-                password,
-                redirect: false,
-                callbackUrl: "/dashboard",
+            const response = await fetch("/api/auth/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(data),
             });
 
-            if (result?.error) {
-                setError(result.error);
-                toast.error(result.error);
-            } else if (result?.ok) {
-                toast.success("Successfully signed in!");
-                router.push("/dashboard");
-                router.refresh();
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.error || "Invalid credentials");
             }
+
+            toast.success("Successfully signed in!");
+            router.push("/dashboard");
+            router.refresh();
         } catch (error) {
-            const errorMessage = "An error occurred. Please try again.";
+            const errorMessage = error instanceof Error ? error.message : "An error occurred";
             setError(errorMessage);
             toast.error(errorMessage);
         } finally {
@@ -48,45 +51,42 @@ export default function AdminLoginForm() {
     };
 
     return (
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-            <div className="rounded-md shadow-sm space-y-4">
-                <div>
-                    <Label htmlFor="email">Email address</Label>
-                    <Input
-                        id="email"
-                        name="email"
-                        type="email"
-                        required
-                        className="mt-1"
-                        placeholder="Enter your email"
-                    />
-                </div>
-                <div>
-                    <Label htmlFor="password">Password</Label>
-                    <Input
-                        id="password"
-                        name="password"
-                        type="password"
-                        required
-                        className="mt-1"
-                        placeholder="Enter your password"
-                    />
-                </div>
+        <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+                <Label htmlFor="email">Email address</Label>
+                <Input
+                    id="email"
+                    name="email"
+                    type="email"
+                    autoComplete="email"
+                    required
+                    className="mt-1"
+                />
+            </div>
+
+            <div>
+                <Label htmlFor="password">Password</Label>
+                <Input
+                    id="password"
+                    name="password"
+                    type="password"
+                    autoComplete="current-password"
+                    required
+                    className="mt-1"
+                />
             </div>
 
             {error && (
-                <div className="text-red-500 text-sm text-center">{error}</div>
+                <div className="text-red-500 text-sm">{error}</div>
             )}
 
-            <div>
-                <Button
-                    type="submit"
-                    className="w-full"
-                    disabled={loading}
-                >
-                    {loading ? "Signing in..." : "Sign in"}
-                </Button>
-            </div>
+            <Button
+                type="submit"
+                className="w-full"
+                disabled={loading}
+            >
+                {loading ? "Signing in..." : "Sign in"}
+            </Button>
         </form>
     );
 } 

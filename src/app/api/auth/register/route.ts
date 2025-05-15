@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { hash } from "bcryptjs";
+import { register } from "@/lib/auth";
 import { z } from "zod";
 
 // Validation schema
@@ -17,38 +16,7 @@ export async function POST(req: Request) {
     // Validate input
     const validatedData = userSchema.parse(body);
     
-    // Check if user already exists
-    const existingUser = await prisma.user.findUnique({
-      where: { email: validatedData.email },
-    });
-
-    if (existingUser) {
-      return NextResponse.json(
-        { error: "User with this email already exists" },
-        { status: 400 }
-      );
-    }
-
-    // Hash password
-    const hashedPassword = await hash(validatedData.password, 12);
-
-    // Create user without transaction
-    const user = await prisma.user.create({
-      data: {
-        name: validatedData.name,
-        email: validatedData.email,
-        password: hashedPassword,
-        role: "admin",
-      },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        role: true,
-        createdAt: true,
-        updatedAt: true,
-      },
-    });
+    const user = await register(validatedData);
 
     return NextResponse.json(
       {
@@ -67,8 +35,8 @@ export async function POST(req: Request) {
 
     console.error("Registration error:", error);
     return NextResponse.json(
-      { error: "Error creating user" },
-      { status: 500 }
+      { error: error instanceof Error ? error.message : "Error creating user" },
+      { status: 400 }
     );
   }
 } 
