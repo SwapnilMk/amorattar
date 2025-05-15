@@ -18,7 +18,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import FavoritesBtn from "./FavoritesBtn";
 import InputGroup from "@/components/ui/input-group";
 
 const ResTopNavbar = ({ data }: { data: NavMenu }) => {
