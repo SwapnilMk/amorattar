@@ -9,13 +9,13 @@ const persistConfig = {
   key: "root",
   storage,
   version: 1,
-  whitelist: ["carts", "favorites"], // Add "favorites" to persist
+  whitelist: ["carts", "favorites"], 
 };
 
 const rootReducer = combineReducers({
   products: productsReducer,
   carts: cartsReducer,
-  favorites: favoritesReducer, // Add favorites reducer
+  favorites: favoritesReducer, 
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
