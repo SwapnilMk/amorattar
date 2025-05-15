@@ -1,10 +1,9 @@
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default async function Dashboard() {
-  const session = await getServerSession(authOptions);
+  const session = await getSession();
   
   // Fetch some basic stats
   const [totalProducts, totalOrders] = await Promise.all([
@@ -41,7 +40,7 @@ export default async function Dashboard() {
           </CardHeader>
           <CardContent>
             <p className="text-lg">
-              Hello, {session?.user?.name || "Admin"}!
+              Hello, {session?.name || "Admin"}!
             </p>
           </CardContent>
         </Card>
