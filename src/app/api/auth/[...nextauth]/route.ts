@@ -5,4 +5,7 @@ const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };
 export const PUT = handler;
-export const DELETE = handler; 
+export const DELETE = handler;
+export const PATCH = handler;
+export const HEAD = handler;
+export const OPTIONS = handler; 
