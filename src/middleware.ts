@@ -24,5 +24,6 @@ export const config = {
     "/api/products/:path*",
     "/api/orders/:path*",
     "/api/admin/:path*",
+    "/((?!api/auth|_next/static|_next/image|favicon.ico).*)",
   ],
 }; 
