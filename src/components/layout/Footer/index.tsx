@@ -26,11 +26,6 @@ const socialsData: SocialNetworks[] = [
     icon: <FaInstagram />,
     url: "https://instagram.com/amorattar",
   },
-  {
-    id: 4,
-    icon: <FaPinterest />, // Swapped GitHub for Pinterest, more relevant for a fragrance brand
-    url: "https://pinterest.com/amorattar",
-  },
 ];
 
 const paymentBadgesData: PaymentBadge[] = [
@@ -103,14 +98,7 @@ const Footer = () => {
           <hr className="h-[1px] border-t-black/10 mb-6" />
           <div className="flex flex-col sm:flex-row justify-center sm:justify-between items-center mb-2">
             <p className="text-sm text-center sm:text-left text-black/60 mb-4 sm:mb-0 sm:mr-1">
-              © 2025 AMORATTAR. Crafted by{" "}
-              <Link
-                href="https://github.com/swapnilMk"
-                className="text-black font-medium"
-              >
-                Swapnil Mahadik
-              </Link>
-              {", "}
+              © 2025 AMORATTAR. 
               Designed by{" "}
               <Link
                 href="https://www.amorattar.shop"

@@ -13,7 +13,6 @@ import Image from "next/image";
 import InputGroup from "@/components/ui/input-group";
 import ResTopNavbar from "./ResTopNavbar";
 import CartBtn from "./CartBtn";
-import FavoritesBtn from "./FavoritesBtn";
 
 const data: NavMenu = [
   {
@@ -129,8 +128,7 @@ const TopNavbar = () => {
               />
             </InputGroup>
             <CartBtn />
-            <FavoritesBtn />
-            <Link href="/#signin" className="p-1">
+            <Link href="/sign-in" className="p-1">
               <Image
                 priority
                 src="/icons/user.svg"

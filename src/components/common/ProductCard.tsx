@@ -1,4 +1,3 @@
-// src/components/ProductCard.tsx
 "use client";
 
 import React from "react";
@@ -7,10 +6,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { Product } from "@/types/product.types";
 import { Button } from "@/components/ui/button";
-import { useAppDispatch } from "@/lib/hooks/redux";
+import { useAppDispatch, useAppSelector } from "@/lib/hooks/redux";
 import { addToCart } from "@/lib/features/carts/cartsSlice";
-import { addToFavorites } from "@/lib/features/favorites/favoritesSlice";
-import { FaShoppingCart, FaHeart } from "react-icons/fa"; // Importing icons
+import { FaShoppingCart, FaWhatsapp } from "react-icons/fa"; 
 
 type ProductCardProps = {
   data: Product;
@@ -18,6 +16,7 @@ type ProductCardProps = {
 
 const ProductCard = ({ data }: ProductCardProps) => {
   const dispatch = useAppDispatch();
+  const colorSelection = useAppSelector((state) => state.products.colorSelection);
 
   const handleAddToCart = () => {
     dispatch(
@@ -26,24 +25,17 @@ const ProductCard = ({ data }: ProductCardProps) => {
         name: data.title,
         srcUrl: data.srcUrl,
         price: data.price,
-        attributes: [], // Assuming no attributes for simplicity; adjust if needed
+        attributes: [colorSelection.name], // Add color as an attribute
         discount: data.discount,
         quantity: 1,
       })
     );
   };
 
-  const handleAddToFavorites = () => {
-    dispatch(
-      addToFavorites({
-        id: data.id,
-        name: data.title,
-        brand: data.brand || "AMORATTAR",
-        price: data.price,
-        srcUrl: data.srcUrl,
-        fragranceType: data.fragranceType || "Perfume",
-      })
-    );
+  const handleWhatsAppClick = () => {
+    const message = `Hi, I'm interested in this product: ${data.title} (${window.location.origin}/shop/product/${data.id}/${data.title.split(" ").join("-")})`;
+    const whatsappUrl = `https://wa.me/918286319995?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
   };
 
   const discountedPrice =
@@ -109,16 +101,15 @@ const ProductCard = ({ data }: ProductCardProps) => {
       <div className="flex space-x-2 mt-2">
         <Button
           onClick={handleAddToCart}
-          className="bg-black text-white rounded-full flex items-center space-x-2 px-4"
+          className="bg-red-400 text-white rounded-full flex items-center space-x-2 px-4"
         >
           <FaShoppingCart className="text-sm" />
         </Button>
         <Button
-          onClick={handleAddToFavorites}
-          variant="outline"
-          className="rounded-full flex items-center space-x-2 px-4"
+          onClick={handleWhatsAppClick}
+          className="bg-[#25D366] text-white rounded-full flex items-center space-x-2 px-4"
         >
-          <FaHeart className="text-sm" />
+          <FaWhatsapp className="text-sm" />
         </Button>
       </div>
     </div>

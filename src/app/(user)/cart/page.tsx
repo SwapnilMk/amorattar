@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import InputGroup from "@/components/ui/input-group";
 import { cn } from "@/lib/utils";
 import { integralCF } from "@/styles/fonts";
-import { FaArrowRight } from "react-icons/fa6";
+import { FaArrowRight, FaWhatsapp } from "react-icons/fa";
 import { MdOutlineLocalOffer } from "react-icons/md";
 import { TbBasketExclamation } from "react-icons/tb";
 import React from "react";
@@ -18,6 +18,18 @@ export default function CartPage() {
   const { cart, totalPrice, adjustedTotalPrice } = useAppSelector(
     (state: RootState) => state.carts
   );
+
+  const handleWhatsAppClick = () => {
+    if (!cart) return;
+
+    const itemsList = cart.items.map(item =>
+      `- ${item.name} (${item.quantity} x $${item.price})`
+    ).join('\n');
+
+    const message = `Hi, I would like to place an order for the following items:\n\n${itemsList}\n\nTotal Amount: $${adjustedTotalPrice}`;
+    const whatsappUrl = `https://wa.me/918286319995?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
+  };
 
   return (
     <main className="pb-20">
@@ -79,31 +91,12 @@ export default function CartPage() {
                     </span>
                   </div>
                 </div>
-                <div className="flex space-x-3">
-                  <InputGroup className="bg-[#F0F0F0]">
-                    <InputGroup.Text>
-                      <MdOutlineLocalOffer className="text-black/40 text-2xl" />
-                    </InputGroup.Text>
-                    <InputGroup.Input
-                      type="text"
-                      name="code"
-                      placeholder="Add promo code"
-                      className="bg-transparent placeholder:text-black/40"
-                    />
-                  </InputGroup>
-                  <Button
-                    type="button"
-                    className="bg-black rounded-full w-full max-w-[119px] h-[48px]"
-                  >
-                    Apply
-                  </Button>
-                </div>
                 <Button
-                  type="button"
-                  className="text-sm md:text-base font-medium bg-black rounded-full w-full py-4 h-[54px] md:h-[60px] group"
+                  onClick={handleWhatsAppClick}
+                  className="text-sm md:text-base font-medium bg-[#25D366] text-white rounded-full w-full py-4 h-[54px] md:h-[60px] group"
                 >
-                  Go to Checkout{" "}
-                  <FaArrowRight className="text-xl ml-2 group-hover:translate-x-1 transition-all" />
+                  <FaWhatsapp className="text-lg mr-2 group-hover:translate-x-1 transition-all" />
+                  <span>DM Order on WhatsApp</span>
                 </Button>
               </div>
             </div>
