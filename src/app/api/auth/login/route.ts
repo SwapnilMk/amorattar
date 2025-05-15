@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { login } from "@/lib/auth";
 import { z } from "zod";
 
+export const runtime = "nodejs";
+
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),

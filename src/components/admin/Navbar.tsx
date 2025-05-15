@@ -1,45 +1,39 @@
 "use client";
 
-import { signOut } from "next-auth/react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { useSession } from "@/components/providers/SessionProvider";
 
-export default function AdminNavbar() {
+export default function Navbar() {
+  const router = useRouter();
+  const { user } = useSession();
+
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+      router.push("/sign-in");
+      router.refresh();
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
+
   return (
-    <nav className="bg-white shadow-sm">
-      <div className="container mx-auto px-4">
-        <div className="flex justify-between items-center h-16">
-          <div className="flex items-center space-x-8">
-            <Link href="/admin/dashboard" className="text-xl font-bold">
-              Admin Panel
+    <nav className="bg-white shadow">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between h-16">
+          <div className="flex">
+            <Link href="/dashboard" className="flex items-center">
+              <span className="text-xl font-bold">Admin Dashboard</span>
             </Link>
-            <div className="hidden md:flex space-x-4">
-              <Link
-                href="/admin/dashboard"
-                className="text-gray-600 hover:text-gray-900"
-              >
-                Dashboard
-              </Link>
-              <Link
-                href="/admin/products"
-                className="text-gray-600 hover:text-gray-900"
-              >
-                Products
-              </Link>
-              <Link
-                href="/admin/orders"
-                className="text-gray-600 hover:text-gray-900"
-              >
-                Orders
-              </Link>
-            </div>
           </div>
-          <Button
-            variant="ghost"
-            onClick={() => signOut({ callbackUrl: "/admin/login" })}
-          >
-            Sign Out
-          </Button>
+          <div className="flex items-center">
+            <span className="mr-4">Welcome, {user?.name}</span>
+            <Button onClick={handleLogout} variant="outline">
+              Sign out
+            </Button>
+          </div>
         </div>
       </div>
     </nav>

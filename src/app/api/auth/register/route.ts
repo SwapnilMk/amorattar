@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { register } from "@/lib/auth";
 import { z } from "zod";
 
+export const runtime = "nodejs";
+
 // Validation schema
 const userSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
