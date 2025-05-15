@@ -6,6 +6,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
 
 export default function AdminLoginForm() {
     const router = useRouter();
@@ -26,15 +27,21 @@ export default function AdminLoginForm() {
                 email,
                 password,
                 redirect: false,
+                callbackUrl: "/dashboard",
             });
 
             if (result?.error) {
-                setError("Invalid credentials");
-            } else {
+                setError(result.error);
+                toast.error(result.error);
+            } else if (result?.ok) {
+                toast.success("Successfully signed in!");
                 router.push("/dashboard");
+                router.refresh();
             }
         } catch (error) {
-            setError("An error occurred. Please try again.");
+            const errorMessage = "An error occurred. Please try again.";
+            setError(errorMessage);
+            toast.error(errorMessage);
         } finally {
             setLoading(false);
         }
@@ -51,6 +58,7 @@ export default function AdminLoginForm() {
                         type="email"
                         required
                         className="mt-1"
+                        placeholder="Enter your email"
                     />
                 </div>
                 <div>
@@ -61,6 +69,7 @@ export default function AdminLoginForm() {
                         type="password"
                         required
                         className="mt-1"
+                        placeholder="Enter your password"
                     />
                 </div>
             </div>
