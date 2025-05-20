@@ -1,8 +1,7 @@
-// src/components/layout/header/Header.tsx
 import AnimatedCounter from '@/components/ui/AnimatedCounter';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
-import { integralCF } from '@/styles/fonts';
+import { poppins } from '@/styles/fonts';
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
@@ -19,8 +18,8 @@ const Header = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
             className={cn([
-              integralCF.className,
-              'mb-5 text-4xl lg:mb-8 lg:text-[64px] lg:leading-[64px]'
+              poppins.className,
+              'mb-5 text-4xl font-semibold lg:mb-8 lg:text-[64px] lg:leading-[64px]'
             ])}
           >
             DISCOVER SCENTS THAT DEFINE YOUR ESSENCE
@@ -104,6 +103,14 @@ const Header = () => {
             width={104}
             alt='big star'
             className='lg:max-h-max-w-24 absolute right-7 top-12 max-h-[76px] max-w-[76px] animate-[spin_4s_infinite] lg:max-w-24 xl:right-0 xl:max-h-[104px] xl:max-w-[104px]'
+          />
+          <Image
+            priority
+            src='/images/banner/banner.png'
+            height={700}
+            width={700}
+            alt='attars'
+            className='absolute left-1/2 top-1/2 max-h-[500px] max-w-[500px] -translate-x-1/2 -translate-y-1/2 animate-[float_3s_ease-in-out_infinite] md:max-h-[600px] md:max-w-[600px]'
           />
           <Image
             priority

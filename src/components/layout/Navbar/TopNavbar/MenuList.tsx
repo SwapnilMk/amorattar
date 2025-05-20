@@ -26,13 +26,16 @@ export function MenuList({ data, label }: MenuListProps) {
           <li className='row-span-3'>
             <NavigationMenuLink asChild>
               <a
-                className='flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md'
+                className='flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-black/70 to-black/50 bg-cover bg-center bg-no-repeat p-6 no-underline outline-none backdrop-blur-sm focus:shadow-md'
+                style={{
+                  backgroundImage: 'url(/images/menu/signatureAttars.jpeg)'
+                }}
                 href='/shop#signature-attars'
               >
-                <div className='mb-2 mt-4 text-lg font-medium'>
+                <div className='mb-2 mt-4 text-lg font-medium text-white'>
                   Signature Attars
                 </div>
-                <p className='text-sm leading-tight text-muted-foreground'>
+                <p className='text-sm leading-tight text-white/90'>
                   Experience our exclusive range of handcrafted attars made from
                   the finest oils.
                 </p>

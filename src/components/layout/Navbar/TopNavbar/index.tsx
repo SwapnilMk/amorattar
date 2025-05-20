@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils';
-import { integralCF } from '@/styles/fonts';
+import { dancingScript } from '@/styles/fonts';
 import Link from 'next/link';
 import React from 'react';
 import { NavMenu } from '../navbar.types';
@@ -85,7 +85,7 @@ const data: NavMenu = [
 const TopNavbar = () => {
   return (
     <nav className='sticky top-0 z-20 bg-white'>
-      <div className='relative mx-auto flex max-w-frame items-center justify-between px-4 py-5 md:py-6 xl:px-0'>
+      <div className='relative mx-auto flex max-w-frame items-center justify-between px-4 py-2 md:py-6 xl:px-0'>
         {/* Mobile Layout */}
         <div className='flex w-full items-center md:hidden'>
           {/* Left: Hamburger Menu */}
@@ -95,8 +95,21 @@ const TopNavbar = () => {
 
           {/* Center: Logo */}
           <div className='flex flex-grow justify-center'>
-            <Link href='/' className={cn([integralCF.className, 'text-2xl'])}>
-              AMORATTAR
+            <Link
+              href='/'
+              className={cn([
+                dancingScript.className,
+                'mb-2 mr-3 flex items-center gap-2 text-2xl font-bold lg:mr-10 lg:text-[43px]'
+              ])}
+            >
+              <Image
+                src='/logo/amorattar.png'
+                height={100}
+                width={100}
+                alt='logo'
+                className='max-h-[55px] max-w-[55px]'
+              />
+              <span>Amorattar</span>
             </Link>
           </div>
 
@@ -112,11 +125,18 @@ const TopNavbar = () => {
             <Link
               href='/'
               className={cn([
-                integralCF.className,
-                'mb-2 mr-3 text-2xl lg:mr-10 lg:text-[32px]'
+                dancingScript.className,
+                'mb-2 mr-3 flex items-center gap-2 text-2xl font-bold lg:mr-10 lg:text-[43px]'
               ])}
             >
-              AMORATTAR
+              <Image
+                src='/logo/amorattar.png'
+                height={100}
+                width={100}
+                alt='logo'
+                className='max-h-[65px] max-w-[65px]'
+              />
+              <span>Amorattar</span>
             </Link>
             <NavigationMenu className='mr-2 lg:mr-7'>
               <NavigationMenuList>
@@ -153,16 +173,6 @@ const TopNavbar = () => {
               />
             </InputGroup>
             <CartBtn />
-            <Link href='/sign-in' className='p-1'>
-              <Image
-                priority
-                src='/icons/user.svg'
-                height={100}
-                width={100}
-                alt='user'
-                className='max-h-[22px] max-w-[22px]'
-              />
-            </Link>
           </div>
         </div>
       </div>
