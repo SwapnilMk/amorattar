@@ -1,46 +1,46 @@
-import { Button } from "@/components/ui/button";
-import InputGroup from "@/components/ui/input-group";
-import { cn } from "@/lib/utils";
-import { integralCF } from "@/styles/fonts";
-import Image from "next/image";
-import React from "react";
+import { Button } from '@/components/ui/button';
+import InputGroup from '@/components/ui/input-group';
+import { cn } from '@/lib/utils';
+import { integralCF } from '@/styles/fonts';
+import Image from 'next/image';
+import React from 'react';
 
 const NewsLetterSection = () => {
   return (
-    <div className="relative grid grid-cols-1 md:grid-cols-2 py-9 md:py-11 px-6 md:px-16 max-w-frame mx-auto bg-black rounded-[20px]">
+    <div className='relative mx-auto grid max-w-frame grid-cols-1 rounded-[20px] bg-black px-6 py-9 md:grid-cols-2 md:px-16 md:py-11'>
       <p
         className={cn([
           integralCF.className,
-          "font-bold text-[32px] md:text-[40px] text-white mb-9 md:mb-0",
+          'mb-9 text-[32px] font-bold text-white md:mb-0 md:text-[40px]'
         ])}
       >
         STAY UP TO DATE ABOUT OUR LATEST OFFERS
       </p>
-      <div className="flex items-center">
-        <div className="flex flex-col w-full max-w-[349px] mx-auto">
-          <InputGroup className="flex bg-white mb-[14px]">
+      <div className='flex items-center'>
+        <div className='mx-auto flex w-full max-w-[349px] flex-col'>
+          <InputGroup className='mb-[14px] flex bg-white'>
             <InputGroup.Text>
               <Image
                 priority
-                src="/icons/envelope.svg"
+                src='/icons/envelope.svg'
                 height={20}
                 width={20}
-                alt="email"
-                className="min-w-5 min-h-5"
+                alt='email'
+                className='min-h-5 min-w-5'
               />
             </InputGroup.Text>
             <InputGroup.Input
-              type="email"
-              name="email"
-              placeholder="Enter your email address"
-              className="bg-transparent placeholder:text-black/40 placeholder:text-sm sm:placeholder:text-base"
+              type='email'
+              name='email'
+              placeholder='Enter your email address'
+              className='bg-transparent placeholder:text-sm placeholder:text-black/40 sm:placeholder:text-base'
             />
           </InputGroup>
           <Button
-            variant="secondary"
-            className="text-sm sm:text-base font-medium bg-white h-12 rounded-full px-4 py-3"
-            aria-label="Subscribe to Newsletter"
-            type="button"
+            variant='secondary'
+            className='h-12 rounded-full bg-white px-4 py-3 text-sm font-medium sm:text-base'
+            aria-label='Subscribe to Newsletter'
+            type='button'
           >
             Subscribe to Newsletter
           </Button>

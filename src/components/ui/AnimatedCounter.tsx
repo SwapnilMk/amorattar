@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
 import {
   KeyframeOptions,
   animate,
   useInView,
-  useIsomorphicLayoutEffect,
-} from "framer-motion";
-import { useRef } from "react";
+  useIsomorphicLayoutEffect
+} from 'framer-motion';
+import { useRef } from 'react';
 
 type AnimatedCounterProps = {
   from: number;
@@ -17,7 +17,7 @@ type AnimatedCounterProps = {
 const AnimatedCounter = ({
   from,
   to,
-  animationOptions,
+  animationOptions
 }: AnimatedCounterProps) => {
   const ref = useRef<HTMLSpanElement>(null);
   const inView = useInView(ref, { once: true });
@@ -32,18 +32,18 @@ const AnimatedCounter = ({
     element.textContent = String(from);
 
     // If reduced motion is enabled in system's preferences
-    if (window.matchMedia("(prefers-reduced-motion)").matches) {
+    if (window.matchMedia('(prefers-reduced-motion)').matches) {
       element.textContent = String(to);
       return;
     }
 
     const controls = animate(from, to, {
       duration: 6,
-      ease: "easeOut",
+      ease: 'easeOut',
       ...animationOptions,
       onUpdate(value) {
         element.textContent = Number(value.toFixed(0)).toLocaleString();
-      },
+      }
     });
 
     // Cancel on unmount

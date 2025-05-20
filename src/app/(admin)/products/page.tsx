@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
+import { useEffect, useState } from 'react';
+import { Button } from '@/components/ui/button';
 import {
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Product } from "@prisma/client";
-import { useRouter } from "next/navigation";
+  TableRow
+} from '@/components/ui/table';
+import { Product } from '@prisma/client';
+import { useRouter } from 'next/navigation';
 
 export default function AdminProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -24,26 +24,26 @@ export default function AdminProductsPage() {
 
   const fetchProducts = async () => {
     try {
-      const response = await fetch("/api/products");
+      const response = await fetch('/api/products');
       const data = await response.json();
       setProducts(data);
     } catch (error) {
-      console.error("Error fetching products:", error);
+      console.error('Error fetching products:', error);
     } finally {
       setLoading(false);
     }
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this product?")) return;
+    if (!confirm('Are you sure you want to delete this product?')) return;
 
     try {
       await fetch(`/api/products/${id}`, {
-        method: "DELETE",
+        method: 'DELETE'
       });
       fetchProducts();
     } catch (error) {
-      console.error("Error deleting product:", error);
+      console.error('Error deleting product:', error);
     }
   };
 
@@ -52,15 +52,15 @@ export default function AdminProductsPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">Products</h1>
-        <Button onClick={() => router.push("/admin/products/new")}>
+    <div className='space-y-6'>
+      <div className='flex items-center justify-between'>
+        <h1 className='text-3xl font-bold'>Products</h1>
+        <Button onClick={() => router.push('/admin/products/new')}>
           Add Product
         </Button>
       </div>
 
-      <div className="border rounded-lg">
+      <div className='rounded-lg border'>
         <Table>
           <TableHeader>
             <TableRow>
@@ -77,17 +77,19 @@ export default function AdminProductsPage() {
                 <TableCell>${product.price.toFixed(2)}</TableCell>
                 <TableCell>{product.stock}</TableCell>
                 <TableCell>
-                  <div className="flex space-x-2">
+                  <div className='flex space-x-2'>
                     <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => router.push(`/admin/products/${product.id}`)}
+                      variant='outline'
+                      size='sm'
+                      onClick={() =>
+                        router.push(`/admin/products/${product.id}`)
+                      }
                     >
                       Edit
                     </Button>
                     <Button
-                      variant="destructive"
-                      size="sm"
+                      variant='destructive'
+                      size='sm'
                       onClick={() => handleDelete(product.id)}
                     >
                       Delete
@@ -101,4 +103,4 @@ export default function AdminProductsPage() {
       </div>
     </div>
   );
-} 
+}

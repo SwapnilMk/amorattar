@@ -1,39 +1,39 @@
 // src/components/layout/SizeSection.tsx
-"use client";
+'use client';
 
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import { cn } from "@/lib/utils";
+  AccordionTrigger
+} from '@/components/ui/accordion';
+import { cn } from '@/lib/utils';
 
 const SizeSection = () => {
-  const [selected, setSelected] = useState<string>("30ml");
+  const [selected, setSelected] = useState<string>('30ml');
 
   return (
-    <Accordion type="single" collapsible defaultValue="filter-size">
-      <AccordionItem value="filter-size" className="border-none">
-        <AccordionTrigger className="text-black font-bold text-xl hover:no-underline p-0 py-0.5">
+    <Accordion type='single' collapsible defaultValue='filter-size'>
+      <AccordionItem value='filter-size' className='border-none'>
+        <AccordionTrigger className='p-0 py-0.5 text-xl font-bold text-black hover:no-underline'>
           Bottle Size
         </AccordionTrigger>
-        <AccordionContent className="pt-4 pb-0">
-          <div className="flex items-center flex-wrap">
+        <AccordionContent className='pb-0 pt-4'>
+          <div className='flex flex-wrap items-center'>
             {[
-              "3ml",  // Common for attar samples
-              "10ml", // Travel or roll-on size
-              "30ml", // Standard perfume size
-              "50ml", // Mid-range option
-              "100ml", // Full-size bottle
+              '3ml', // Common for attar samples
+              '10ml', // Travel or roll-on size
+              '30ml', // Standard perfume size
+              '50ml', // Mid-range option
+              '100ml' // Full-size bottle
             ].map((size, index) => (
               <button
                 key={index}
-                type="button"
+                type='button'
                 className={cn([
-                  "bg-[#F0F0F0] m-1 flex items-center justify-center px-5 py-2.5 text-sm rounded-full max-h-[39px]",
-                  selected === size && "bg-black font-medium text-white",
+                  'm-1 flex max-h-[39px] items-center justify-center rounded-full bg-[#F0F0F0] px-5 py-2.5 text-sm',
+                  selected === size && 'bg-black font-medium text-white'
                 ])}
                 onClick={() => setSelected(size)}
               >

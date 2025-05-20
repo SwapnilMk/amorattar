@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { createContext, useContext, ReactNode } from "react";
+import { createContext, useContext, ReactNode } from 'react';
 
 interface SessionContextType {
   user: {
@@ -19,14 +19,14 @@ export function useSession() {
 
 export default function SessionProvider({
   children,
-  user,
+  user
 }: {
   children: ReactNode;
-  user: SessionContextType["user"];
+  user: SessionContextType['user'];
 }) {
   return (
     <SessionContext.Provider value={{ user }}>
       {children}
     </SessionContext.Provider>
   );
-} 
+}

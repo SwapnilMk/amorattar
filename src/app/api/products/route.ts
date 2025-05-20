@@ -1,6 +1,6 @@
-import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { getSession } from "@/lib/auth";
+import { NextResponse } from 'next/server';
+import { prisma } from '@/lib/prisma';
+import { getSession } from '@/lib/auth';
 
 export async function GET() {
   try {
@@ -8,7 +8,7 @@ export async function GET() {
     return NextResponse.json(products);
   } catch (error) {
     return NextResponse.json(
-      { error: "Error fetching products" },
+      { error: 'Error fetching products' },
       { status: 500 }
     );
   }
@@ -17,23 +17,20 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const session = await getSession();
-    if (!session || session.role !== "admin") {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      );
+    if (!session || session.role !== 'admin') {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await req.json();
     const product = await prisma.product.create({
-      data: body,
+      data: body
     });
 
     return NextResponse.json(product, { status: 201 });
   } catch (error) {
     return NextResponse.json(
-      { error: "Error creating product" },
+      { error: 'Error creating product' },
       { status: 500 }
     );
   }
-} 
+}

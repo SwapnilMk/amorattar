@@ -1,19 +1,19 @@
-import { combineReducers, configureStore } from "@reduxjs/toolkit";
-import { persistReducer, persistStore } from "redux-persist";
-import storage from "@/components/storage";
-import productsReducer from "./features/products/productsSlice";
-import cartsReducer from "./features/carts/cartsSlice";
+import { combineReducers, configureStore } from '@reduxjs/toolkit';
+import { persistReducer, persistStore } from 'redux-persist';
+import storage from '@/components/storage';
+import productsReducer from './features/products/productsSlice';
+import cartsReducer from './features/carts/cartsSlice';
 
 const persistConfig = {
-  key: "root",
+  key: 'root',
   storage,
   version: 1,
-  whitelist: ["carts"], 
+  whitelist: ['carts']
 };
 
 const rootReducer = combineReducers({
   products: productsReducer,
-  carts: cartsReducer,
+  carts: cartsReducer
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -21,11 +21,11 @@ const persistedReducer = persistReducer(persistConfig, rootReducer);
 export const makeStore = () => {
   const store = configureStore({
     reducer: persistedReducer,
-    devTools: process.env.NODE_ENV !== "production",
+    devTools: process.env.NODE_ENV !== 'production',
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware({
-        serializableCheck: false,
-      }),
+        serializableCheck: false
+      })
   });
 
   const persistor = persistStore(store);

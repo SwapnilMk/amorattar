@@ -1,21 +1,21 @@
-import React from "react";
+import React from 'react';
 import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
-import Link from "next/link";
+  BreadcrumbSeparator
+} from '@/components/ui/breadcrumb';
+import Link from 'next/link';
 
 const BreadcrumbShop = () => {
   return (
-    <Breadcrumb className="mb-5 sm:mb-9">
+    <Breadcrumb className='mb-5 sm:mb-9'>
       <BreadcrumbList>
         <BreadcrumbItem>
           <BreadcrumbLink asChild>
-            <Link href="/">Home</Link>
+            <Link href='/'>Home</Link>
           </BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator />

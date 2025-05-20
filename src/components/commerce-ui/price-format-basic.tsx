@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { cn } from "@/lib/utils";
-import { NumericFormat } from "react-number-format";
+import { cn } from '@/lib/utils';
+import { NumericFormat } from 'react-number-format';
 
 interface PriceFormat_BasicProps extends React.HTMLAttributes<HTMLDivElement> {
   value: number;
@@ -14,10 +14,10 @@ interface PriceFormat_BasicProps extends React.HTMLAttributes<HTMLDivElement> {
 const PriceFormat_Basic: React.FC<PriceFormat_BasicProps> = ({
   className,
   decimalScale = 2,
-  decimalSeparator = ",",
-  prefix = "$",
-  thousandSeparator = ".",
-  value,
+  decimalSeparator = ',',
+  prefix = '$',
+  thousandSeparator = '.',
+  value
 }) => {
   return (
     <NumericFormat
@@ -26,8 +26,8 @@ const PriceFormat_Basic: React.FC<PriceFormat_BasicProps> = ({
       decimalSeparator={decimalSeparator}
       decimalScale={decimalScale}
       prefix={prefix}
-      displayType="text"
-      className={cn("text-lg font-medium", className)}
+      displayType='text'
+      className={cn('text-lg font-medium', className)}
     />
   );
 };
