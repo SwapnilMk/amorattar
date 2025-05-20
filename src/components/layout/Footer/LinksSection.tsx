@@ -1,4 +1,3 @@
-// src/components/layout/footer/LinksSection.tsx
 import React from 'react';
 import { FooterLinks } from './footer.types';
 import Link from 'next/link';

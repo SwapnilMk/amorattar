@@ -1,14 +1,9 @@
 // src/components/layout/footer/Footer.tsx
 import { cn } from '@/lib/utils';
-import { integralCF } from '@/styles/fonts';
+import { dancingScript } from '@/styles/fonts';
 import React from 'react';
 import { PaymentBadge, SocialNetworks } from './footer.types';
-import {
-  FaFacebookF,
-  FaInstagram,
-  FaPinterest,
-  FaTwitter
-} from 'react-icons/fa'; // Adjusted social icons
+import { FaInstagram, FaSnapchat, FaWhatsapp } from 'react-icons/fa';
 import Link from 'next/link';
 import LinksSection from './LinksSection';
 import Image from 'next/image';
@@ -18,18 +13,18 @@ import LayoutSpacing from './LayoutSpacing';
 const socialsData: SocialNetworks[] = [
   {
     id: 1,
-    icon: <FaTwitter />,
-    url: 'https://twitter.com/amorattar'
+    icon: <FaWhatsapp />,
+    url: 'https://wa.me/918286319995'
   },
   {
     id: 2,
-    icon: <FaFacebookF />,
-    url: 'https://facebook.com/amorattar'
+    icon: <FaSnapchat />,
+    url: 'https://www.snapchat.com/add/skazi1539'
   },
   {
     id: 3,
     icon: <FaInstagram />,
-    url: 'https://instagram.com/amorattar'
+    url: 'https://www.instagram.com/amorattar6/'
   }
 ];
 
@@ -71,11 +66,11 @@ const Footer = () => {
             <div className='flex flex-col lg:col-span-3 lg:max-w-[248px]'>
               <h1
                 className={cn([
-                  integralCF.className,
+                  dancingScript.className,
                   'mb-6 text-[28px] lg:text-[32px]'
                 ])}
               >
-                AMORATTAR
+                Amorattar
               </h1>
               <p className='mb-9 text-sm text-black/60'>
                 Discover the art of fragrance with our curated collection of
@@ -106,7 +101,7 @@ const Footer = () => {
             <p className='mb-4 text-center text-sm text-black/60 sm:mb-0 sm:mr-1 sm:text-left'>
               © 2025 AMORATTAR. Designed by{' '}
               <Link
-                href='https://www.amorattar.shop'
+                href='https://amorattar.vercel.app/'
                 className='font-medium text-black'
               >
                 Amorattar

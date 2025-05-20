@@ -10,7 +10,7 @@ import {
 import Image from 'next/image';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
-import { integralCF } from '@/styles/fonts';
+import { dancingScript, poppins } from '@/styles/fonts';
 import { NavMenu } from '../navbar.types';
 import {
   Accordion,
@@ -37,8 +37,23 @@ const ResTopNavbar = ({ data }: { data: NavMenu }) => {
         <SheetHeader className='mb-6'>
           <SheetTitle asChild>
             <SheetClose asChild>
-              <Link href='/' className={cn([integralCF.className, 'text-2xl'])}>
-                AMORATTAR
+              <Link
+                href='/'
+                className={cn([
+                  dancingScript.className,
+                  'flex flex-col items-center'
+                ])}
+              >
+                <Image
+                  src='/logo/amorattar.png'
+                  height={100}
+                  width={100}
+                  alt='logo'
+                  className='mb-2 max-h-[60px] max-w-[60px]'
+                />
+                <div className='text-[30px] font-bold leading-none text-[#1A1A1A]'>
+                  Amorattar
+                </div>
               </Link>
             </SheetClose>
           </SheetTitle>
