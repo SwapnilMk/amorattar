@@ -1,6 +1,6 @@
-import React from "react";
-import ProductDetails from "./ProductDetails";
-import { Product } from "@/types/product.types";
+import React from 'react';
+import ProductDetails from './ProductDetails';
+import { Product } from '@/types/product.types';
 
 type ProductDetailsContentProps = {
   data: Product;
@@ -9,7 +9,7 @@ type ProductDetailsContentProps = {
 const ProductDetailsContent = ({ data }: ProductDetailsContentProps) => {
   return (
     <section>
-      <h3 className="text-xl sm:text-2xl font-bold text-black mb-5 sm:mb-6">
+      <h3 className='mb-5 text-xl font-bold text-black sm:mb-6 sm:text-2xl'>
         Product specifications
       </h3>
       <ProductDetails data={data} />

@@ -1,6 +1,6 @@
-import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { getSession } from "@/lib/auth";
+import { NextResponse } from 'next/server';
+import { prisma } from '@/lib/prisma';
+import { getSession } from '@/lib/auth';
 
 export async function GET(
   req: Request,
@@ -8,20 +8,17 @@ export async function GET(
 ) {
   try {
     const product = await prisma.product.findUnique({
-      where: { id: params.id },
+      where: { id: params.id }
     });
 
     if (!product) {
-      return NextResponse.json(
-        { error: "Product not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Product not found' }, { status: 404 });
     }
 
     return NextResponse.json(product);
   } catch (error) {
     return NextResponse.json(
-      { error: "Error fetching product" },
+      { error: 'Error fetching product' },
       { status: 500 }
     );
   }
@@ -33,23 +30,20 @@ export async function PUT(
 ) {
   try {
     const session = await getSession();
-    if (!session || session.role !== "admin") {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      );
+    if (!session || session.role !== 'admin') {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await req.json();
     const product = await prisma.product.update({
       where: { id: params.id },
-      data: body,
+      data: body
     });
 
     return NextResponse.json(product);
   } catch (error) {
     return NextResponse.json(
-      { error: "Error updating product" },
+      { error: 'Error updating product' },
       { status: 500 }
     );
   }
@@ -61,22 +55,19 @@ export async function DELETE(
 ) {
   try {
     const session = await getSession();
-    if (!session || session.role !== "admin") {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      );
+    if (!session || session.role !== 'admin') {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     await prisma.product.delete({
-      where: { id: params.id },
+      where: { id: params.id }
     });
 
-    return NextResponse.json({ message: "Product deleted successfully" });
+    return NextResponse.json({ message: 'Product deleted successfully' });
   } catch (error) {
     return NextResponse.json(
-      { error: "Error deleting product" },
+      { error: 'Error deleting product' },
       { status: 500 }
     );
   }
-} 
+}

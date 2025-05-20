@@ -1,18 +1,18 @@
-import React from "react";
+import React from 'react';
 
 export type MenuItem = {
   id: number;
-  type: "MenuItem" | "MenuList";
+  type: 'MenuItem' | 'MenuList';
   label: string;
   url?: string;
   children:
-    | (Omit<MenuItem, "children" | "type"> & {
+    | (Omit<MenuItem, 'children' | 'type'> & {
         description?: string | React.ReactNode;
       })[]
     | [];
 };
 
-export type MenuListData = (Omit<MenuItem, "children" | "type"> & {
+export type MenuListData = (Omit<MenuItem, 'children' | 'type'> & {
   description?: string | React.ReactNode;
 })[];
 

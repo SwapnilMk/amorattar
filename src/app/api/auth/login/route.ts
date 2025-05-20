@@ -1,12 +1,12 @@
-import { NextResponse } from "next/server";
-import { login } from "@/lib/auth";
-import { z } from "zod";
+import { NextResponse } from 'next/server';
+import { login } from '@/lib/auth';
+import { z } from 'zod';
 
-export const runtime = "nodejs";
+export const runtime = 'nodejs';
 
 const loginSchema = z.object({
-  email: z.string().email("Invalid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+  email: z.string().email('Invalid email address'),
+  password: z.string().min(6, 'Password must be at least 6 characters')
 });
 
 export async function POST(req: Request) {
@@ -18,7 +18,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({
       user,
-      message: "Login successful",
+      message: 'Login successful'
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -28,10 +28,7 @@ export async function POST(req: Request) {
       );
     }
 
-    console.error("Login error:", error);
-    return NextResponse.json(
-      { error: "Invalid credentials" },
-      { status: 401 }
-    );
+    console.error('Login error:', error);
+    return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
   }
-} 
+}

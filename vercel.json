@@ -5,7 +5,7 @@
       "destination": "/shop/product/:id/:slug"
     },
     {
-      "source": "/(.*)", 
+      "source": "/(.*)",
       "destination": "/"
     }
   ]

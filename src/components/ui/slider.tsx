@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import * as React from "react";
-import * as SliderPrimitive from "@radix-ui/react-slider";
-import { cn } from "@/lib/utils";
+import * as React from 'react';
+import * as SliderPrimitive from '@radix-ui/react-slider';
+import { cn } from '@/lib/utils';
 
 interface SliderProps
   extends React.ComponentPropsWithoutRef<typeof SliderPrimitive.Root> {
@@ -36,11 +36,11 @@ const Slider = React.forwardRef<
     };
 
     return (
-      <div className="w-full relative">
+      <div className='relative w-full'>
         <SliderPrimitive.Root
           ref={ref}
           className={cn(
-            "relative flex w-full touch-none select-none items-center",
+            'relative flex w-full touch-none select-none items-center',
             className
           )}
           min={min}
@@ -50,33 +50,33 @@ const Slider = React.forwardRef<
           onValueChange={handleValueChange}
           {...props}
         >
-          <SliderPrimitive.Track className="relative h-1.5 w-full grow overflow-hidden rounded-full bg-primary/20">
-            <SliderPrimitive.Range className="absolute h-full bg-primary" />
+          <SliderPrimitive.Track className='relative h-1.5 w-full grow overflow-hidden rounded-full bg-primary/20'>
+            <SliderPrimitive.Range className='absolute h-full bg-primary' />
           </SliderPrimitive.Track>
 
           {/* Thumb 1 with Label */}
           <div
-            className="absolute -translate-x-1/2 -bottom-8 text-xs font-medium px-2 py-1 rounded z-10"
+            className='absolute -bottom-8 z-10 -translate-x-1/2 rounded px-2 py-1 text-xs font-medium'
             style={{
-              left: `${((values[0] - min) / (max - min)) * 100}%`,
+              left: `${((values[0] - min) / (max - min)) * 100}%`
             }}
           >
             {label}
             {values[0]}
           </div>
-          <SliderPrimitive.Thumb className="relative block h-4 w-4 rounded-full border border-primary/50 bg-black shadow transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50" />
+          <SliderPrimitive.Thumb className='relative block h-4 w-4 rounded-full border border-primary/50 bg-black shadow transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50' />
 
           {/* Thumb 2 with Label */}
           <div
-            className="absolute -translate-x-1/2 -bottom-8 text-xs font-medium px-2 py-1 rounded z-10"
+            className='absolute -bottom-8 z-10 -translate-x-1/2 rounded px-2 py-1 text-xs font-medium'
             style={{
-              left: `${((values[1] - min) / (max - min)) * 100}%`,
+              left: `${((values[1] - min) / (max - min)) * 100}%`
             }}
           >
             {label}
             {values[1]}
           </div>
-          <SliderPrimitive.Thumb className="relative block h-4 w-4 rounded-full border border-primary/50 bg-black shadow transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50" />
+          <SliderPrimitive.Thumb className='relative block h-4 w-4 rounded-full border border-primary/50 bg-black shadow transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50' />
         </SliderPrimitive.Root>
       </div>
     );

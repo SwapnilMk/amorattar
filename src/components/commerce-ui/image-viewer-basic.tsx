@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
 import {
   Dialog,
   DialogClose,
@@ -8,13 +8,13 @@ import {
   DialogOverlay,
   DialogPortal,
   DialogTitle,
-  DialogTrigger,
-} from "@radix-ui/react-dialog";
-import { TransformComponent, TransformWrapper } from "react-zoom-pan-pinch";
-import { Cross2Icon } from "@radix-ui/react-icons";
+  DialogTrigger
+} from '@radix-ui/react-dialog';
+import { TransformComponent, TransformWrapper } from 'react-zoom-pan-pinch';
+import { Cross2Icon } from '@radix-ui/react-icons';
 
 const DEFAULT_PLACEHOLDER_URL =
-  "https://raw.githubusercontent.com/stackzero-labs/ui/refs/heads/main/public/placeholders/headphone-2.jpg";
+  'https://raw.githubusercontent.com/stackzero-labs/ui/refs/heads/main/public/placeholders/headphone-2.jpg';
 
 interface ImageViewerProps {
   className?: string;
@@ -34,25 +34,25 @@ const ImageViewer_Basic = ({
   imageTitle,
   imageUrl,
   thumbnailUrl,
-  placeholderUrl = DEFAULT_PLACEHOLDER_URL,
+  placeholderUrl = DEFAULT_PLACEHOLDER_URL
 }: ImageViewerProps) => {
   const handleImgError = (event: React.SyntheticEvent<HTMLImageElement>) => {
-    console.error("Image failed to load", event.currentTarget.src);
+    console.error('Image failed to load', event.currentTarget.src);
     event.currentTarget.src = placeholderUrl;
   };
 
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <div className={cn("cursor-pointer", className)}>
+        <div className={cn('cursor-pointer', className)}>
           {/* You can swap this with your preferred image optization technique, like using  next/image */}
           <img
             src={thumbnailUrl || imageUrl}
-            alt={`${imageTitle ?? "Image"} - Preview`}
-            width="100%"
+            alt={`${imageTitle ?? 'Image'} - Preview`}
+            width='100%'
             height={300}
             className={cn(
-              "rounded-lg object-cover transition-opacity hover:opacity-90",
+              'rounded-lg object-cover transition-opacity hover:opacity-90',
               classNameThumbnailViewer
             )}
             onError={handleImgError}
@@ -60,10 +60,10 @@ const ImageViewer_Basic = ({
         </div>
       </DialogTrigger>
       <DialogPortal>
-        <DialogOverlay className="fixed inset-0 z-50 bg-black/80" />
-        <DialogContent className="bg-background fixed inset-0 z-50 flex flex-col items-center justify-center p-0">
-          <DialogTitle className="sr-only">{imageTitle}</DialogTitle>
-          <div className="relative flex h-screen w-screen items-center justify-center">
+        <DialogOverlay className='fixed inset-0 z-50 bg-black/80' />
+        <DialogContent className='fixed inset-0 z-50 flex flex-col items-center justify-center bg-background p-0'>
+          <DialogTitle className='sr-only'>{imageTitle}</DialogTitle>
+          <div className='relative flex h-screen w-screen items-center justify-center'>
             <TransformWrapper
               initialScale={1}
               initialPositionX={0}
@@ -75,7 +75,7 @@ const ImageViewer_Basic = ({
                     {/* You can swap this with your preferred image optization technique, like using  next/image */}
                     <img
                       src={imageUrl}
-                      alt={`${imageTitle ?? "Image"} - Full`}
+                      alt={`${imageTitle ?? 'Image'} - Full`}
                       className={classNameImageViewer}
                       onError={handleImgError}
                     />
@@ -85,10 +85,10 @@ const ImageViewer_Basic = ({
             </TransformWrapper>
             <DialogClose asChild>
               <button
-                className="absolute top-4 right-4 z-10 cursor-pointer rounded-full bg-black/50 p-2 text-white transition-colors hover:bg-black/70"
-                aria-label="Close"
+                className='absolute right-4 top-4 z-10 cursor-pointer rounded-full bg-black/50 p-2 text-white transition-colors hover:bg-black/70'
+                aria-label='Close'
               >
-                <Cross2Icon className="size-6" />
+                <Cross2Icon className='size-6' />
               </button>
             </DialogClose>
           </div>
