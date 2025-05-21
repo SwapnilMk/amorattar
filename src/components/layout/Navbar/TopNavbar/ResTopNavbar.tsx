@@ -45,11 +45,11 @@ const ResTopNavbar = ({ data }: { data: NavMenu }) => {
                 ])}
               >
                 <Image
-                  src='/logo/amorattar.png'
+                  src='/logo/amorattar.jpg'
                   height={100}
                   width={100}
                   alt='logo'
-                  className='mb-2 max-h-[60px] max-w-[60px]'
+                  className='mb-2 max-h-[60px] max-w-[60px] rounded-full'
                 />
                 <div className='text-[30px] font-bold leading-none text-[#1A1A1A]'>
                   Amorattar

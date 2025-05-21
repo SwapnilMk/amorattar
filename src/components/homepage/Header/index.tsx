@@ -1,7 +1,7 @@
 import AnimatedCounter from '@/components/ui/AnimatedCounter';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
-import { poppins } from '@/styles/fonts';
+import { poppins, satoshi } from '@/styles/fonts';
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
@@ -18,7 +18,7 @@ const Header = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
             className={cn([
-              poppins.className,
+              satoshi.className,
               'mb-5 text-4xl font-semibold lg:mb-8 lg:text-[64px] lg:leading-[64px]'
             ])}
           >
