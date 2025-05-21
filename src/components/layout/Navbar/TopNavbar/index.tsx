@@ -99,15 +99,15 @@ const TopNavbar = () => {
               href='/'
               className={cn([
                 dancingScript.className,
-                'mb-2 mr-3 flex items-center gap-2 text-2xl font-bold lg:mr-10 lg:text-[43px]'
+                'mr-3 flex items-center gap-2 text-2xl font-bold lg:mr-10 lg:text-[43px]'
               ])}
             >
               <Image
-                src='/logo/amorattar.png'
+                src='/logo/amorattar.jpg'
                 height={100}
                 width={100}
                 alt='logo'
-                className='max-h-[55px] max-w-[55px]'
+                className='max-h-[50px] max-w-[50px] rounded-full'
               />
               <span>Amorattar</span>
             </Link>
@@ -130,11 +130,11 @@ const TopNavbar = () => {
               ])}
             >
               <Image
-                src='/logo/amorattar.png'
+                src='/logo/amorattar.jpg'
                 height={100}
                 width={100}
                 alt='logo'
-                className='max-h-[65px] max-w-[65px]'
+                className='max-h-[65px] max-w-[65px] rounded-full'
               />
               <span>Amorattar</span>
             </Link>

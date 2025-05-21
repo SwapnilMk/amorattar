@@ -36,7 +36,7 @@ const ProductCard = ({ data }: ProductCardProps) => {
 
   const handleWhatsAppClick = () => {
     const message = `Hi, I'm interested in this product: ${data.title} (${window.location.origin}/shop/product/${data.id}/${data.title.split(' ').join('-')})`;
-    const whatsappUrl = `https://wa.me/918286319995?text=${encodeURIComponent(message)}`;
+    const whatsappUrl = `https://wa.me/918268435091?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
   };
 

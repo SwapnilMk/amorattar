@@ -14,12 +14,12 @@ const socialsData: SocialNetworks[] = [
   {
     id: 1,
     icon: <FaWhatsapp />,
-    url: 'https://wa.me/918286319995'
+    url: 'https://wa.me/918268435091'
   },
   {
     id: 2,
     icon: <FaSnapchat />,
-    url: 'https://www.snapchat.com/add/skazi1539'
+    url: '#'
   },
   {
     id: 3,

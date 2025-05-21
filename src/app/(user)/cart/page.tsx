@@ -27,7 +27,7 @@ export default function CartPage() {
       .join('\n');
 
     const message = `Hi, I would like to place an order for the following items:\n\n${itemsList}\n\nTotal Amount: $${adjustedTotalPrice}`;
-    const whatsappUrl = `https://wa.me/918286319995?text=${encodeURIComponent(message)}`;
+    const whatsappUrl = `https://wa.me/918268435091?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
   };
 
