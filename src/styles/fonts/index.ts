@@ -199,6 +199,127 @@ const poppins = localFont({
   variable: '--font-poppins'
 });
 
+const firaSans = localFont({
+  src: [
+    {
+      path: './FiraSans-Regular.ttf',
+      weight: '400',
+      style: 'normal'
+    },
+    {
+      path: './FiraSans-Medium.ttf',
+      weight: '500',
+      style: 'normal'
+    },
+    {
+      path: './FiraSans-SemiBold.ttf',
+      weight: '600',
+      style: 'normal'
+    },
+    {
+      path: './FiraSans-Bold.ttf',
+      weight: '700',
+      style: 'normal'
+    }
+  ],
+  fallback: ['sans-serif'],
+  variable: '--font-fira-sans'
+});
+
+const lora = localFont({
+  src: [
+    {
+      path: './Lora-Regular.ttf',
+      weight: '400',
+      style: 'normal'
+    },
+    {
+      path: './Lora-Medium.ttf',
+      weight: '500',
+      style: 'normal'
+    },
+    {
+      path: './Lora-SemiBold.ttf',
+      weight: '600',
+      style: 'normal'
+    },
+    {
+      path: './Lora-Bold.ttf',
+      weight: '700',
+      style: 'normal'
+    },
+    {
+      path: './Lora-Italic.ttf',
+      weight: '400',
+      style: 'italic'
+    },
+    {
+      path: './Lora-MediumItalic.ttf',
+      weight: '500',
+      style: 'italic'
+    },
+    {
+      path: './Lora-SemiBoldItalic.ttf',
+      weight: '600',
+      style: 'italic'
+    },
+    {
+      path: './Lora-BoldItalic.ttf',
+      weight: '700',
+      style: 'italic'
+    }
+  ],
+  fallback: ['serif'],
+  variable: '--font-lora'
+});
+
+const vollkorn = localFont({
+  src: [
+    {
+      path: './Vollkorn-Regular.ttf',
+      weight: '400',
+      style: 'normal'
+    },
+    {
+      path: './Vollkorn-Medium.ttf',
+      weight: '500',
+      style: 'normal'
+    },
+    {
+      path: './Vollkorn-SemiBold.ttf',
+      weight: '600',
+      style: 'normal'
+    },
+    {
+      path: './Vollkorn-Bold.ttf',
+      weight: '700',
+      style: 'normal'
+    },
+    {
+      path: './Vollkorn-Italic.ttf',
+      weight: '400',
+      style: 'italic'
+    },
+    {
+      path: './Vollkorn-MediumItalic.ttf',
+      weight: '500',
+      style: 'italic'
+    },
+    {
+      path: './Vollkorn-SemiBoldItalic.ttf',
+      weight: '600',
+      style: 'italic'
+    },
+    {
+      path: './Vollkorn-BoldItalic.ttf',
+      weight: '700',
+      style: 'italic'
+    }
+  ],
+  fallback: ['serif'],
+  variable: '--font-vollkorn'
+});
+
 export {
   integralCF,
   satoshi,
@@ -206,5 +327,8 @@ export {
   dmSerifText,
   greatVibes,
   pacifico,
-  poppins
+  poppins,
+  firaSans,
+  lora,
+  vollkorn
 };

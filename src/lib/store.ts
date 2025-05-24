@@ -3,17 +3,19 @@ import { persistReducer, persistStore } from 'redux-persist';
 import storage from '@/components/storage';
 import productsReducer from './features/products/productsSlice';
 import cartsReducer from './features/carts/cartsSlice';
+import bannerReducer from './features/banner/bannerSlice';
 
 const persistConfig = {
   key: 'root',
   storage,
   version: 1,
-  whitelist: ['carts']
+  whitelist: ['carts', 'banner']
 };
 
 const rootReducer = combineReducers({
   products: productsReducer,
-  carts: cartsReducer
+  carts: cartsReducer,
+  banner: bannerReducer
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

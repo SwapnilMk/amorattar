@@ -1,4 +1,6 @@
-import AdminNavbar from '@/components/admin/AdminNavbar';
+import AppSidebar from '@/components/layout/app-sidebar';
+import Header from '@/components/layout/header';
+import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { getSession } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 
@@ -14,11 +16,12 @@ export default async function AdminLayout({
   }
 
   return (
-    <div className='min-h-screen bg-gray-100'>
-      <AdminNavbar />
-      <main className='py-10'>
-        <div className='mx-auto max-w-7xl px-4 sm:px-6 lg:px-8'>{children}</div>
-      </main>
-    </div>
+    <SidebarProvider defaultOpen={true}>
+      <AppSidebar />
+      <SidebarInset>
+        <Header />
+        {children}
+      </SidebarInset>
+    </SidebarProvider>
   );
 }
