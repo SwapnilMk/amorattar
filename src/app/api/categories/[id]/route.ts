@@ -8,19 +8,20 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    const product = await prisma.product.findUnique({
+    const category = await prisma.category.findUnique({
       where: { id: params.id },
-      include: { category: true }
+      include: { products: true }
     });
-
-    if (!product) {
-      return NextResponse.json({ error: 'Product not found' }, { status: 404 });
+    if (!category) {
+      return NextResponse.json(
+        { error: 'Category not found' },
+        { status: 404 }
+      );
     }
-
-    return NextResponse.json(product);
+    return NextResponse.json(category);
   } catch (error) {
     return NextResponse.json(
-      { error: 'Error fetching product' },
+      { error: 'Error fetching category' },
       { status: 500 }
     );
   }
@@ -35,18 +36,15 @@ export async function PUT(
     if (!session || session.role !== 'admin') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-
     const body = await req.json();
-    const product = await prisma.product.update({
+    const category = await prisma.category.update({
       where: { id: params.id },
-      data: body,
-      include: { category: true }
+      data: { name: body.name }
     });
-
-    return NextResponse.json(product);
+    return NextResponse.json(category);
   } catch (error) {
     return NextResponse.json(
-      { error: 'Error updating product' },
+      { error: 'Error updating category' },
       { status: 500 }
     );
   }
@@ -61,15 +59,13 @@ export async function DELETE(
     if (!session || session.role !== 'admin') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-
-    await prisma.product.delete({
+    await prisma.category.delete({
       where: { id: params.id }
     });
-
-    return NextResponse.json({ message: 'Product deleted successfully' });
+    return NextResponse.json({ message: 'Category deleted successfully' });
   } catch (error) {
     return NextResponse.json(
-      { error: 'Error deleting product' },
+      { error: 'Error deleting category' },
       { status: 500 }
     );
   }

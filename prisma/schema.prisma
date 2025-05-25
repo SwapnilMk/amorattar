@@ -48,16 +48,60 @@ model Session {
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
+model Category {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  name      String    @unique
+  products  Product[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+type Discount {
+  amount     Float
+  percentage Float
+}
+
+type Color {
+  name     String
+  code     String
+  imageUrl String
+}
+
+type VolumeOption {
+  ml    Int
+  price Float
+  stock Int
+}
+
+type Specification {
+  key   String
+  value String
+}
+
 model Product {
-  id          String      @id @default(auto()) @map("_id") @db.ObjectId
-  name        String
-  description String
-  price       Float
-  stock       Int
-  image       String?
-  orderItems  OrderItem[]
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  id             String          @id @default(auto()) @map("_id") @db.ObjectId
+  title          String
+  srcUrl         String
+  gallery        String[]
+  price          Float
+  discountedPrice Float
+  discount       Discount
+  rating         Float
+  description    String
+  gender         String[]
+  colors         Color[]
+  selectedColor  Color
+  volumeOptions  VolumeOption[]
+  quantity       Int
+  isSale         Boolean
+  specifications Specification[]
+  isInStock      Boolean
+  isOutOfStock   Boolean
+  categoryId     String?         @db.ObjectId
+  category       Category?       @relation(fields: [categoryId], references: [id])
+  orderItems     OrderItem[]
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
 }
 
 model Order {
