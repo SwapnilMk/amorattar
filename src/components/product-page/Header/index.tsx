@@ -9,6 +9,8 @@ import Rating from '@/components/ui/Rating';
 import ColorSelection from './ColorSelection';
 import AddToCardSection from './AddToCardSection';
 import { Badge } from '@/components/ui/badge';
+import Link from 'next/link';
+import { IconBrandWhatsapp } from '@tabler/icons-react';
 
 const Header = ({ data }: { data: Product }) => {
   const [selectedVolume, setSelectedVolume] = useState(data.volumeOptions[0]);
@@ -25,6 +27,12 @@ const Header = ({ data }: { data: Product }) => {
     setSelectedColor(color);
   };
 
+  const handleWhatsAppShare = () => {
+    const message = `Check out this amazing product: ${data.title} - ₹${selectedVolume.price}`;
+    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
+  };
+
   return (
     <>
       <div className='grid grid-cols-1 gap-5 md:grid-cols-2'>
@@ -32,6 +40,30 @@ const Header = ({ data }: { data: Product }) => {
           <PhotoSection data={{ ...data, srcUrl: selectedColor.imageUrl }} />
         </div>
         <div>
+          {/* Categories */}
+          <div className='mb-3 flex flex-wrap gap-2'>
+            {data.categories.map((category) => (
+              <Link 
+                key={category} 
+                href={`/shop?category=${category}`}
+                className='no-underline'
+              >
+                <Badge
+                  variant='outline'
+                  className={cn(
+                    'px-3 py-1 text-sm capitalize transition-colors hover:bg-black hover:text-white',
+                    category === 'perfumes' && 'bg-blue-50 text-blue-700',
+                    category === 'attars' && 'bg-amber-50 text-amber-700',
+                    category === 'new-arrivals' && 'bg-green-50 text-green-700',
+                    category === 'best-sellers' && 'bg-purple-50 text-purple-700'
+                  )}
+                >
+                  {category.replace('-', ' ')}
+                </Badge>
+              </Link>
+            ))}
+          </div>
+
           <h1
             className={cn([
               integralCF.className,
@@ -134,7 +166,16 @@ const Header = ({ data }: { data: Product }) => {
           </div>
 
           <hr className='my-5 hidden h-[1px] border-t-black/10 md:block' />
-          <AddToCardSection data={data} />
+          <div className='flex gap-3'>
+            <AddToCardSection data={data} />
+            <button
+              onClick={handleWhatsAppShare}
+              className='flex flex-1 items-center justify-center gap-2 rounded-full bg-[#25D366] px-6 py-3 text-sm font-medium text-white transition-all hover:bg-[#128C7E] focus:outline-none focus:ring-2 focus:ring-[#25D366] focus:ring-offset-2'
+            >
+              <IconBrandWhatsapp className='h-5 w-5' />
+              Share
+            </button>
+          </div>
         </div>
       </div>
     </>

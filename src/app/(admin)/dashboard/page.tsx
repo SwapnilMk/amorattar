@@ -10,11 +10,11 @@ export const metadata: Metadata = {
 export default function Dashboard() {
   return (
     <PageContainer>
-      <div className='flex flex-col gap-4'>
+      <div className='flex flex-col gap-4 w-full'>
         <h1 className='text-2xl font-bold'>Dashboard Overview</h1>
 
-        <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-4'>
-          <Card>
+        <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-4 w-full'>
+          <Card className='w-full'>
             <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
               <CardTitle className='text-sm font-medium'>
                 Total Products
@@ -28,7 +28,7 @@ export default function Dashboard() {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className='w-full'>
             <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
               <CardTitle className='text-sm font-medium'>
                 Active Categories
@@ -40,7 +40,7 @@ export default function Dashboard() {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className='w-full'>
             <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
               <CardTitle className='text-sm font-medium'>Total Sales</CardTitle>
             </CardHeader>
@@ -52,7 +52,7 @@ export default function Dashboard() {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className='w-full'>
             <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
               <CardTitle className='text-sm font-medium'>
                 Active Users

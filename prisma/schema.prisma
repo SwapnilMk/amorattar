@@ -17,6 +17,7 @@ model User {
   role          String    @default("user")
   accounts      Account[]
   sessions      Session[]
+  reviews       Review[]
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 }
@@ -51,9 +52,22 @@ model Session {
 model Category {
   id        String    @id @default(auto()) @map("_id") @db.ObjectId
   name      String    @unique
-  products  Product[]
+  slug      String    @unique
+  productCategories ProductCategory[]
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
+}
+
+model ProductCategory {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  productId  String   @db.ObjectId
+  categoryId String   @db.ObjectId
+  product    Product  @relation(fields: [productId], references: [id])
+  category   Category @relation(fields: [categoryId], references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([productId, categoryId])
 }
 
 type Discount {
@@ -79,29 +93,44 @@ type Specification {
 }
 
 model Product {
-  id             String          @id @default(auto()) @map("_id") @db.ObjectId
-  title          String
-  srcUrl         String
-  gallery        String[]
-  price          Float
+  id              String            @id @default(auto()) @map("_id") @db.ObjectId
+  title           String
+  slug            String            @unique
+  srcUrl          String
+  gallery         String[]
+  price           Float
   discountedPrice Float
-  discount       Discount
-  rating         Float
-  description    String
-  gender         String[]
-  colors         Color[]
-  selectedColor  Color
-  volumeOptions  VolumeOption[]
-  quantity       Int
-  isSale         Boolean
-  specifications Specification[]
-  isInStock      Boolean
-  isOutOfStock   Boolean
-  categoryId     String?         @db.ObjectId
-  category       Category?       @relation(fields: [categoryId], references: [id])
-  orderItems     OrderItem[]
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
+  discount        Discount
+  rating          Float             @default(0)
+  description     String
+  gender          String[]
+  productCategories ProductCategory[]
+  colors          Color[]
+  selectedColor   Color
+  volumeOptions   VolumeOption[]
+  quantity        Int
+  isSale          Boolean           @default(false)
+  specifications  Specification[]
+  isInStock       Boolean           @default(true)
+  isOutOfStock    Boolean           @default(false)
+  reviews         Review[]
+  orderItems      OrderItem[]
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+}
+
+model Review {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  productId String   @db.ObjectId
+  userId    String   @db.ObjectId
+  rating    Float
+  content   String
+  user      User     @relation(fields: [userId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([productId, userId])
 }
 
 model Order {

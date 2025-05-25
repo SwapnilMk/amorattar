@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import PageContainer from '@/components/layout/page-container';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -24,12 +24,25 @@ import { Label } from '@/components/ui/label';
 import { IconPlus, IconEdit, IconTrash, IconSearch } from '@tabler/icons-react';
 import { useState, useEffect } from 'react';
 
+type Category = {
+  id: string;
+  name: string;
+  slug: string;
+  productCategories: Array<{
+    id: string;
+    productId: string;
+    categoryId: string;
+  }>;
+  createdAt: string;
+  updatedAt: string;
+};
+
 export default function ManageCategory() {
-  const [categories, setCategories] = useState<any[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<any>(null);
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [newCategoryName, setNewCategoryName] = useState('');
@@ -44,12 +57,23 @@ export default function ManageCategory() {
     setError('');
     try {
       const res = await fetch('/api/categories');
+      if (!res.ok) {
+        throw new Error('Failed to fetch categories');
+      }
       const data = await res.json();
-      setCategories(data);
+      if (Array.isArray(data)) {
+        setCategories(data);
+      } else {
+        console.error('Categories data is not an array:', data);
+        setCategories([]);
+      }
     } catch (err) {
+      console.error('Error fetching categories:', err);
       setError('Failed to fetch categories');
+      setCategories([]);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }
 
   const filteredCategories = categories.filter((category) =>
@@ -58,62 +82,71 @@ export default function ManageCategory() {
 
   const handleAddCategory = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!newCategoryName.trim()) return;
+
     try {
       const res = await fetch('/api/categories', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: newCategoryName })
+        body: JSON.stringify({ name: newCategoryName.trim() })
       });
-      if (res.ok) {
-        setIsAddDialogOpen(false);
-        setNewCategoryName('');
-        fetchCategories();
-      } else {
-        setError('Failed to add category');
+
+      if (!res.ok) {
+        throw new Error('Failed to add category');
       }
-    } catch {
+
+      setIsAddDialogOpen(false);
+      setNewCategoryName('');
+      await fetchCategories();
+    } catch (err) {
+      console.error('Error adding category:', err);
       setError('Failed to add category');
     }
   };
 
   const handleEditCategory = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedCategory) return;
+    if (!selectedCategory || !editCategoryName.trim()) return;
+
     try {
       const res = await fetch(`/api/categories/${selectedCategory.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: editCategoryName })
+        body: JSON.stringify({ name: editCategoryName.trim() })
       });
-      if (res.ok) {
-        setIsEditDialogOpen(false);
-        setSelectedCategory(null);
-        setEditCategoryName('');
-        fetchCategories();
-      } else {
-        setError('Failed to edit category');
+
+      if (!res.ok) {
+        throw new Error('Failed to edit category');
       }
-    } catch {
+
+      setIsEditDialogOpen(false);
+      setSelectedCategory(null);
+      setEditCategoryName('');
+      await fetchCategories();
+    } catch (err) {
+      console.error('Error editing category:', err);
       setError('Failed to edit category');
     }
   };
 
   const handleDeleteCategory = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this category?')) return;
+
     try {
       const res = await fetch(`/api/categories/${id}`, { method: 'DELETE' });
-      if (res.ok) {
-        fetchCategories();
-      } else {
-        setError('Failed to delete category');
+      if (!res.ok) {
+        throw new Error('Failed to delete category');
       }
-    } catch {
+      await fetchCategories();
+    } catch (err) {
+      console.error('Error deleting category:', err);
       setError('Failed to delete category');
     }
   };
 
   return (
     <PageContainer>
-      <div className='flex flex-col gap-4'>
+      <div className='flex flex-col gap-4 w-full'>
         <div className='flex items-center justify-between'>
           <h1 className='text-2xl font-bold'>Manage Categories</h1>
           <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
@@ -168,9 +201,11 @@ export default function ManageCategory() {
           </CardHeader>
           <CardContent>
             {loading ? (
-              <div>Loading...</div>
+              <div>Loading categories...</div>
             ) : error ? (
               <div className='text-red-500'>{error}</div>
+            ) : filteredCategories.length === 0 ? (
+              <div>No categories found</div>
             ) : (
               <Table>
                 <TableHeader>
@@ -185,24 +220,13 @@ export default function ManageCategory() {
                   {filteredCategories.map((category) => (
                     <TableRow key={category.id}>
                       <TableCell>{category.name}</TableCell>
-                      <TableCell>{category.products?.length ?? 0}</TableCell>
+                      <TableCell>{category.productCategories?.length ?? 0}</TableCell>
                       <TableCell>
-                        {category.createdAt
-                          ? new Date(category.createdAt).toLocaleDateString()
-                          : '-'}
+                        {new Date(category.createdAt).toLocaleDateString()}
                       </TableCell>
-                      <TableCell>
+                      <TableCell className='text-right'>
                         <div className='flex justify-end gap-2'>
-                          <Dialog
-                            open={
-                              isEditDialogOpen &&
-                              selectedCategory?.id === category.id
-                            }
-                            onOpenChange={(open) => {
-                              setIsEditDialogOpen(open);
-                              if (!open) setSelectedCategory(null);
-                            }}
-                          >
+                          <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
                             <DialogTrigger asChild>
                               <Button
                                 variant='ghost'
@@ -219,21 +243,17 @@ export default function ManageCategory() {
                               <DialogHeader>
                                 <DialogTitle>Edit Category</DialogTitle>
                                 <DialogDescription>
-                                  Modify category details
+                                  Update category name
                                 </DialogDescription>
                               </DialogHeader>
                               <form onSubmit={handleEditCategory}>
                                 <div className='space-y-4 py-4'>
                                   <div className='space-y-2'>
-                                    <Label htmlFor='editCategoryName'>
-                                      Category Name
-                                    </Label>
+                                    <Label htmlFor='editCategoryName'>Category Name</Label>
                                     <Input
                                       id='editCategoryName'
                                       value={editCategoryName}
-                                      onChange={(e) =>
-                                        setEditCategoryName(e.target.value)
-                                      }
+                                      onChange={(e) => setEditCategoryName(e.target.value)}
                                       placeholder='Enter category name'
                                     />
                                   </div>

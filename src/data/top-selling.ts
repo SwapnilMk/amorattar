@@ -16,6 +16,7 @@ export const topSellingData: Product[] = [
     description:
       'Rose Attar Elegance is a luxurious and unique fragrance that combines the rich, warm notes of rose with the deep, mysterious notes of musk. This attar is perfect for those who want to make a bold statement and stand out from the crowd.',
     gender: ['female', 'unisex'],
+    categories: ['attars', 'best-sellers'],
     colors: [
       {
         name: 'Red',
@@ -70,6 +71,7 @@ export const topSellingData: Product[] = [
     description:
       'Sandalwood Bliss Perfume is a luxurious and unique fragrance that combines the rich, warm notes of sandalwood with the deep, mysterious notes of musk. This attar is perfect for those who want to make a bold statement and stand out from the crowd.',
     gender: ['male', 'unisex'],
+    categories: ['perfumes', 'best-sellers'],
     colors: [
       {
         name: 'Brown',
@@ -124,6 +126,7 @@ export const topSellingData: Product[] = [
     description:
       'Citrus Zest Spray is a refreshing and energizing fragrance that combines the vibrant notes of citrus fruits with a subtle woody base. Perfect for daily wear and casual occasions.',
     gender: ['unisex'],
+    categories: ['perfumes', 'best-sellers'],
     colors: [
       {
         name: 'Orange',
@@ -168,6 +171,7 @@ export const topSellingData: Product[] = [
     description:
       'Oud Royale Attar is a luxurious and unique fragrance that combines the rich, warm notes of oud with the deep, mysterious notes of musk. This attar is perfect for those who want to make a bold statement and stand out from the crowd.',
     gender: ['male', 'unisex'],
+    categories: ['attars', 'best-sellers'],
     colors: [
       {
         name: 'Dark Brown',

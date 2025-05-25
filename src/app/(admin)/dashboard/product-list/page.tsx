@@ -32,7 +32,7 @@ export default function ProductList() {
 
   return (
     <PageContainer>
-      <div className='flex flex-col gap-4'>
+      <div className='flex flex-col gap-4 w-full'>
         <div className='flex items-center justify-between'>
           <h1 className='text-2xl font-bold'>Product List</h1>
           <Button asChild>

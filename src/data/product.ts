@@ -1,4 +1,4 @@
-import { Product } from '@/types/product.types';
+import { Product, Category } from '@/types/product.types';
 
 export const relatedProductData: Product[] = [
   {
@@ -16,6 +16,7 @@ export const relatedProductData: Product[] = [
     description:
       'Amber Glow Attar is a luxurious and unique fragrance that combines the rich, warm notes of amber with the deep, mysterious notes of musk. This attar is perfect for those who want to make a bold statement and stand out from the crowd.',
     gender: ['unisex'],
+    categories: ['attars', 'best-sellers'],
     colors: [
       {
         name: 'Amber',
@@ -70,6 +71,7 @@ export const relatedProductData: Product[] = [
     description:
       'Lavender Mist Perfume is a luxurious and unique fragrance that combines the rich, warm notes of lavender with the deep, mysterious notes of musk. This attar is perfect for those who want to make a bold statement and stand out from the crowd.',
     gender: ['female'],
+    categories: ['perfumes', 'new-arrivals'],
     colors: [
       {
         name: 'Purple',
@@ -124,6 +126,7 @@ export const relatedProductData: Product[] = [
     description:
       'Vetiver Breeze Eau de Toilette is a refreshing and sophisticated fragrance that combines the earthy notes of vetiver with citrus and woody undertones. Perfect for both casual and formal occasions.',
     gender: ['male', 'unisex'],
+    categories: ['perfumes', 'best-sellers'],
     colors: [
       {
         name: 'Green',
@@ -168,6 +171,7 @@ export const relatedProductData: Product[] = [
     description:
       'Patchouli Essence Attar is a rich and exotic fragrance that combines the deep, earthy notes of patchouli with subtle floral undertones. Perfect for those who appreciate unique and distinctive scents.',
     gender: ['unisex'],
+    categories: ['attars', 'new-arrivals'],
     colors: [
       {
         name: 'Brown',
