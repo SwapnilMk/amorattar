@@ -16,6 +16,7 @@ export const newArrivalsData: Product[] = [
     description:
       'Jasmine Bloom Perfume is a luxurious and unique fragrance that combines the rich, warm notes of jasmine with the deep, mysterious notes of musk. This attar is perfect for those who want to make a bold statement and stand out from the crowd.',
     gender: ['female'],
+    categories: ['perfumes', 'new-arrivals'],
     colors: [
       {
         name: 'Pink',
@@ -70,6 +71,7 @@ export const newArrivalsData: Product[] = [
     description:
       'Oud Mystique Attar is a luxurious and unique fragrance that combines the rich, warm notes of oud with the deep, mysterious notes of musk. This attar is perfect for those who want to make a bold statement and stand out from the crowd.',
     gender: ['male', 'unisex'],
+    categories: ['attars', 'new-arrivals'],
     colors: [
       {
         name: 'Brown',
@@ -124,6 +126,7 @@ export const newArrivalsData: Product[] = [
     description:
       'Lemon Grove Spray is a refreshing and invigorating fragrance that combines the zesty notes of lemon with subtle floral undertones. Perfect for daily wear and special occasions.',
     gender: ['unisex'],
+    categories: ['perfumes', 'new-arrivals'],
     colors: [
       {
         name: 'Yellow',

@@ -17,6 +17,8 @@ export type Color = {
   imageUrl: string;
 };
 
+export type Category = 'perfumes' | 'attars' | 'new-arrivals' | 'best-sellers';
+
 export type Product = {
   id: number;
   title: string;
@@ -28,6 +30,7 @@ export type Product = {
   rating: number;
   description: string;
   gender: Gender[];
+  categories: Category[];
   colors: Color[];
   selectedColor: Color;
   volumeOptions: VolumeOption[];
