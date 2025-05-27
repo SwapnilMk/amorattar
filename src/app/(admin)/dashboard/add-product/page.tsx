@@ -14,118 +14,123 @@ import {
 } from '@/components/ui/select';
 import { IconArrowLeft } from '@tabler/icons-react';
 import Link from 'next/link';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import Image from 'next/image';
-
-type ProductCategory = {
-  id: string;
-  productId: string;
-  categoryId: string;
-  createdAt: Date;
-  updatedAt: Date;
-};
-
-type Category = {
-  id: string;
-  name: string;
-  slug: string;
-  productCategories: ProductCategory[];
-  createdAt: Date;
-  updatedAt: Date;
-};
-
-type FormData = {
-  title: string;
-  description: string;
-  price: string;
-  categoryId: string;
-  discountedPrice: string;
-  discount: { amount: number; percentage: number };
-  gender: string[];
-  categories: string[];
-  colors: Array<{ name: string; code: string; imageUrl: string }>;
-  selectedColor: { name: string; code: string; imageUrl: string };
-  volumeOptions: Array<{ ml: number; price: number; stock: number }>;
-  quantity: number;
-  isSale: boolean;
-  specifications: Array<{ key: string; value: string }>;
-  isInStock: boolean;
-  isOutOfStock: boolean;
+import { useRouter } from 'next/navigation';
+import { useSession } from '@/components/providers/SessionProvider';
+import { toast } from 'sonner';
+import { CreateProductInput } from '@/lib/validations/product';
+import {
+  Gender,
+  Fragrance,
+  Color,
+  Category,
+  AvailabilityStatus
+} from '@/types/product.types';
+import { Badge } from '@/components/ui/badge';
+import { X } from 'lucide-react';
+import slugify from 'slugify';
+const initialFormData: CreateProductInput = {
+  title: '',
+  slug: '',
+  srcUrl: '',
+  gallery: [],
+  brand: '',
+  price: 0,
+  discountedPrice: 0,
+  discount: {
+    amount: 0,
+    percentage: 0
+  },
+  rating: 0,
+  description: '',
+  gender: ['Unisex'] as Gender[],
+  categories: ['Perfumes'] as Category[],
+  colors: [],
+  selectedColor: {
+    id: '',
+    value: '',
+    color: '',
+    label: ''
+  },
+  volumeOptions: [],
+  specifications: {},
+  fragrance: ['Floral'] as Fragrance[],
+  quantity: 1,
+  isSale: false,
+  availabilityStatus: 'In Stock'
 };
 
 export default function AddProduct() {
-  const [categories, setCategories] = useState<Category[]>([]);
+  const router = useRouter();
+  const { user } = useSession();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string>('');
+  const [formData, setFormData] = useState<CreateProductInput>(initialFormData);
   const [mainImage, setMainImage] = useState<File | null>(null);
   const [mainImagePreview, setMainImagePreview] = useState<string>('');
   const [galleryImages, setGalleryImages] = useState<File[]>([]);
   const [galleryPreviews, setGalleryPreviews] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string>('');
-  const [form, setForm] = useState<FormData>({
-    title: '',
-    description: '',
-    price: '',
-    categoryId: '',
-    discountedPrice: '',
-    discount: { amount: 0, percentage: 0 },
-    gender: [],
-    categories: [],
-    colors: [],
-    selectedColor: { name: '', code: '', imageUrl: '' },
-    volumeOptions: [],
-    quantity: 0,
-    isSale: false,
-    specifications: [],
-    isInStock: true,
-    isOutOfStock: false
+  const [newColor, setNewColor] = useState<Color>({
+    id: '',
+    value: '',
+    color: '',
+    label: ''
   });
-  const [submitting, setSubmitting] = useState(false);
-  const [success, setSuccess] = useState(false);
+  const [newVolumeOption, setNewVolumeOption] = useState({
+    ml: 0,
+    price: 0
+  });
+  const [newSpecification, setNewSpecification] = useState({
+    key: '',
+    value: ''
+  });
 
-  useEffect(() => {
-    fetchCategories();
-  }, []);
-
-  async function fetchCategories() {
-    setLoading(true);
-    setError('');
-    try {
-      const res = await fetch('/api/categories');
-      if (!res.ok) {
-        throw new Error('Failed to fetch categories');
-      }
-      const data = await res.json();
-      if (Array.isArray(data)) {
-        setCategories(data);
-      } else {
-        console.error('Categories data is not an array:', data);
-        setCategories([]);
-      }
-    } catch (err) {
-      console.error('Error fetching categories:', err);
-      setError('Failed to fetch categories');
-      setCategories([]);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  const handleChange = (e: any) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]:
+        name === 'price' ||
+        name === 'discountedPrice' ||
+        name === 'quantity' ||
+        name === 'rating'
+          ? parseFloat(value) || 0
+          : value
+    }));
   };
 
-  const handleCategoryChange = (value: string) => {
-    if (value) {
-      setForm(prev => ({ 
-        ...prev, 
-        categoryId: value,
-        categories: [...prev.categories, value]
-      }));
-    }
+  const handleGenderChange = (value: Gender) => {
+    setFormData((prev) => ({
+      ...prev,
+      gender: prev.gender.includes(value)
+        ? prev.gender.filter((g) => g !== value)
+        : [...prev.gender, value]
+    }));
   };
 
-  const onMainImageDrop = useCallback((acceptedFiles: File[]) => {
+  const handleCategoryChange = (value: Category) => {
+    setFormData((prev) => ({
+      ...prev,
+      categories: prev.categories.includes(value)
+        ? prev.categories.filter((c) => c !== value)
+        : [...prev.categories, value]
+    }));
+  };
+
+  const handleFragranceChange = (value: Fragrance) => {
+    setFormData((prev) => ({
+      ...prev,
+      fragrance: prev.fragrance.includes(value)
+        ? prev.fragrance.filter((f) => f !== value)
+        : [...prev.fragrance, value]
+    }));
+  };
+
+  const onMainImageDrop = useCallback(async (acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
     if (file) {
       setMainImage(file);
@@ -134,104 +139,218 @@ export default function AddProduct() {
         setMainImagePreview(reader.result as string);
       };
       reader.readAsDataURL(file);
+
+      try {
+        const base64 = await convertFileToBase64(file);
+        const response = await fetch('/api/upload', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            image: base64,
+            folder: 'products/main'
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to upload image');
+        }
+
+        const result = await response.json();
+        setFormData((prev) => ({ ...prev, srcUrl: result.secure_url }));
+      } catch (error) {
+        console.error('Error uploading main image:', error);
+        toast.error('Failed to upload main image');
+      }
     }
   }, []);
 
-  const onGalleryDrop = useCallback((acceptedFiles: File[]) => {
-    setGalleryImages(prev => [...prev, ...acceptedFiles]);
-    acceptedFiles.forEach(file => {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setGalleryPreviews(prev => [...prev, reader.result as string]);
-      };
-      reader.readAsDataURL(file);
-    });
+  const onGalleryDrop = useCallback(async (acceptedFiles: File[]) => {
+    setGalleryImages((prev) => [...prev, ...acceptedFiles]);
+
+    try {
+      const uploadPromises = acceptedFiles.map(async (file) => {
+        const base64 = await convertFileToBase64(file);
+        const response = await fetch('/api/upload', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            image: base64,
+            folder: 'products/gallery'
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to upload image');
+        }
+
+        const result = await response.json();
+        return result.secure_url;
+      });
+
+      const urls = await Promise.all(uploadPromises);
+      setFormData((prev) => ({ ...prev, gallery: [...prev.gallery, ...urls] }));
+
+      acceptedFiles.forEach((file) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setGalleryPreviews((prev) => [...prev, reader.result as string]);
+        };
+        reader.readAsDataURL(file);
+      });
+    } catch (error) {
+      console.error('Error uploading gallery images:', error);
+      toast.error('Failed to upload gallery images');
+    }
   }, []);
 
-  const { getRootProps: getMainImageRootProps, getInputProps: getMainImageInputProps } = useDropzone({
+  const {
+    getRootProps: getMainImageRootProps,
+    getInputProps: getMainImageInputProps
+  } = useDropzone({
     onDrop: onMainImageDrop,
     accept: { 'image/*': [] },
     maxFiles: 1
   });
 
-  const { getRootProps: getGalleryRootProps, getInputProps: getGalleryInputProps } = useDropzone({
+  const {
+    getRootProps: getGalleryRootProps,
+    getInputProps: getGalleryInputProps
+  } = useDropzone({
     onDrop: onGalleryDrop,
     accept: { 'image/*': [] },
     multiple: true
   });
 
+  const handleAddColor = () => {
+    if (newColor.value && newColor.color && newColor.label) {
+      const color: Color = {
+        id: `${formData.title.toLowerCase()}-${newColor.value}`,
+        value: newColor.value,
+        color: newColor.color,
+        label: newColor.label
+      };
+      setFormData((prev) => ({
+        ...prev,
+        colors: [...prev.colors, color],
+        selectedColor: prev.selectedColor.id ? prev.selectedColor : color
+      }));
+      setNewColor({
+        id: '',
+        value: '',
+        color: '',
+        label: ''
+      });
+    }
+  };
+
+  const handleColorSelect = (color: Color) => {
+    setFormData((prev) => ({
+      ...prev,
+      selectedColor: color
+    }));
+  };
+
+  const handleRemoveColor = (colorId: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      colors: prev.colors.filter((c) => c.id !== colorId),
+      selectedColor:
+        prev.selectedColor.id === colorId
+          ? { id: '', value: '', color: '', label: '' }
+          : prev.selectedColor
+    }));
+  };
+
+  const handleAddVolumeOption = () => {
+    if (!newVolumeOption.ml || !newVolumeOption.price) {
+      toast.error('Please fill in all volume option fields');
+      return;
+    }
+
+    setFormData((prev) => ({
+      ...prev,
+      volumeOptions: [...prev.volumeOptions, newVolumeOption]
+    }));
+
+    setNewVolumeOption({
+      ml: 0,
+      price: 0
+    });
+  };
+
+  const handleAddSpecification = () => {
+    if (!newSpecification.key || !newSpecification.value) {
+      toast.error('Please fill in all specification fields');
+      return;
+    }
+
+    setFormData((prev) => ({
+      ...prev,
+      specifications: {
+        ...prev.specifications,
+        [newSpecification.key]: newSpecification.value
+      }
+    }));
+
+    setNewSpecification({
+      key: '',
+      value: ''
+    });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitting(true);
+    if (!user || user.role !== 'admin') {
+      router.push('/sign-in');
+      return;
+    }
+
+    setLoading(true);
     setError('');
-    setSuccess(false);
 
     try {
-      const formData = new FormData();
-      const productData = {
-        ...form,
-        price: parseFloat(form.price) || 0,
-        discountedPrice: form.discountedPrice ? parseFloat(form.discountedPrice) : 0,
-        gender: form.gender.length > 0 ? form.gender : ['unisex'],
-        colors: form.colors.length > 0 ? form.colors : [{ name: 'Default', code: '#000000', imageUrl: '' }],
-        selectedColor: form.selectedColor.name ? form.selectedColor : { name: 'Default', code: '#000000', imageUrl: '' },
-        volumeOptions: form.volumeOptions.length > 0 ? form.volumeOptions : [{ ml: 100, price: parseFloat(form.price) || 0, stock: 0 }]
-      };
-
-      formData.append('data', JSON.stringify(productData));
-      
-      if (mainImage) {
-        formData.append('mainImage', mainImage);
-      }
-      
-      galleryImages.forEach((image) => {
-        formData.append('gallery', image);
-      });
+      // Generate slug from title
+      const slug = slugify(formData.title, { lower: true });
+      const data = { ...formData, slug };
 
       const response = await fetch('/api/products', {
         method: 'POST',
-        body: formData
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
       });
 
       if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || 'Failed to create product');
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to create product');
       }
 
-      setSuccess(true);
-      // Reset form
-      setForm({
-        title: '',
-        description: '',
-        price: '',
-        categoryId: '',
-        discountedPrice: '',
-        discount: { amount: 0, percentage: 0 },
-        gender: [],
-        categories: [],
-        colors: [],
-        selectedColor: { name: '', code: '', imageUrl: '' },
-        volumeOptions: [],
-        quantity: 0,
-        isSale: false,
-        specifications: [],
-        isInStock: true,
-        isOutOfStock: false
-      });
-      setMainImage(null);
-      setMainImagePreview('');
-      setGalleryImages([]);
-      setGalleryPreviews([]);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      toast.success('Product created successfully');
+      router.push('/dashboard/product-list');
+    } catch (error) {
+      console.error('Error creating product:', error);
+      toast.error(
+        error instanceof Error ? error.message : 'Failed to create product'
+      );
     } finally {
-      setSubmitting(false);
+      setLoading(false);
     }
+  };
+
+  const convertFileToBase64 = async (file: File): Promise<string> => {
+    const buffer = await file.arrayBuffer();
+    const base64 = Buffer.from(buffer).toString('base64');
+    return `data:${file.type};base64,${base64}`;
   };
 
   return (
     <PageContainer>
-      <div className='flex flex-col gap-4 w-full'>
+      <div className='flex w-full flex-col gap-4'>
         <div className='flex items-center gap-4'>
           <Button variant='ghost' size='icon' asChild>
             <Link href='/dashboard/product-list'>
@@ -241,80 +360,95 @@ export default function AddProduct() {
           <h1 className='text-2xl font-bold'>Add New Product</h1>
         </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Product Images</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid gap-6 md:grid-cols-2">
-              {/* Main Image Upload */}
-              <div className="space-y-4">
-                <Label>Main Product Image</Label>
-                <div
-                  {...getMainImageRootProps()}
-                  className="border-2 border-dashed rounded-lg p-4 text-center cursor-pointer hover:border-primary"
-                >
-                  <input {...getMainImageInputProps()} />
-                  {mainImagePreview ? (
-                    <div className="relative w-full aspect-square">
-                      <Image
-                        src={mainImagePreview}
-                        alt="Main product"
-                        fill
-                        className="object-contain"
-                      />
-                    </div>
-                  ) : (
-                    <p>Drag & drop the main product image here, or click to select</p>
-                  )}
+        <form onSubmit={handleSubmit} className='space-y-6'>
+          <Card>
+            <CardHeader>
+              <CardTitle>Product Images</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className='grid gap-6 md:grid-cols-2'>
+                {/* Main Image Upload */}
+                <div className='space-y-4'>
+                  <Label>Main Product Image</Label>
+                  <div
+                    {...getMainImageRootProps()}
+                    className='cursor-pointer rounded-lg border-2 border-dashed p-4 text-center hover:border-primary'
+                  >
+                    <input {...getMainImageInputProps()} />
+                    {mainImagePreview ? (
+                      <div className='relative aspect-square w-full'>
+                        <Image
+                          src={mainImagePreview}
+                          alt='Main product'
+                          fill
+                          className='object-contain'
+                        />
+                      </div>
+                    ) : (
+                      <p>
+                        Drag & drop the main product image here, or click to
+                        select
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Gallery Images Upload */}
+                <div className='space-y-4'>
+                  <Label>Gallery Images</Label>
+                  <div
+                    {...getGalleryRootProps()}
+                    className='cursor-pointer rounded-lg border-2 border-dashed p-4 text-center hover:border-primary'
+                  >
+                    <input {...getGalleryInputProps()} />
+                    {galleryPreviews.length > 0 ? (
+                      <div className='grid grid-cols-2 gap-2'>
+                        {galleryPreviews.map((preview, index) => (
+                          <div key={index} className='relative aspect-square'>
+                            <Image
+                              src={preview}
+                              alt={`Gallery ${index + 1}`}
+                              fill
+                              className='object-contain'
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p>Drag & drop gallery images here, or click to select</p>
+                    )}
+                  </div>
                 </div>
               </div>
+            </CardContent>
+          </Card>
 
-              {/* Gallery Images Upload */}
-              <div className="space-y-4">
-                <Label>Gallery Images</Label>
-                <div
-                  {...getGalleryRootProps()}
-                  className="border-2 border-dashed rounded-lg p-4 text-center cursor-pointer hover:border-primary"
-                >
-                  <input {...getGalleryInputProps()} />
-                  {galleryPreviews.length > 0 ? (
-                    <div className="grid grid-cols-2 gap-2">
-                      {galleryPreviews.map((preview, index) => (
-                        <div key={index} className="relative aspect-square">
-                          <Image
-                            src={preview}
-                            alt={`Gallery ${index + 1}`}
-                            fill
-                            className="object-contain"
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <p>Drag & drop gallery images here, or click to select</p>
-                  )}
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="mt-6">
-          <CardHeader>
-            <CardTitle>Product Information</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form className='space-y-6' onSubmit={handleSubmit}>
+          <Card>
+            <CardHeader>
+              <CardTitle>Basic Information</CardTitle>
+            </CardHeader>
+            <CardContent className='space-y-4'>
               <div className='grid gap-4 md:grid-cols-2'>
                 <div className='space-y-2'>
                   <Label htmlFor='title'>Product Name</Label>
                   <Input
                     id='title'
                     name='title'
-                    value={form.title}
+                    value={formData.title}
                     onChange={handleChange}
                     placeholder='Enter product name'
+                    required
+                  />
+                </div>
+                <div className='space-y-2'>
+                  <Label htmlFor='brand'>Brand</Label>
+                  <Input
+                    id='brand'
+                    name='brand'
+                    value={formData.brand}
+                    onChange={handleChange}
+                    placeholder='Enter brand name'
+                    required
                   />
                 </div>
                 <div className='space-y-2'>
@@ -322,92 +456,404 @@ export default function AddProduct() {
                   <Input
                     id='price'
                     name='price'
-                    value={form.price}
+                    type='number'
+                    value={formData.price}
                     onChange={handleChange}
                     placeholder='Enter price'
-                    type='number'
+                    required
                   />
                 </div>
                 <div className='space-y-2'>
-                  <Label htmlFor='category'>Category</Label>
+                  <Label htmlFor='discountedPrice'>Discounted Price</Label>
+                  <Input
+                    id='discountedPrice'
+                    name='discountedPrice'
+                    type='number'
+                    value={formData.discountedPrice}
+                    onChange={handleChange}
+                    placeholder='Enter discounted price'
+                  />
+                </div>
+                <div className='space-y-2'>
+                  <Label htmlFor='quantity'>Quantity</Label>
+                  <Input
+                    id='quantity'
+                    name='quantity'
+                    type='number'
+                    value={formData.quantity}
+                    onChange={handleChange}
+                    placeholder='Enter quantity'
+                    required
+                  />
+                </div>
+                <div className='space-y-2'>
+                  <Label>Availability Status</Label>
                   <Select
-                    value={form.categoryId || undefined}
-                    onValueChange={handleCategoryChange}
-                    disabled={loading}
+                    value={formData.availabilityStatus}
+                    onValueChange={(value: AvailabilityStatus) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        availabilityStatus: value
+                      }))
+                    }
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder={loading ? 'Loading categories...' : 'Select a category'} />
+                      <SelectValue placeholder='Select availability status' />
                     </SelectTrigger>
                     <SelectContent>
-                      {categories.length > 0 ? (
-                        categories.map((category) => (
-                          <SelectItem key={category.id} value={category.id}>
-                            {category.name}
-                          </SelectItem>
-                        ))
-                      ) : (
-                        <SelectItem value="no-categories" disabled>
-                          No categories available
-                        </SelectItem>
-                      )}
+                      <SelectItem value='In Stock'>In Stock</SelectItem>
+                      <SelectItem value='Out of Stock'>Out of Stock</SelectItem>
+                      <SelectItem value='Pre-Order'>Pre-Order</SelectItem>
+                      <SelectItem value='Low Stock'>Low Stock</SelectItem>
                     </SelectContent>
                   </Select>
-                  {error && <p className="text-sm text-red-500">{error}</p>}
-                </div>
-                <div className='space-y-2'>
-                  <Label htmlFor='stock'>Stock</Label>
-                  <Input
-                    id='stock'
-                    type='number'
-                    placeholder='Enter stock quantity'
-                  />
-                </div>
-                <div className='space-y-2 md:col-span-2'>
-                  <Label htmlFor='description'>Description</Label>
-                  <Textarea
-                    id='description'
-                    name='description'
-                    value={form.description}
-                    onChange={handleChange}
-                    placeholder='Enter product description (minimum 10 characters)'
-                    rows={4}
-                    className={form.description.length > 0 && form.description.length < 10 ? 'border-red-500' : ''}
-                  />
-                  {form.description.length > 0 && form.description.length < 10 && (
-                    <p className="text-sm text-red-500">
-                      Description must be at least 10 characters
-                    </p>
-                  )}
-                </div>
-                <div className='space-y-2'>
-                  <Label htmlFor='brand'>Brand</Label>
-                  <Input id='brand' placeholder='Enter brand name' />
-                </div>
-                <div className='space-y-2'>
-                  <Label htmlFor='model'>Model</Label>
-                  <Input id='model' placeholder='Enter model number' />
-                </div>
-                <div className='space-y-2'>
-                  <Label htmlFor='color'>Color</Label>
-                  <Input id='color' placeholder='Enter color' />
-                </div>
-                <div className='space-y-2'>
-                  <Label htmlFor='weight'>Weight</Label>
-                  <Input id='weight' placeholder='Enter weight' />
                 </div>
               </div>
-              <Button type='submit' disabled={submitting}>
-                {submitting ? 'Adding...' : 'Add Product'}
-              </Button>
-              {error && <div className='text-red-500'>{error}</div>}
-              {success && (
-                <div className='text-green-500'>
-                  Product added successfully!
+              <div className='space-y-2'>
+                <Label htmlFor='description'>Description</Label>
+                <Textarea
+                  id='description'
+                  name='description'
+                  value={formData.description}
+                  onChange={handleChange}
+                  placeholder='Enter product description'
+                  required
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Categories and Gender</CardTitle>
+            </CardHeader>
+            <CardContent className='space-y-4'>
+              <div className='space-y-2'>
+                <Label>Categories</Label>
+                <div className='flex flex-wrap gap-2'>
+                  {(
+                    [
+                      'Perfumes',
+                      'Attars',
+                      'New Arrivals',
+                      'Best Sellers'
+                    ] as const
+                  ).map((category) => (
+                    <Badge
+                      key={category}
+                      variant={
+                        formData.categories.includes(category)
+                          ? 'default'
+                          : 'secondary'
+                      }
+                      className='cursor-pointer'
+                      onClick={() => handleCategoryChange(category)}
+                    >
+                      {category}
+                    </Badge>
+                  ))}
                 </div>
-              )}
-            </form>
-          </CardContent>
-        </Card>
+              </div>
+              <div className='space-y-2'>
+                <Label>Gender</Label>
+                <div className='flex flex-wrap gap-2'>
+                  {(['Men', 'Women', 'Unisex'] as const).map((gender) => (
+                    <Badge
+                      key={gender}
+                      variant={
+                        formData.gender.includes(gender)
+                          ? 'default'
+                          : 'secondary'
+                      }
+                      className='cursor-pointer'
+                      onClick={() => handleGenderChange(gender)}
+                    >
+                      {gender}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Colors</CardTitle>
+            </CardHeader>
+            <CardContent className='space-y-4'>
+              <div className='grid gap-4 md:grid-cols-2'>
+                <div className='space-y-2'>
+                  <Label>Add New Color</Label>
+                  <div className='space-y-2'>
+                    <Input
+                      placeholder='Color Value'
+                      value={newColor.value}
+                      onChange={(e) =>
+                        setNewColor((prev) => ({
+                          ...prev,
+                          value: e.target.value
+                        }))
+                      }
+                    />
+                    <Input
+                      placeholder='Color Code (e.g., #FF0000)'
+                      value={newColor.color}
+                      onChange={(e) =>
+                        setNewColor((prev) => ({
+                          ...prev,
+                          color: e.target.value
+                        }))
+                      }
+                    />
+                    <Input
+                      placeholder='Color Label'
+                      value={newColor.label}
+                      onChange={(e) =>
+                        setNewColor((prev) => ({
+                          ...prev,
+                          label: e.target.value
+                        }))
+                      }
+                    />
+                    <Button type='button' onClick={handleAddColor}>
+                      Add Color
+                    </Button>
+                  </div>
+                </div>
+                <div className='space-y-2'>
+                  <Label>Selected Colors</Label>
+                  <div className='grid gap-2'>
+                    {formData.colors.map((color) => (
+                      <div
+                        key={color.id}
+                        className={`flex cursor-pointer items-center justify-between rounded-lg border p-4 ${
+                          formData.selectedColor.id === color.id
+                            ? 'border-primary'
+                            : 'border-border'
+                        }`}
+                        onClick={() => handleColorSelect(color)}
+                      >
+                        <div className='flex items-center space-x-4'>
+                          <div
+                            className='h-8 w-8 rounded-full'
+                            style={{ backgroundColor: color.color }}
+                          />
+                          <div>
+                            <p className='font-medium'>{color.label}</p>
+                            <p className='text-sm text-muted-foreground'>
+                              {color.value}
+                            </p>
+                          </div>
+                        </div>
+                        <Button
+                          variant='ghost'
+                          size='icon'
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleRemoveColor(color.id);
+                          }}
+                        >
+                          <X className='h-4 w-4' />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Volume Options</CardTitle>
+            </CardHeader>
+            <CardContent className='space-y-4'>
+              <div className='grid gap-4 md:grid-cols-2'>
+                <div className='space-y-2'>
+                  <Label>Add New Volume Option</Label>
+                  <div className='space-y-2'>
+                    <Input
+                      type='number'
+                      placeholder='Volume (ml)'
+                      value={newVolumeOption.ml || ''}
+                      onChange={(e) =>
+                        setNewVolumeOption((prev) => ({
+                          ...prev,
+                          ml: parseInt(e.target.value) || 0
+                        }))
+                      }
+                    />
+                    <Input
+                      type='number'
+                      placeholder='Price'
+                      value={newVolumeOption.price || ''}
+                      onChange={(e) =>
+                        setNewVolumeOption((prev) => ({
+                          ...prev,
+                          price: parseFloat(e.target.value) || 0
+                        }))
+                      }
+                    />
+                    <Button type='button' onClick={handleAddVolumeOption}>
+                      Add Volume Option
+                    </Button>
+                  </div>
+                </div>
+                <div className='space-y-2'>
+                  <Label>Volume Options</Label>
+                  <div className='grid gap-2'>
+                    {formData.volumeOptions.map((option, index) => (
+                      <div
+                        key={index}
+                        className='flex items-center justify-between rounded-lg border p-4'
+                      >
+                        <div>
+                          <p className='font-medium'>{option.ml}ml</p>
+                          <p className='text-sm text-muted-foreground'>
+                            ${option.price}
+                          </p>
+                        </div>
+                        <Button
+                          variant='ghost'
+                          size='icon'
+                          onClick={() => {
+                            setFormData((prev) => ({
+                              ...prev,
+                              volumeOptions: prev.volumeOptions.filter(
+                                (_, i) => i !== index
+                              )
+                            }));
+                          }}
+                        >
+                          <X className='h-4 w-4' />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Specifications</CardTitle>
+            </CardHeader>
+            <CardContent className='space-y-4'>
+              <div className='grid gap-4 md:grid-cols-2'>
+                <div className='space-y-2'>
+                  <Label>Add New Specification</Label>
+                  <div className='space-y-2'>
+                    <Input
+                      placeholder='Key'
+                      value={newSpecification.key}
+                      onChange={(e) =>
+                        setNewSpecification((prev) => ({
+                          ...prev,
+                          key: e.target.value
+                        }))
+                      }
+                    />
+                    <Input
+                      placeholder='Value'
+                      value={newSpecification.value}
+                      onChange={(e) =>
+                        setNewSpecification((prev) => ({
+                          ...prev,
+                          value: e.target.value
+                        }))
+                      }
+                    />
+                    <Button type='button' onClick={handleAddSpecification}>
+                      Add Specification
+                    </Button>
+                  </div>
+                </div>
+                <div className='space-y-2'>
+                  <Label>Specifications</Label>
+                  <div className='grid gap-2'>
+                    {Object.entries(formData.specifications).map(
+                      ([key, value]) => (
+                        <div
+                          key={key}
+                          className='flex items-center justify-between rounded-lg border p-4'
+                        >
+                          <div>
+                            <p className='font-medium'>{key}</p>
+                            <p className='text-sm text-muted-foreground'>
+                              {value}
+                            </p>
+                          </div>
+                          <Button
+                            variant='ghost'
+                            size='icon'
+                            onClick={() => {
+                              setFormData((prev) => {
+                                const newSpecs = { ...prev.specifications };
+                                delete newSpecs[key];
+                                return { ...prev, specifications: newSpecs };
+                              });
+                            }}
+                          >
+                            <X className='h-4 w-4' />
+                          </Button>
+                        </div>
+                      )
+                    )}
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Fragrance Types</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className='flex flex-wrap gap-2'>
+                {(
+                  [
+                    'Floral',
+                    'Woody',
+                    'Citrus',
+                    'Spicy',
+                    'Musky',
+                    'Sandalwood',
+                    'Vanilla',
+                    'Oriental',
+                    'Gourmand',
+                    'Chypre',
+                    'Aquatic',
+                    'Green',
+                    'Fresh',
+                    'Musk',
+                    'Scented'
+                  ] as const
+                ).map((fragrance) => (
+                  <Badge
+                    key={fragrance}
+                    variant={
+                      formData.fragrance.includes(fragrance)
+                        ? 'default'
+                        : 'secondary'
+                    }
+                    className='cursor-pointer'
+                    onClick={() => handleFragranceChange(fragrance)}
+                  >
+                    {fragrance}
+                  </Badge>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          <div className='flex justify-end'>
+            <Button type='submit' disabled={loading}>
+              {loading ? 'Creating...' : 'Create Product'}
+            </Button>
+          </div>
+        </form>
       </div>
     </PageContainer>
   );

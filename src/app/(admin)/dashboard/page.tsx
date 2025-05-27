@@ -10,10 +10,10 @@ export const metadata: Metadata = {
 export default function Dashboard() {
   return (
     <PageContainer>
-      <div className='flex flex-col gap-4 w-full'>
+      <div className='flex w-full flex-col gap-4'>
         <h1 className='text-2xl font-bold'>Dashboard Overview</h1>
 
-        <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-4 w-full'>
+        <div className='grid w-full gap-4 md:grid-cols-2 lg:grid-cols-4'>
           <Card className='w-full'>
             <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
               <CardTitle className='text-sm font-medium'>

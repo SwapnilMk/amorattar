@@ -9,8 +9,7 @@ export async function GET(
 ) {
   try {
     const category = await prisma.category.findUnique({
-      where: { id: params.id },
-      include: { products: true }
+      where: { id: params.id }
     });
     if (!category) {
       return NextResponse.json(

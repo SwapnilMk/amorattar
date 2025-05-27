@@ -17,7 +17,6 @@ model User {
   role          String    @default("user")
   accounts      Account[]
   sessions      Session[]
-  reviews       Review[]
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 }
@@ -76,15 +75,15 @@ type Discount {
 }
 
 type Color {
-  name     String
-  code     String
-  imageUrl String
+  id    String
+  value String
+  color String
+  label String
 }
 
 type VolumeOption {
   ml    Int
   price Float
-  stock Int
 }
 
 type Specification {
@@ -93,44 +92,39 @@ type Specification {
 }
 
 model Product {
-  id              String            @id @default(auto()) @map("_id") @db.ObjectId
-  title           String
-  slug            String            @unique
-  srcUrl          String
-  gallery         String[]
-  price           Float
-  discountedPrice Float
-  discount        Discount
-  rating          Float             @default(0)
-  description     String
-  gender          String[]
+  id                String            @id @default(auto()) @map("_id") @db.ObjectId
+  title             String
+  slug              String            @unique
+  srcUrl            String
+  gallery           String[]
+  brand             String
+  price             Float
+  discountedPrice   Float
+  discount          Float
+  rating            Float             @default(0)
+  description       String
+  gender            String[]
   productCategories ProductCategory[]
-  colors          Color[]
-  selectedColor   Color
-  volumeOptions   VolumeOption[]
-  quantity        Int
-  isSale          Boolean           @default(false)
-  specifications  Specification[]
-  isInStock       Boolean           @default(true)
-  isOutOfStock    Boolean           @default(false)
-  reviews         Review[]
-  orderItems      OrderItem[]
-  createdAt       DateTime          @default(now())
-  updatedAt       DateTime          @updatedAt
+  colors            Color[]
+  selectedColor     Color
+  volumeOptions     VolumeOption[]
+  quantity          Int
+  isSale            Boolean           @default(false)
+  specifications    Specification[]
+  fragrance         String[]
+  availabilityStatus String           @default("In Stock")
+  orderItems        OrderItem[]
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
 }
 
 model Review {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  productId String   @db.ObjectId
-  userId    String   @db.ObjectId
+  name      String
   rating    Float
   content   String
-  user      User     @relation(fields: [userId], references: [id])
-  product   Product  @relation(fields: [productId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  @@unique([productId, userId])
 }
 
 model Order {

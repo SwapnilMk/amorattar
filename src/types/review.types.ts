@@ -1,7 +1,20 @@
 export type Review = {
-  id: number;
-  user: string;
-  content: string;
+  id: string;
+  name: string;
   rating: number;
-  date: string;
+  content: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type CreateReviewInput = {
+  name: string;
+  rating: number;
+  content: string;
+};
+
+export type UpdateReviewInput = {
+  name: string;
+  rating: number;
+  content: string;
 };

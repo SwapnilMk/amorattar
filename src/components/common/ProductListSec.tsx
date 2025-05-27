@@ -59,9 +59,10 @@ const ProductListSec = ({ title, data, viewAllLink }: ProductListSecProps) => {
           <div className='w-full px-4 text-center sm:px-0'>
             <Link
               href={viewAllLink}
-              className='inline-block w-full rounded-full border border-black/10 px-[54px] py-4 text-sm font-medium text-black transition-all hover:bg-black hover:text-white sm:w-[218px] sm:text-base'
+              className='group relative inline-block w-full overflow-hidden rounded-full border border-black/10 px-[54px] py-4 text-sm font-medium text-black transition-all hover:bg-[#F9CB43] sm:w-[218px] sm:text-base'
             >
-              View All
+              <span className='relative z-10'>View All</span>
+              <div className='absolute inset-0 -translate-x-full bg-white/20 transition-transform duration-300 group-hover:translate-x-0'></div>
             </Link>
           </div>
         )}

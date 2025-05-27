@@ -9,6 +9,7 @@ import LinksSection from './LinksSection';
 import Image from 'next/image';
 import NewsLetterSection from './NewsLetterSection';
 import LayoutSpacing from './LayoutSpacing';
+import Banner from '@/components/commerce-ui/banner';
 
 const socialsData: SocialNetworks[] = [
   {
@@ -57,7 +58,7 @@ const Footer = () => {
       <div className='relative'>
         <div className='absolute bottom-0 h-1/2 w-full bg-[#F0F0F0]'></div>
         <div className='px-4'>
-          <NewsLetterSection />
+          <Banner />
         </div>
       </div>
       <div className='bg-[#F0F0F0] px-4 pb-4 pt-8 md:pt-[50px]'>

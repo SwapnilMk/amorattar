@@ -1,15 +1,21 @@
 import { z } from 'zod';
+import {
+  Category,
+  Gender,
+  Fragrance,
+  AvailabilityStatus
+} from '@/types/product.types';
 
 export const colorSchema = z.object({
-  name: z.string().min(1, 'Color name is required'),
-  code: z.string().min(1, 'Color code is required'),
-  imageUrl: z.string().url('Invalid image URL').optional().or(z.literal(''))
+  id: z.string().min(1, 'Color ID is required'),
+  value: z.string().min(1, 'Color value is required'),
+  color: z.string().min(1, 'Color code is required'),
+  label: z.string().min(1, 'Color label is required')
 });
 
 export const volumeOptionSchema = z.object({
   ml: z.number().min(1, 'Volume must be at least 1ml'),
-  price: z.number().min(0, 'Price must be positive'),
-  stock: z.number().min(0, 'Stock must be positive')
+  price: z.number().min(0, 'Price must be positive')
 });
 
 export const specificationSchema = z.object({
@@ -19,26 +25,67 @@ export const specificationSchema = z.object({
 
 export const productSchema = z.object({
   title: z.string().min(1, 'Title is required'),
-  description: z.string().min(10, 'Description must be at least 10 characters'),
+  slug: z.string().min(1, 'Slug is required'),
+  srcUrl: z.string().min(1, 'Main image is required'),
+  gallery: z.array(z.string()).min(1, 'At least one gallery image is required'),
+  brand: z.string().min(1, 'Brand is required'),
   price: z.number().min(0, 'Price must be positive'),
   discountedPrice: z.number().min(0, 'Discounted price must be positive'),
   discount: z.object({
     amount: z.number().min(0),
     percentage: z.number().min(0).max(100)
   }),
-  gender: z.array(z.enum(['male', 'female', 'unisex'])).min(1, 'Select at least one gender'),
-  categories: z.array(z.string()).min(1, 'Select at least one category'),
-  colors: z.array(colorSchema).min(1, 'Add at least one color'),
+  rating: z.number().min(0).max(5).default(0),
+  description: z.string().min(1, 'Description is required'),
+  gender: z
+    .array(z.enum(['Men', 'Women', 'Unisex'] as const))
+    .min(1, 'At least one gender is required'),
+  categories: z
+    .array(
+      z.enum(['Perfumes', 'Attars', 'New Arrivals', 'Best Sellers'] as const)
+    )
+    .min(1, 'At least one category is required'),
+  colors: z.array(colorSchema).min(1, 'At least one color is required'),
   selectedColor: colorSchema,
-  volumeOptions: z.array(volumeOptionSchema).min(1, 'Add at least one volume option'),
-  quantity: z.number().min(0, 'Quantity must be positive'),
-  isSale: z.boolean(),
-  specifications: z.array(specificationSchema),
-  isInStock: z.boolean(),
-  isOutOfStock: z.boolean()
+  volumeOptions: z
+    .array(volumeOptionSchema)
+    .min(1, 'At least one volume option is required'),
+  quantity: z.number().min(0).default(1),
+  isSale: z.boolean().default(false),
+  specifications: z.record(z.string(), z.string()),
+  fragrance: z
+    .array(
+      z.enum([
+        'Floral',
+        'Woody',
+        'Citrus',
+        'Spicy',
+        'Musky',
+        'Sandalwood',
+        'Vanilla',
+        'Oriental',
+        'Gourmand',
+        'Chypre',
+        'Aquatic',
+        'Green',
+        'Fresh',
+        'Musk',
+        'Scented'
+      ] as const)
+    )
+    .min(1, 'At least one fragrance type is required'),
+  availabilityStatus: z.enum([
+    'In Stock',
+    'Out of Stock',
+    'Pre-Order',
+    'Low Stock'
+  ] as const)
 });
+
+export type CreateProductInput = z.infer<typeof productSchema>;
+export type UpdateProductInput = Partial<CreateProductInput>;
 
 export const reviewSchema = z.object({
   rating: z.number().min(1).max(5),
   content: z.string().min(10, 'Review must be at least 10 characters')
-}); 
+});

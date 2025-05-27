@@ -1,4 +1,10 @@
-import { Product, Category } from '@/types/product.types';
+import {
+  Product,
+  Gender,
+  Category,
+  AvailabilityStatus,
+  Fragrance
+} from '@/types/product.types';
 
 export const relatedProductData: Product[] = [
   {
@@ -6,6 +12,7 @@ export const relatedProductData: Product[] = [
     title: 'Amber Glow Attar',
     srcUrl: '/images/pic12.png',
     gallery: ['/images/pic12.png', '/images/pic10.png', '/images/pic11.png'],
+    brand: 'Amor Attar',
     price: 242,
     discountedPrice: 193.6,
     discount: {
@@ -15,34 +22,38 @@ export const relatedProductData: Product[] = [
     rating: 4.0,
     description:
       'Amber Glow Attar is a luxurious and unique fragrance that combines the rich, warm notes of amber with the deep, mysterious notes of musk. This attar is perfect for those who want to make a bold statement and stand out from the crowd.',
-    gender: ['unisex'],
-    categories: ['attars', 'best-sellers'],
+    gender: ['Unisex'] as Gender[],
+    categories: ['Attars', 'Best Sellers'] as Category[],
     colors: [
       {
-        name: 'Amber',
-        code: 'bg-amber-500',
-        imageUrl: '/images/pic12.png'
+        id: 'amber-amber',
+        value: 'Amber',
+        color: '#F59E0B',
+        label: 'Amber'
       },
       {
-        name: 'Pink',
-        code: 'bg-pink-500',
-        imageUrl: '/images/pic10.png'
+        id: 'amber-pink',
+        value: 'Pink',
+        color: '#EC4899',
+        label: 'Pink'
       },
       {
-        name: 'Gold',
-        code: 'bg-yellow-400',
-        imageUrl: '/images/pic11.png'
+        id: 'amber-gold',
+        value: 'Gold',
+        color: '#FACC15',
+        label: 'Gold'
       }
     ],
     selectedColor: {
-      name: 'Amber',
-      code: 'bg-amber-500',
-      imageUrl: '/images/pic12.png'
+      id: 'amber-amber',
+      value: 'Amber',
+      color: '#F59E0B',
+      label: 'Amber'
     },
     volumeOptions: [
-      { ml: 6, price: 242, stock: 10 },
-      { ml: 12, price: 450, stock: 15 },
-      { ml: 20, price: 750, stock: 8 }
+      { ml: 6, price: 242 },
+      { ml: 12, price: 450 },
+      { ml: 20, price: 750 }
     ],
     quantity: 1,
     isSale: true,
@@ -53,14 +64,15 @@ export const relatedProductData: Product[] = [
       Ingredients: 'Natural Essential Oils',
       'Country of Origin': 'India'
     },
-    isInStock: true,
-    isOutOfStock: false
+    fragrance: ['Oriental', 'Woody'] as Fragrance[],
+    availabilityStatus: 'In Stock' as AvailabilityStatus
   },
   {
     id: 13,
     title: 'Lavender Mist Perfume',
     srcUrl: '/images/pic13.png',
     gallery: ['/images/pic13.png', '/images/pic10.png', '/images/pic11.png'],
+    brand: 'Amor Attar',
     price: 145,
     discountedPrice: 145,
     discount: {
@@ -70,34 +82,38 @@ export const relatedProductData: Product[] = [
     rating: 3.5,
     description:
       'Lavender Mist Perfume is a luxurious and unique fragrance that combines the rich, warm notes of lavender with the deep, mysterious notes of musk. This attar is perfect for those who want to make a bold statement and stand out from the crowd.',
-    gender: ['female'],
-    categories: ['perfumes', 'new-arrivals'],
+    gender: ['Women'] as Gender[],
+    categories: ['Perfumes', 'New Arrivals'] as Category[],
     colors: [
       {
-        name: 'Purple',
-        code: 'bg-purple-500',
-        imageUrl: '/images/pic13.png'
+        id: 'lavender-purple',
+        value: 'Purple',
+        color: '#A855F7',
+        label: 'Purple'
       },
       {
-        name: 'Pink',
-        code: 'bg-pink-500',
-        imageUrl: '/images/pic10.png'
+        id: 'lavender-pink',
+        value: 'Pink',
+        color: '#EC4899',
+        label: 'Pink'
       },
       {
-        name: 'Gold',
-        code: 'bg-yellow-400',
-        imageUrl: '/images/pic11.png'
+        id: 'lavender-gold',
+        value: 'Gold',
+        color: '#FACC15',
+        label: 'Gold'
       }
     ],
     selectedColor: {
-      name: 'Purple',
-      code: 'bg-purple-500',
-      imageUrl: '/images/pic13.png'
+      id: 'lavender-purple',
+      value: 'Purple',
+      color: '#A855F7',
+      label: 'Purple'
     },
     volumeOptions: [
-      { ml: 6, price: 145, stock: 20 },
-      { ml: 12, price: 280, stock: 15 },
-      { ml: 20, price: 450, stock: 10 }
+      { ml: 6, price: 145 },
+      { ml: 12, price: 280 },
+      { ml: 20, price: 450 }
     ],
     quantity: 1,
     isSale: false,
@@ -108,14 +124,15 @@ export const relatedProductData: Product[] = [
       Ingredients: 'Essential Oils, Alcohol Base',
       'Country of Origin': 'France'
     },
-    isInStock: true,
-    isOutOfStock: false
+    fragrance: ['Floral', 'Fresh'] as Fragrance[],
+    availabilityStatus: 'In Stock' as AvailabilityStatus
   },
   {
     id: 14,
     title: 'Vetiver Breeze Eau de Toilette',
     srcUrl: '/images/pic14.png',
     gallery: ['/images/pic14.png'],
+    brand: 'Amor Attar',
     price: 180,
     discountedPrice: 180,
     discount: {
@@ -125,24 +142,26 @@ export const relatedProductData: Product[] = [
     rating: 4.5,
     description:
       'Vetiver Breeze Eau de Toilette is a refreshing and sophisticated fragrance that combines the earthy notes of vetiver with citrus and woody undertones. Perfect for both casual and formal occasions.',
-    gender: ['male', 'unisex'],
-    categories: ['perfumes', 'best-sellers'],
+    gender: ['Men', 'Unisex'] as Gender[],
+    categories: ['Perfumes', 'Best Sellers'] as Category[],
     colors: [
       {
-        name: 'Green',
-        code: 'bg-green-500',
-        imageUrl: '/images/pic14.png'
+        id: 'vetiver-green',
+        value: 'Green',
+        color: '#22C55E',
+        label: 'Green'
       }
     ],
     selectedColor: {
-      name: 'Green',
-      code: 'bg-green-500',
-      imageUrl: '/images/pic14.png'
+      id: 'vetiver-green',
+      value: 'Green',
+      color: '#22C55E',
+      label: 'Green'
     },
     volumeOptions: [
-      { ml: 6, price: 180, stock: 18 },
-      { ml: 12, price: 340, stock: 12 },
-      { ml: 20, price: 550, stock: 8 }
+      { ml: 6, price: 180 },
+      { ml: 12, price: 340 },
+      { ml: 20, price: 550 }
     ],
     quantity: 1,
     isSale: false,
@@ -153,14 +172,15 @@ export const relatedProductData: Product[] = [
       Ingredients: 'Vetiver Oil, Essential Oils',
       'Country of Origin': 'France'
     },
-    isInStock: true,
-    isOutOfStock: false
+    fragrance: ['Woody', 'Green'] as Fragrance[],
+    availabilityStatus: 'In Stock' as AvailabilityStatus
   },
   {
     id: 15,
     title: 'Patchouli Essence Attar',
     srcUrl: '/images/pic15.png',
     gallery: ['/images/pic15.png'],
+    brand: 'Amor Attar',
     price: 150,
     discountedPrice: 105,
     discount: {
@@ -170,24 +190,26 @@ export const relatedProductData: Product[] = [
     rating: 5.0,
     description:
       'Patchouli Essence Attar is a rich and exotic fragrance that combines the deep, earthy notes of patchouli with subtle floral undertones. Perfect for those who appreciate unique and distinctive scents.',
-    gender: ['unisex'],
-    categories: ['attars', 'new-arrivals'],
+    gender: ['Unisex'] as Gender[],
+    categories: ['Attars', 'New Arrivals'] as Category[],
     colors: [
       {
-        name: 'Brown',
-        code: 'bg-[#4F4631]',
-        imageUrl: '/images/pic15.png'
+        id: 'patchouli-brown',
+        value: 'Brown',
+        color: '#4F4631',
+        label: 'Brown'
       }
     ],
     selectedColor: {
-      name: 'Brown',
-      code: 'bg-[#4F4631]',
-      imageUrl: '/images/pic15.png'
+      id: 'patchouli-brown',
+      value: 'Brown',
+      color: '#4F4631',
+      label: 'Brown'
     },
     volumeOptions: [
-      { ml: 6, price: 150, stock: 15 },
-      { ml: 12, price: 280, stock: 10 },
-      { ml: 20, price: 450, stock: 8 }
+      { ml: 6, price: 150 },
+      { ml: 12, price: 280 },
+      { ml: 20, price: 450 }
     ],
     quantity: 1,
     isSale: true,
@@ -198,7 +220,7 @@ export const relatedProductData: Product[] = [
       Ingredients: 'Pure Patchouli Oil, Natural Essential Oils',
       'Country of Origin': 'India'
     },
-    isInStock: true,
-    isOutOfStock: false
+    fragrance: ['Woody', 'Oriental'] as Fragrance[],
+    availabilityStatus: 'In Stock' as AvailabilityStatus
   }
 ];

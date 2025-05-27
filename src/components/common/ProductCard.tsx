@@ -6,7 +6,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Product } from '@/types/product.types';
 import { Button } from '@/components/ui/button';
-import { useAppDispatch, useAppSelector } from '@/lib/hooks/redux';
+import { useAppDispatch } from '@/lib/hooks/redux';
 import { addToCart } from '@/lib/features/carts/cartsSlice';
 import { FaShoppingCart, FaWhatsapp } from 'react-icons/fa';
 
@@ -16,9 +16,6 @@ type ProductCardProps = {
 
 const ProductCard = ({ data }: ProductCardProps) => {
   const dispatch = useAppDispatch();
-  const colorSelection = useAppSelector(
-    (state) => state.products.colorSelection
-  );
 
   const handleAddToCart = () => {
     dispatch(
@@ -27,7 +24,7 @@ const ProductCard = ({ data }: ProductCardProps) => {
         name: data.title,
         srcUrl: data.srcUrl,
         price: data.price,
-        attributes: [colorSelection.name], // Add color as an attribute
+        attributes: [data.selectedColor.label],
         discount: data.discount,
         quantity: 1
       })
@@ -48,23 +45,33 @@ const ProductCard = ({ data }: ProductCardProps) => {
         : data.price;
 
   return (
-    <div className='flex aspect-auto flex-col items-start'>
+    <div className='group flex aspect-auto flex-col items-start rounded-lg border border-gray-100 p-4 transition-all hover:shadow-lg'>
       <Link
         href={`/shop/product/${data.id}/${data.title.split(' ').join('-')}`}
         className='w-full'
       >
+        {/* Product Image */}
         <div className='mb-2.5 aspect-square w-full overflow-hidden rounded-[13px] bg-[#F0EEED] lg:max-w-[295px] lg:rounded-[20px] xl:mb-4'>
           <Image
             src={data.srcUrl}
             width={295}
             height={298}
-            className='h-full w-full rounded-md object-contain transition-all duration-500 hover:scale-110'
+            className='h-full w-full rounded-md object-contain transition-all duration-500 group-hover:scale-110'
             alt={data.title}
             priority
           />
         </div>
-        <strong className='text-black xl:text-xl'>{data.title}</strong>
-        <div className='mb-1 flex items-end xl:mb-2'>
+
+        {/* Brand */}
+        <div className='mb-1 text-left text-sm text-gray-600'>{data.brand}</div>
+
+        {/* Title */}
+        <div className='mb-2 w-full text-left'>
+          <strong className='text-black xl:text-xl'>{data.title}</strong>
+        </div>
+
+        {/* Rating */}
+        <div className='mb-2 flex items-end'>
           <Rating
             initialValue={data.rating}
             allowFraction
@@ -73,43 +80,46 @@ const ProductCard = ({ data }: ProductCardProps) => {
             size={19}
             readonly
           />
-          <span className='ml-[11px] pb-0.5 text-xs text-black xl:ml-[13px] xl:pb-0 xl:text-sm'>
+          <span className='ml-2 text-xs text-black'>
             {data.rating.toFixed(1)}
             <span className='text-black/60'>/5</span>
           </span>
         </div>
-        <div className='flex items-center space-x-[5px] xl:space-x-2.5'>
-          <span className='text-xl font-bold text-black xl:text-2xl'>
-            ${discountedPrice}
+
+        {/* Price and Discount */}
+        <div className='mb-2 flex items-center space-x-2'>
+          <span className='text-xl font-bold text-black'>
+            ₹{discountedPrice}
           </span>
           {(data.discount.percentage > 0 || data.discount.amount > 0) && (
-            <span className='text-xl font-bold text-black/40 line-through xl:text-2xl'>
-              ${data.price}
+            <span className='text-xl font-bold text-black/40 line-through'>
+              ₹{data.price}
             </span>
           )}
-          {data.discount.percentage > 0 ? (
-            <span className='rounded-full bg-[#FF3333]/10 px-3.5 py-1.5 text-[10px] font-medium text-[#FF3333] xl:text-xs'>
+          {data.discount.percentage > 0 && (
+            <span className='rounded-full bg-[#FF3333]/10 px-2 py-1 text-xs font-medium text-[#FF3333]'>
               {`-${data.discount.percentage}%`}
             </span>
-          ) : (
-            data.discount.amount > 0 && (
-              <span className='rounded-full bg-[#FF3333]/10 px-3.5 py-1.5 text-[10px] font-medium text-[#FF3333] xl:text-xs'>
-                {`-$${data.discount.amount}`}
-              </span>
-            )
           )}
         </div>
       </Link>
-      <div className='mt-2 flex space-x-2'>
+
+      {/* Action Buttons */}
+      <div className='mt-auto flex w-full space-x-2'>
         <Button
           onClick={handleAddToCart}
-          className='flex items-center space-x-2 rounded-full bg-red-400 px-4 text-white'
+          disabled={data.availabilityStatus === 'Out of Stock'}
+          className='group relative flex flex-1 items-center justify-center space-x-2 overflow-hidden rounded-full bg-[#F9CB43] px-4 py-3 text-black transition-all duration-300 hover:bg-[#F9CB43]/90 disabled:bg-gray-400 disabled:hover:bg-gray-400'
         >
-          <FaShoppingCart className='text-sm' />
+          <span className='relative z-10 flex items-center space-x-2'>
+            <FaShoppingCart className='text-sm' />
+            <span>Add to Cart</span>
+          </span>
+          <div className='absolute inset-0 -translate-x-full bg-white/20 transition-transform duration-300 group-hover:translate-x-0'></div>
         </Button>
         <Button
           onClick={handleWhatsAppClick}
-          className='flex items-center space-x-2 rounded-full bg-[#25D366] px-4 text-white'
+          className='flex items-center justify-center rounded-full bg-[#25D366] px-4 py-3 text-white transition-all duration-300 hover:bg-[#128C7E]'
         >
           <FaWhatsapp className='text-sm' />
         </Button>
