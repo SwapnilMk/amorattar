@@ -33,6 +33,7 @@ import { useSession } from '@/components/providers/SessionProvider';
 import PageContainer from '@/components/layout/page-container';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Star } from 'lucide-react';
 
 export default function ReviewsPage() {
   const router = useRouter();
@@ -257,33 +258,46 @@ export default function ReviewsPage() {
             ) : filteredReviews.length === 0 ? (
               <div>No reviews found</div>
             ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Rating</TableHead>
-                    <TableHead>Content</TableHead>
-                    <TableHead>Date</TableHead>
-                    <TableHead className='text-right'>Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredReviews.map((review) => (
-                    <TableRow key={review.id}>
-                      <TableCell>{review.name}</TableCell>
-                      <TableCell>{review.rating}</TableCell>
-                      <TableCell className='max-w-xs truncate'>
-                        {review.content}
-                      </TableCell>
-                      <TableCell>
-                        {new Date(review.createdAt).toLocaleDateString()}
-                      </TableCell>
-                      <TableCell className='text-right'>
-                        <div className='flex justify-end gap-2'>
-                          <Dialog
-                            open={editDialogOpen}
-                            onOpenChange={setEditDialogOpen}
-                          >
+              <div className='rounded-md border'>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className='w-[200px]'>Name</TableHead>
+                      <TableHead className='w-[100px]'>Rating</TableHead>
+                      <TableHead className='w-[300px]'>Content</TableHead>
+                      <TableHead className='w-[120px]'>Date</TableHead>
+                      <TableHead className='w-[100px] text-right'>
+                        Actions
+                      </TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredReviews.map((review) => (
+                      <TableRow key={review.id}>
+                        <TableCell>
+                          <div className='flex items-center gap-2'>
+                            <Avatar>
+                              <AvatarFallback>
+                                {review.name.slice(0, 2).toUpperCase()}
+                              </AvatarFallback>
+                            </Avatar>
+                            <span className='font-medium'>{review.name}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className='flex items-center gap-1'>
+                            <Star className='h-4 w-4 fill-yellow-400 text-yellow-400' />
+                            <span>{review.rating.toFixed(1)}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <p className='line-clamp-2'>{review.content}</p>
+                        </TableCell>
+                        <TableCell>
+                          {new Date(review.createdAt).toLocaleDateString()}
+                        </TableCell>
+                        <TableCell className='text-right'>
+                          <div className='flex justify-end gap-2'>
                             <Button
                               variant='ghost'
                               size='icon'
@@ -291,82 +305,20 @@ export default function ReviewsPage() {
                             >
                               <FaEdit className='h-4 w-4' />
                             </Button>
-                            <DialogContent>
-                              <DialogHeader>
-                                <DialogTitle>Edit Review</DialogTitle>
-                                <DialogDescription>
-                                  Update review details
-                                </DialogDescription>
-                              </DialogHeader>
-                              <form
-                                onSubmit={handleUpdate}
-                                className='space-y-4'
-                              >
-                                <div>
-                                  <Label htmlFor='name'>Name</Label>
-                                  <Input
-                                    id='name'
-                                    value={editForm.name}
-                                    onChange={(e) =>
-                                      setEditForm({
-                                        ...editForm,
-                                        name: e.target.value
-                                      })
-                                    }
-                                    required
-                                  />
-                                </div>
-                                <div>
-                                  <Label htmlFor='rating'>Rating</Label>
-                                  <Input
-                                    id='rating'
-                                    type='number'
-                                    min='1'
-                                    max='5'
-                                    step='0.5'
-                                    value={editForm.rating}
-                                    onChange={(e) =>
-                                      setEditForm({
-                                        ...editForm,
-                                        rating: parseFloat(e.target.value)
-                                      })
-                                    }
-                                    required
-                                  />
-                                </div>
-                                <div>
-                                  <Label htmlFor='content'>Content</Label>
-                                  <Textarea
-                                    id='content'
-                                    value={editForm.content}
-                                    onChange={(e) =>
-                                      setEditForm({
-                                        ...editForm,
-                                        content: e.target.value
-                                      })
-                                    }
-                                    required
-                                  />
-                                </div>
-                                <DialogFooter>
-                                  <Button type='submit'>Save Changes</Button>
-                                </DialogFooter>
-                              </form>
-                            </DialogContent>
-                          </Dialog>
-                          <Button
-                            variant='ghost'
-                            size='icon'
-                            onClick={() => handleDelete(review.id)}
-                          >
-                            <FaTrash className='h-4 w-4' />
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                            <Button
+                              variant='ghost'
+                              size='icon'
+                              onClick={() => handleDelete(review.id)}
+                            >
+                              <FaTrash className='h-4 w-4' />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
             )}
           </CardContent>
         </Card>

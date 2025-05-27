@@ -17,7 +17,22 @@ export type Color = {
   label: string;
 };
 
-export type Category = 'Perfumes' | 'Attars' | 'New Arrivals' | 'Best Sellers';
+export type Category = {
+  id: string;
+  name: string;
+  slug: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type ProductCategory = {
+  id: string;
+  productId: string;
+  categoryId: string;
+  createdAt: string;
+  updatedAt: string;
+  category: Category;
+};
 
 export type Fragrance =
   | 'Floral'
@@ -43,24 +58,29 @@ export type AvailabilityStatus =
   | 'Low Stock';
 
 export type Product = {
-  id: number;
+  id: string;
   title: string;
   srcUrl: string;
-  gallery?: string[];
+  gallery: string[];
   brand: string;
   price: number;
   discountedPrice: number;
-  discount: Discount;
+  discount: number;
   rating: number;
   description: string;
   gender: Gender[];
-  categories: Category[];
+  categories: ProductCategory[];
   colors: Color[];
   selectedColor: Color;
   volumeOptions: VolumeOption[];
-  quantity: number;
+  selectedVolume: VolumeOption;
   isSale: boolean;
-  specifications: Record<string, string>;
+  specifications: Array<{
+    key: string;
+    value: string;
+  }>;
   fragrance: Fragrance[];
   availabilityStatus: AvailabilityStatus;
+  createdAt: string;
+  updatedAt: string;
 };

@@ -20,17 +20,35 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useSession } from '@/components/providers/SessionProvider';
 import { toast } from 'sonner';
-import { CreateProductInput } from '@/lib/validations/product';
+import { CreateProductInput, CategoryType } from '@/lib/validations/product';
 import {
   Gender,
   Fragrance,
   Color,
-  Category,
-  AvailabilityStatus
+  AvailabilityStatus,
+  VolumeOption
 } from '@/types/product.types';
 import { Badge } from '@/components/ui/badge';
 import { X } from 'lucide-react';
 import slugify from 'slugify';
+import { Switch } from '@/components/ui/switch';
+import { HexColorPicker } from 'react-colorful';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger
+} from '@/components/ui/popover';
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem
+} from '@/components/ui/command';
+import { Check, ChevronsUpDown } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { Star } from 'lucide-react';
+
 const initialFormData: CreateProductInput = {
   title: '',
   slug: '',
@@ -39,14 +57,11 @@ const initialFormData: CreateProductInput = {
   brand: '',
   price: 0,
   discountedPrice: 0,
-  discount: {
-    amount: 0,
-    percentage: 0
-  },
+  discount: 0,
   rating: 0,
   description: '',
   gender: ['Unisex'] as Gender[],
-  categories: ['Perfumes'] as Category[],
+  categories: ['Perfumes'] as CategoryType[],
   colors: [],
   selectedColor: {
     id: '',
@@ -55,12 +70,33 @@ const initialFormData: CreateProductInput = {
     label: ''
   },
   volumeOptions: [],
+  selectedVolume: {
+    ml: 0,
+    price: 0
+  },
+  isSale: false,
   specifications: {},
   fragrance: ['Floral'] as Fragrance[],
-  quantity: 1,
-  isSale: false,
   availabilityStatus: 'In Stock'
 };
+
+const fragranceTypes = [
+  'Floral',
+  'Woody',
+  'Citrus',
+  'Spicy',
+  'Musky',
+  'Sandalwood',
+  'Vanilla',
+  'Oriental',
+  'Gourmand',
+  'Chypre',
+  'Aquatic',
+  'Green',
+  'Fresh',
+  'Musk',
+  'Scented'
+] as const;
 
 export default function AddProduct() {
   const router = useRouter();
@@ -112,7 +148,7 @@ export default function AddProduct() {
     }));
   };
 
-  const handleCategoryChange = (value: Category) => {
+  const handleCategoryChange = (value: CategoryType) => {
     setFormData((prev) => ({
       ...prev,
       categories: prev.categories.includes(value)
@@ -158,7 +194,11 @@ export default function AddProduct() {
         }
 
         const result = await response.json();
-        setFormData((prev) => ({ ...prev, srcUrl: result.secure_url }));
+        setFormData((prev) => ({
+          ...prev,
+          srcUrl: result.secure_url,
+          gallery: [result.secure_url, ...prev.gallery]
+        }));
       } catch (error) {
         console.error('Error uploading main image:', error);
         toast.error('Failed to upload main image');
@@ -265,15 +305,34 @@ export default function AddProduct() {
     }));
   };
 
+  const handleVolumeSelect = (volume: VolumeOption) => {
+    setFormData((prev) => ({
+      ...prev,
+      selectedVolume: volume,
+      price: volume.price,
+      discountedPrice: volume.price * (1 - prev.discount / 100)
+    }));
+  };
+
   const handleAddVolumeOption = () => {
     if (!newVolumeOption.ml || !newVolumeOption.price) {
       toast.error('Please fill in all volume option fields');
       return;
     }
 
+    const newVolume = {
+      ml: newVolumeOption.ml,
+      price: newVolumeOption.price
+    };
+
     setFormData((prev) => ({
       ...prev,
-      volumeOptions: [...prev.volumeOptions, newVolumeOption]
+      volumeOptions: [...prev.volumeOptions, newVolume],
+      selectedVolume:
+        prev.volumeOptions.length === 0 ? newVolume : prev.selectedVolume,
+      price: prev.volumeOptions.length === 0 ? newVolume.price : prev.price,
+      discountedPrice:
+        prev.volumeOptions.length === 0 ? newVolume.price : prev.discountedPrice
     }));
 
     setNewVolumeOption({
@@ -315,7 +374,18 @@ export default function AddProduct() {
     try {
       // Generate slug from title
       const slug = slugify(formData.title, { lower: true });
-      const data = { ...formData, slug };
+
+      // Ensure categories are properly formatted
+      const categories = formData.categories.map((category) => ({
+        name: category,
+        slug: slugify(category, { lower: true })
+      }));
+
+      const data = {
+        ...formData,
+        slug,
+        categories: formData.categories // Send just the category names
+      };
 
       const response = await fetch('/api/products', {
         method: 'POST',
@@ -346,6 +416,15 @@ export default function AddProduct() {
     const buffer = await file.arrayBuffer();
     const base64 = Buffer.from(buffer).toString('base64');
     return `data:${file.type};base64,${base64}`;
+  };
+
+  const handleRemoveGalleryImage = (index: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      gallery: prev.gallery.filter((_, i) => i !== index)
+    }));
+    setGalleryPreviews((prev) => prev.filter((_, i) => i !== index));
+    setGalleryImages((prev) => prev.filter((_, i) => i !== index));
   };
 
   return (
@@ -404,13 +483,24 @@ export default function AddProduct() {
                     {galleryPreviews.length > 0 ? (
                       <div className='grid grid-cols-2 gap-2'>
                         {galleryPreviews.map((preview, index) => (
-                          <div key={index} className='relative aspect-square'>
+                          <div
+                            key={index}
+                            className='group relative aspect-square'
+                          >
                             <Image
                               src={preview}
                               alt={`Gallery ${index + 1}`}
                               fill
                               className='object-contain'
                             />
+                            <Button
+                              variant='destructive'
+                              size='icon'
+                              className='absolute right-2 top-2 opacity-0 transition-opacity group-hover:opacity-100'
+                              onClick={() => handleRemoveGalleryImage(index)}
+                            >
+                              <X className='h-4 w-4' />
+                            </Button>
                           </div>
                         ))}
                       </div>
@@ -448,41 +538,6 @@ export default function AddProduct() {
                     value={formData.brand}
                     onChange={handleChange}
                     placeholder='Enter brand name'
-                    required
-                  />
-                </div>
-                <div className='space-y-2'>
-                  <Label htmlFor='price'>Price</Label>
-                  <Input
-                    id='price'
-                    name='price'
-                    type='number'
-                    value={formData.price}
-                    onChange={handleChange}
-                    placeholder='Enter price'
-                    required
-                  />
-                </div>
-                <div className='space-y-2'>
-                  <Label htmlFor='discountedPrice'>Discounted Price</Label>
-                  <Input
-                    id='discountedPrice'
-                    name='discountedPrice'
-                    type='number'
-                    value={formData.discountedPrice}
-                    onChange={handleChange}
-                    placeholder='Enter discounted price'
-                  />
-                </div>
-                <div className='space-y-2'>
-                  <Label htmlFor='quantity'>Quantity</Label>
-                  <Input
-                    id='quantity'
-                    name='quantity'
-                    type='number'
-                    value={formData.quantity}
-                    onChange={handleChange}
-                    placeholder='Enter quantity'
                     required
                   />
                 </div>
@@ -537,7 +592,7 @@ export default function AddProduct() {
                       'Attars',
                       'New Arrivals',
                       'Best Sellers'
-                    ] as const
+                    ] as CategoryType[]
                   ).map((category) => (
                     <Badge
                       key={category}
@@ -595,16 +650,32 @@ export default function AddProduct() {
                         }))
                       }
                     />
-                    <Input
-                      placeholder='Color Code (e.g., #FF0000)'
-                      value={newColor.color}
-                      onChange={(e) =>
-                        setNewColor((prev) => ({
-                          ...prev,
-                          color: e.target.value
-                        }))
-                      }
-                    />
+                    <div className='space-y-2'>
+                      <Label>Color Picker</Label>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant='outline'
+                            className='w-full justify-between'
+                            style={{ backgroundColor: newColor.color }}
+                          >
+                            {newColor.color || 'Pick a color'}
+                            <ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className='w-full p-3'>
+                          <HexColorPicker
+                            color={newColor.color}
+                            onChange={(color) =>
+                              setNewColor((prev) => ({
+                                ...prev,
+                                color
+                              }))
+                            }
+                          />
+                        </PopoverContent>
+                      </Popover>
+                    </div>
                     <Input
                       placeholder='Color Label'
                       value={newColor.label}
@@ -615,7 +686,11 @@ export default function AddProduct() {
                         }))
                       }
                     />
-                    <Button type='button' onClick={handleAddColor}>
+                    <Button
+                      type='button'
+                      onClick={handleAddColor}
+                      className='w-full'
+                    >
                       Add Color
                     </Button>
                   </div>
@@ -635,7 +710,7 @@ export default function AddProduct() {
                       >
                         <div className='flex items-center space-x-4'>
                           <div
-                            className='h-8 w-8 rounded-full'
+                            className='h-8 w-8 rounded-full border'
                             style={{ backgroundColor: color.color }}
                           />
                           <div>
@@ -705,7 +780,12 @@ export default function AddProduct() {
                     {formData.volumeOptions.map((option, index) => (
                       <div
                         key={index}
-                        className='flex items-center justify-between rounded-lg border p-4'
+                        className={`flex cursor-pointer items-center justify-between rounded-lg border p-4 ${
+                          formData.selectedVolume.ml === option.ml
+                            ? 'border-primary'
+                            : 'border-border'
+                        }`}
+                        onClick={() => handleVolumeSelect(option)}
                       >
                         <div>
                           <p className='font-medium'>{option.ml}ml</p>
@@ -716,12 +796,17 @@ export default function AddProduct() {
                         <Button
                           variant='ghost'
                           size='icon'
-                          onClick={() => {
+                          onClick={(e) => {
+                            e.stopPropagation();
                             setFormData((prev) => ({
                               ...prev,
                               volumeOptions: prev.volumeOptions.filter(
                                 (_, i) => i !== index
-                              )
+                              ),
+                              selectedVolume:
+                                prev.selectedVolume.ml === option.ml
+                                  ? { ml: 0, price: 0 }
+                                  : prev.selectedVolume
                             }));
                           }}
                         >
@@ -729,6 +814,103 @@ export default function AddProduct() {
                         </Button>
                       </div>
                     ))}
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Pricing</CardTitle>
+            </CardHeader>
+            <CardContent className='space-y-4'>
+              <div className='grid gap-4 md:grid-cols-2'>
+                <div className='space-y-2'>
+                  <Label htmlFor='price'>Price</Label>
+                  <Input
+                    id='price'
+                    name='price'
+                    type='number'
+                    value={formData.price}
+                    onChange={handleChange}
+                    placeholder='Enter price'
+                    required
+                    disabled
+                  />
+                </div>
+                <div className='space-y-2'>
+                  <Label htmlFor='discount'>Discount Percentage</Label>
+                  <Input
+                    id='discount'
+                    name='discount'
+                    type='number'
+                    value={formData.discount}
+                    onChange={(e) => {
+                      const discount = parseFloat(e.target.value) || 0;
+                      setFormData((prev) => ({
+                        ...prev,
+                        discount,
+                        discountedPrice: prev.price * (1 - discount / 100)
+                      }));
+                    }}
+                    placeholder='Enter discount percentage'
+                    min={0}
+                    max={100}
+                  />
+                </div>
+                <div className='space-y-2'>
+                  <Label htmlFor='discountedPrice'>Discounted Price</Label>
+                  <Input
+                    id='discountedPrice'
+                    name='discountedPrice'
+                    type='number'
+                    value={formData.discountedPrice}
+                    onChange={handleChange}
+                    placeholder='Enter discounted price'
+                    disabled
+                  />
+                </div>
+                <div className='space-y-2'>
+                  <Label>Rating</Label>
+                  <div className='flex items-center gap-2'>
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <button
+                        key={star}
+                        type='button'
+                        onClick={() => {
+                          setFormData((prev) => ({
+                            ...prev,
+                            rating: star
+                          }));
+                        }}
+                        className='focus:outline-none'
+                      >
+                        <Star
+                          className={`h-6 w-6 ${
+                            star <= formData.rating
+                              ? 'fill-yellow-400 text-yellow-400'
+                              : 'text-gray-300'
+                          }`}
+                        />
+                      </button>
+                    ))}
+                    <span className='ml-2 text-sm text-muted-foreground'>
+                      {formData.rating.toFixed(1)}/5
+                    </span>
+                  </div>
+                </div>
+                <div className='space-y-2'>
+                  <Label>Sale Status</Label>
+                  <div className='flex items-center space-x-2'>
+                    <Switch
+                      id='isSale'
+                      checked={formData.isSale}
+                      onCheckedChange={(checked) =>
+                        setFormData((prev) => ({ ...prev, isSale: checked }))
+                      }
+                    />
+                    <Label htmlFor='isSale'>Mark as Sale</Label>
                   </div>
                 </div>
               </div>
@@ -811,39 +993,60 @@ export default function AddProduct() {
               <CardTitle>Fragrance Types</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className='flex flex-wrap gap-2'>
-                {(
-                  [
-                    'Floral',
-                    'Woody',
-                    'Citrus',
-                    'Spicy',
-                    'Musky',
-                    'Sandalwood',
-                    'Vanilla',
-                    'Oriental',
-                    'Gourmand',
-                    'Chypre',
-                    'Aquatic',
-                    'Green',
-                    'Fresh',
-                    'Musk',
-                    'Scented'
-                  ] as const
-                ).map((fragrance) => (
-                  <Badge
-                    key={fragrance}
-                    variant={
-                      formData.fragrance.includes(fragrance)
-                        ? 'default'
-                        : 'secondary'
-                    }
-                    className='cursor-pointer'
-                    onClick={() => handleFragranceChange(fragrance)}
-                  >
-                    {fragrance}
-                  </Badge>
-                ))}
+              <div className='space-y-4'>
+                <div className='space-y-2'>
+                  <Label>Add Fragrance Type</Label>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant='outline'
+                        role='combobox'
+                        className='w-full justify-between'
+                      >
+                        Select fragrance type
+                        <ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className='w-full p-0'>
+                      <Command>
+                        <CommandInput placeholder='Search fragrance type...' />
+                        <CommandEmpty>No fragrance type found.</CommandEmpty>
+                        <CommandGroup className='max-h-[200px] overflow-auto'>
+                          {fragranceTypes.map((fragrance) => (
+                            <CommandItem
+                              key={fragrance}
+                              value={fragrance}
+                              onSelect={() => handleFragranceChange(fragrance)}
+                            >
+                              <Check
+                                className={cn(
+                                  'mr-2 h-4 w-4',
+                                  formData.fragrance.includes(fragrance)
+                                    ? 'opacity-100'
+                                    : 'opacity-0'
+                                )}
+                              />
+                              {fragrance}
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                </div>
+                <div className='flex flex-wrap gap-2'>
+                  {formData.fragrance.map((fragrance) => (
+                    <Badge
+                      key={fragrance}
+                      variant='default'
+                      className='cursor-pointer'
+                      onClick={() => handleFragranceChange(fragrance)}
+                    >
+                      {fragrance}
+                      <X className='ml-1 h-3 w-3' />
+                    </Badge>
+                  ))}
+                </div>
               </div>
             </CardContent>
           </Card>

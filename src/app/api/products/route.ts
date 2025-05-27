@@ -22,7 +22,7 @@ export async function GET(request: Request) {
       skip,
       take: limit,
       include: {
-        productCategories: {
+        categories: {
           include: {
             category: true
           }
@@ -72,13 +72,12 @@ export async function POST(request: Request) {
       const product = await prisma.product.create({
         data: {
           title: validatedData.title,
-          slug: validatedData.slug,
           srcUrl: validatedData.srcUrl,
           gallery: validatedData.gallery,
           brand: validatedData.brand,
           price: validatedData.price,
           discountedPrice: validatedData.discountedPrice,
-          discount: validatedData.discount.amount, // Store only the amount
+          discount: validatedData.discount,
           rating: validatedData.rating,
           description: validatedData.description,
           gender: validatedData.gender,
@@ -102,7 +101,10 @@ export async function POST(request: Request) {
               price: option.price
             }))
           },
-          quantity: validatedData.quantity,
+          selectedVolume: {
+            ml: validatedData.selectedVolume.ml,
+            price: validatedData.selectedVolume.price
+          },
           isSale: validatedData.isSale,
           specifications: {
             set: Object.entries(validatedData.specifications).map(
@@ -114,14 +116,14 @@ export async function POST(request: Request) {
           },
           fragrance: validatedData.fragrance,
           availabilityStatus: validatedData.availabilityStatus,
-          productCategories: {
-            create: validatedData.categories.map((category) => ({
+          categories: {
+            create: validatedData.categories.map((categoryName) => ({
               category: {
                 connectOrCreate: {
-                  where: { name: category },
+                  where: { name: categoryName },
                   create: {
-                    name: category,
-                    slug: category.toLowerCase().replace(/\s+/g, '-')
+                    name: categoryName,
+                    slug: categoryName.toLowerCase().replace(/\s+/g, '-')
                   }
                 }
               }
@@ -129,7 +131,7 @@ export async function POST(request: Request) {
           }
         },
         include: {
-          productCategories: {
+          categories: {
             include: {
               category: true
             }
@@ -137,7 +139,44 @@ export async function POST(request: Request) {
         }
       });
 
-      return NextResponse.json(product, { status: 201 });
+      // After creating the product, ensure all categories are properly connected
+      await Promise.all(
+        validatedData.categories.map(async (categoryName) => {
+          const category = await prisma.category.findUnique({
+            where: { name: categoryName }
+          });
+
+          if (category) {
+            await prisma.productCategory.upsert({
+              where: {
+                productId_categoryId: {
+                  productId: product.id,
+                  categoryId: category.id
+                }
+              },
+              create: {
+                productId: product.id,
+                categoryId: category.id
+              },
+              update: {}
+            });
+          }
+        })
+      );
+
+      // Fetch the updated product with categories
+      const updatedProduct = await prisma.product.findUnique({
+        where: { id: product.id },
+        include: {
+          categories: {
+            include: {
+              category: true
+            }
+          }
+        }
+      });
+
+      return NextResponse.json(updatedProduct, { status: 201 });
     } catch (error) {
       if (error instanceof ZodError) {
         return NextResponse.json(
