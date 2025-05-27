@@ -37,8 +37,8 @@ const Header = ({ data }: { data: Product }) => {
           <div className='mb-3 flex flex-wrap gap-2'>
             {data.categories.map((category) => (
               <Link
-                key={category}
-                href={`/shop?category=${category}`}
+                key={category.id}
+                href={`/shop?category=${category.category.slug}`}
                 className='no-underline'
               >
                 <Badge
@@ -46,15 +46,18 @@ const Header = ({ data }: { data: Product }) => {
                   className={cn(
                     'px-3 py-1 text-sm capitalize transition-colors hover:bg-black hover:text-white',
                     {
-                      'bg-blue-50 text-blue-700': category === 'Perfumes',
-                      'bg-amber-50 text-amber-700': category === 'Attars',
-                      'bg-green-50 text-green-700': category === 'New Arrivals',
+                      'bg-blue-50 text-blue-700':
+                        category.category.name === 'Perfumes',
+                      'bg-amber-50 text-amber-700':
+                        category.category.name === 'Attars',
+                      'bg-green-50 text-green-700':
+                        category.category.name === 'New Arrivals',
                       'bg-purple-50 text-purple-700':
-                        category === 'Best Sellers'
+                        category.category.name === 'Best Sellers'
                     }
                   )}
                 >
-                  {category}
+                  {category.category.name}
                 </Badge>
               </Link>
             ))}
@@ -90,16 +93,14 @@ const Header = ({ data }: { data: Product }) => {
             <span className='text-2xl font-bold text-black sm:text-[32px]'>
               ₹{selectedVolume.price}
             </span>
-            {data.discount.percentage > 0 && (
+            {data.discount > 0 && (
               <span className='text-2xl font-bold text-black/40 line-through sm:text-[32px]'>
-                ₹
-                {selectedVolume.price +
-                  (selectedVolume.price * data.discount.percentage) / 100}
+                ₹{data.price}
               </span>
             )}
-            {data.discount.percentage > 0 && (
+            {data.discount > 0 && (
               <span className='rounded-full bg-[#FF3333]/10 px-3.5 py-1.5 text-[10px] font-medium text-[#FF3333] sm:text-xs'>
-                {`-${data.discount.percentage}%`}
+                {`-${data.discount}%`}
               </span>
             )}
             {data.isSale && (

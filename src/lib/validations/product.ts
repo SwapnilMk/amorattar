@@ -1,10 +1,4 @@
 import { z } from 'zod';
-import {
-  Category,
-  Gender,
-  Fragrance,
-  AvailabilityStatus
-} from '@/types/product.types';
 
 export const colorSchema = z.object({
   id: z.string().min(1, 'Color ID is required'),
@@ -23,6 +17,14 @@ export const specificationSchema = z.object({
   value: z.string().min(1, 'Specification value is required')
 });
 
+export const categoryEnum = z.enum([
+  'Perfumes',
+  'Attars',
+  'New Arrivals',
+  'Best Sellers'
+] as const);
+export type CategoryType = z.infer<typeof categoryEnum>;
+
 export const productSchema = z.object({
   title: z.string().min(1, 'Title is required'),
   slug: z.string().min(1, 'Slug is required'),
@@ -31,26 +33,19 @@ export const productSchema = z.object({
   brand: z.string().min(1, 'Brand is required'),
   price: z.number().min(0, 'Price must be positive'),
   discountedPrice: z.number().min(0, 'Discounted price must be positive'),
-  discount: z.object({
-    amount: z.number().min(0),
-    percentage: z.number().min(0).max(100)
-  }),
+  discount: z.number().min(0).max(100),
   rating: z.number().min(0).max(5).default(0),
   description: z.string().min(1, 'Description is required'),
   gender: z
     .array(z.enum(['Men', 'Women', 'Unisex'] as const))
     .min(1, 'At least one gender is required'),
-  categories: z
-    .array(
-      z.enum(['Perfumes', 'Attars', 'New Arrivals', 'Best Sellers'] as const)
-    )
-    .min(1, 'At least one category is required'),
+  categories: z.array(categoryEnum).min(1, 'At least one category is required'),
   colors: z.array(colorSchema).min(1, 'At least one color is required'),
   selectedColor: colorSchema,
   volumeOptions: z
     .array(volumeOptionSchema)
     .min(1, 'At least one volume option is required'),
-  quantity: z.number().min(0).default(1),
+  selectedVolume: volumeOptionSchema,
   isSale: z.boolean().default(false),
   specifications: z.record(z.string(), z.string()),
   fragrance: z

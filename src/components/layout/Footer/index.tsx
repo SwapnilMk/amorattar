@@ -102,10 +102,10 @@ const Footer = () => {
             <p className='mb-4 text-center text-sm text-black/60 sm:mb-0 sm:mr-1 sm:text-left'>
               © 2025 AMORATTAR. Designed by{' '}
               <Link
-                href='https://amorattar.vercel.app/'
+                href='https://github.com/swapnilMk/'
                 className='font-medium text-black'
               >
-                Amorattar
+                SwapnilMk
               </Link>
             </p>
             <div className='flex items-center'>
