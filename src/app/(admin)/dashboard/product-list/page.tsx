@@ -14,25 +14,50 @@ import { Input } from '@/components/ui/input';
 import { IconPlus, IconSearch } from '@tabler/icons-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { Product } from '@/types/product.types';
+
+interface PaginatedResponse {
+  products: Product[];
+  pagination: {
+    total: number;
+    page: number;
+    limit: number;
+    pages: number;
+  };
+}
 
 export default function ProductList() {
-  const [products, setProducts] = useState<any[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [pagination, setPagination] = useState<PaginatedResponse['pagination']>(
+    {
+      total: 0,
+      page: 1,
+      limit: 10,
+      pages: 0
+    }
+  );
 
   useEffect(() => {
     async function fetchProducts() {
       setLoading(true);
-      const res = await fetch('/api/products');
-      const data = await res.json();
-      setProducts(data);
-      setLoading(false);
+      try {
+        const res = await fetch('/api/products');
+        const data: PaginatedResponse = await res.json();
+        setProducts(data.products);
+        setPagination(data.pagination);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      } finally {
+        setLoading(false);
+      }
     }
     fetchProducts();
   }, []);
 
   return (
     <PageContainer>
-      <div className='flex flex-col gap-4 w-full'>
+      <div className='flex w-full flex-col gap-4'>
         <div className='flex items-center justify-between'>
           <h1 className='text-2xl font-bold'>Product List</h1>
           <Button asChild>
@@ -66,12 +91,18 @@ export default function ProductList() {
               <TableRow>
                 <TableCell colSpan={6}>Loading...</TableCell>
               </TableRow>
+            ) : products.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={6} className='text-center'>
+                  No products found
+                </TableCell>
+              </TableRow>
             ) : (
               products.map((product) => (
                 <TableRow key={product.id}>
                   <TableCell>{product.id}</TableCell>
                   <TableCell>{product.title}</TableCell>
-                  <TableCell>{product.category?.name || '-'}</TableCell>
+                  <TableCell>{product.categories?.join(', ') || '-'}</TableCell>
                   <TableCell>${product.price?.toFixed(2)}</TableCell>
                   <TableCell>{product.quantity}</TableCell>
                   <TableCell className='text-right'>

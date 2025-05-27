@@ -42,7 +42,9 @@ export default function ManageCategory() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(
+    null
+  );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [newCategoryName, setNewCategoryName] = useState('');
@@ -146,7 +148,7 @@ export default function ManageCategory() {
 
   return (
     <PageContainer>
-      <div className='flex flex-col gap-4 w-full'>
+      <div className='flex w-full flex-col gap-4'>
         <div className='flex items-center justify-between'>
           <h1 className='text-2xl font-bold'>Manage Categories</h1>
           <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
@@ -220,13 +222,18 @@ export default function ManageCategory() {
                   {filteredCategories.map((category) => (
                     <TableRow key={category.id}>
                       <TableCell>{category.name}</TableCell>
-                      <TableCell>{category.productCategories?.length ?? 0}</TableCell>
+                      <TableCell>
+                        {category.productCategories?.length ?? 0}
+                      </TableCell>
                       <TableCell>
                         {new Date(category.createdAt).toLocaleDateString()}
                       </TableCell>
                       <TableCell className='text-right'>
                         <div className='flex justify-end gap-2'>
-                          <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+                          <Dialog
+                            open={isEditDialogOpen}
+                            onOpenChange={setIsEditDialogOpen}
+                          >
                             <DialogTrigger asChild>
                               <Button
                                 variant='ghost'
@@ -249,11 +256,15 @@ export default function ManageCategory() {
                               <form onSubmit={handleEditCategory}>
                                 <div className='space-y-4 py-4'>
                                   <div className='space-y-2'>
-                                    <Label htmlFor='editCategoryName'>Category Name</Label>
+                                    <Label htmlFor='editCategoryName'>
+                                      Category Name
+                                    </Label>
                                     <Input
                                       id='editCategoryName'
                                       value={editCategoryName}
-                                      onChange={(e) => setEditCategoryName(e.target.value)}
+                                      onChange={(e) =>
+                                        setEditCategoryName(e.target.value)
+                                      }
                                       placeholder='Enter category name'
                                     />
                                   </div>

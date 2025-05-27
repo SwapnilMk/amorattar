@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import * as motion from 'framer-motion/client';
 import { cn } from '@/lib/utils';
 import { integralCF } from '@/styles/fonts';
@@ -16,15 +16,34 @@ import { FaArrowLeft, FaArrowRight } from 'react-icons/fa6';
 import { useIsClient, useMediaQuery } from 'usehooks-ts';
 import ReviewCard from '@/components/common/ReviewCard';
 import { Review } from '@/types/review.types';
+import { toast } from 'sonner';
 
-type ReviewsProps = { data: Review[] };
-
-const Reviews = ({ data }: ReviewsProps) => {
+const Reviews = () => {
   const [api, setApi] = React.useState<CarouselApi>();
   const [current, setCurrent] = React.useState(0);
   const [count, setCount] = React.useState(0);
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [loading, setLoading] = useState(true);
   const isDesktop = useMediaQuery('(min-width: 1024px)');
   const isClient = useIsClient();
+
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        const response = await fetch('/api/reviews');
+        if (!response.ok) throw new Error('Failed to fetch reviews');
+        const data = await response.json();
+        setReviews(data);
+      } catch (error) {
+        console.error('Error fetching reviews:', error);
+        toast.error('Failed to fetch reviews');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchReviews();
+  }, []);
 
   React.useEffect(() => {
     if (!api) {
@@ -39,7 +58,8 @@ const Reviews = ({ data }: ReviewsProps) => {
     });
   }, [api]);
 
-  if (!isClient) return null;
+  if (!isClient || loading) return null;
+  if (reviews.length === 0) return null;
 
   return (
     <section className='overflow-hidden'>
@@ -80,7 +100,7 @@ const Reviews = ({ data }: ReviewsProps) => {
             </div>
           </div>
           <CarouselContent>
-            {data.map((review, index) => (
+            {reviews.map((review, index) => (
               <CarouselItem
                 key={review.id}
                 className='w-full max-w-[358px] pl-5 sm:max-w-[400px]'
@@ -88,8 +108,9 @@ const Reviews = ({ data }: ReviewsProps) => {
                 <ReviewCard
                   className='h-full'
                   data={review}
+                  isDate={true}
                   blurChild={
-                    data.length >= 6 && (
+                    reviews.length >= 6 && (
                       <div
                         className={cn([
                           isDesktop

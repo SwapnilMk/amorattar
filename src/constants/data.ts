@@ -18,18 +18,18 @@ export const navItems: NavItem[] = [
     items: []
   },
   {
-    title: 'Product Detail',
-    url: '/dashboard/product-detail',
-    icon: 'productDetail',
-    shortcut: ['p', 'd'],
-    isActive: false,
-    items: []
-  },
-  {
     title: 'Add Product',
     url: '/dashboard/add-product',
     icon: 'addProduct',
     shortcut: ['a', 'p'],
+    isActive: false,
+    items: []
+  },
+  {
+    title: 'Reviews',
+    url: '/dashboard/reviews',
+    icon: 'reviews',
+    shortcut: ['r', 'v'],
     isActive: false,
     items: []
   },

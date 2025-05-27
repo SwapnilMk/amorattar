@@ -3,6 +3,7 @@
 import { Product } from '@/types/product.types';
 import Image from 'next/image';
 import React, { useState } from 'react';
+import ImageViewer_Basic from '@/components/commerce-ui/image-viewer-basic';
 
 const PhotoSection = ({ data }: { data: Product }) => {
   const [selected, setSelected] = useState<string>(data.srcUrl);
@@ -32,14 +33,13 @@ const PhotoSection = ({ data }: { data: Product }) => {
       )}
 
       <div className='mx-auto mb-3 flex h-full max-h-[530px] min-h-[330px] w-full items-center justify-center overflow-hidden rounded-[13px] bg-[#F0EEED] sm:w-96 sm:rounded-[20px] md:w-full lg:mb-0 lg:min-h-[380px] xl:min-h-[530px]'>
-        <Image
-          src={selected}
-          width={444}
-          height={530}
-          className='h-full w-full rounded-md object-cover transition-all duration-500 hover:scale-110'
-          alt={data.title}
-          priority
-          unoptimized
+        <ImageViewer_Basic
+          imageUrl={selected}
+          imageTitle={data.title}
+          className='h-full w-full cursor-zoom-in'
+          classNameImageViewer='w-full h-full object-contain'
+          classNameThumbnailViewer='h-full w-full rounded-md object-cover transition-all duration-500 hover:scale-110'
+          showControls={true}
         />
       </div>
     </div>

@@ -44,13 +44,13 @@ const ReviewCard = ({
         )}
       </div>
       <div className='mb-2 flex items-center sm:mb-3'>
-        <strong className='mr-1 text-black sm:text-xl'>{data.user}</strong>
+        <strong className='mr-1 text-black sm:text-xl'>{data.name}</strong>
         <IoIosCheckmarkCircle className='text-xl text-[#01AB31] sm:text-2xl' />
       </div>
       <p className='text-sm text-black/60 sm:text-base'>{data.content}</p>
       {isDate && (
         <p className='mt-4 text-sm font-medium text-black/60 sm:mt-6'>
-          Posted on {data.date}
+          Posted on {new Date(data.createdAt).toLocaleDateString()}
         </p>
       )}
     </div>

@@ -49,7 +49,8 @@ import {
   IconPackageExport,
   IconPackageImport,
   IconListDetails,
-  IconGridDots
+  IconGridDots,
+  IconStar
 } from '@tabler/icons-react';
 
 export type Icon = React.ComponentType<IconProps>;
@@ -103,5 +104,6 @@ export const Icons = {
   Directory: IconBook2,
   map: IconMapPin,
   professional: IconBriefcase,
-  grid: IconGridDots
+  grid: IconGridDots,
+  reviews: IconStar
 };

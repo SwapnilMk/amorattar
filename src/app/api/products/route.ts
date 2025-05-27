@@ -1,149 +1,157 @@
 export const runtime = 'nodejs';
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { getSession } from '@/lib/auth';
 import { productSchema } from '@/lib/validations/product';
-import { uploadImage, uploadMultipleImages } from '@/lib/cloudinary';
-import slugify from 'slugify';
 import { ZodError } from 'zod';
+import { getSession } from '@/lib/auth';
+import {
+  Category,
+  Gender,
+  Fragrance,
+  AvailabilityStatus
+} from '@/types/product.types';
 
-export async function GET(req: Request) {
+export async function GET(request: Request) {
   try {
-    const { searchParams } = new URL(req.url);
-    const category = searchParams.get('category');
-    const gender = searchParams.get('gender');
-    const isSale = searchParams.get('isSale');
-
-    const where: any = {};
-    if (category) {
-      where.productCategories = {
-        some: {
-          category: {
-            slug: category
-          }
-        }
-      };
-    }
-    if (gender) {
-      where.gender = { has: gender };
-    }
-    if (isSale === 'true') {
-      where.isSale = true;
-    }
+    const { searchParams } = new URL(request.url);
+    const page = parseInt(searchParams.get('page') || '1');
+    const limit = parseInt(searchParams.get('limit') || '10');
+    const skip = (page - 1) * limit;
 
     const products = await prisma.product.findMany({
-      where,
+      skip,
+      take: limit,
       include: {
         productCategories: {
           include: {
             category: true
           }
-        },
-        reviews: true
+        }
+      },
+      orderBy: {
+        createdAt: 'desc'
       }
     });
 
-    return NextResponse.json(products);
+    const total = await prisma.product.count();
+
+    return NextResponse.json({
+      products,
+      pagination: {
+        total,
+        page,
+        limit,
+        pages: Math.ceil(total / limit)
+      }
+    });
   } catch (error) {
     console.error('Error fetching products:', error);
     return NextResponse.json(
-      { error: 'Error fetching products' },
+      { error: 'Failed to fetch products' },
       { status: 500 }
     );
   }
 }
 
-export async function POST(req: Request) {
+export async function POST(request: Request) {
   try {
     const session = await getSession();
-    if (!session || session.role !== 'admin') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!session) {
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
 
-    const formData = await req.formData();
-    const data = JSON.parse(formData.get('data') as string);
-    const mainImage = formData.get('mainImage') as File | null;
-    const galleryImages = formData.getAll('gallery') as File[];
+    if (session.role !== 'admin') {
+      return NextResponse.json({ error: 'Not authorized' }, { status: 403 });
+    }
 
-    // Validate product data
-    const validatedData = productSchema.parse(data);
-
-    // Handle image uploads
-    let mainImageUrl = '';
-    let galleryUrls: string[] = [];
-
+    const body = await request.json();
     try {
-      // Upload main image if provided
-      if (mainImage) {
-        const mainImageBase64 = await convertFileToBase64(mainImage);
-        const mainImageResult = await uploadImage(mainImageBase64, 'products/main');
-        mainImageUrl = mainImageResult.secure_url;
-      }
+      const validatedData = productSchema.parse(body);
 
-      // Upload gallery images if provided
-      if (galleryImages.length > 0) {
-        const galleryBase64 = await Promise.all(
-          galleryImages.map(file => convertFileToBase64(file))
-        );
-        const galleryResults = await Promise.all(
-          galleryBase64.map(image => uploadImage(image, 'products/gallery'))
-        );
-        galleryUrls = galleryResults.map(img => img.secure_url);
-      }
-    } catch (uploadError) {
-      console.error('Error uploading images:', uploadError);
-      return NextResponse.json(
-        { error: 'Failed to upload images' },
-        { status: 500 }
-      );
-    }
-
-    // Create slug from title
-    const slug = slugify(validatedData.title, { lower: true });
-
-    // Create product with categories and image URLs
-    const product = await prisma.product.create({
-      data: {
-        ...validatedData,
-        slug,
-        srcUrl: mainImageUrl || '', // Make srcUrl optional
-        gallery: galleryUrls,
-        productCategories: {
-          create: validatedData.categories.map((categoryId) => ({
-            category: {
-              connect: { id: categoryId }
+      // Create product with categories
+      const product = await prisma.product.create({
+        data: {
+          title: validatedData.title,
+          slug: validatedData.slug,
+          srcUrl: validatedData.srcUrl,
+          gallery: validatedData.gallery,
+          brand: validatedData.brand,
+          price: validatedData.price,
+          discountedPrice: validatedData.discountedPrice,
+          discount: validatedData.discount.amount, // Store only the amount
+          rating: validatedData.rating,
+          description: validatedData.description,
+          gender: validatedData.gender,
+          colors: {
+            set: validatedData.colors.map((color) => ({
+              id: color.id,
+              value: color.value,
+              color: color.color,
+              label: color.label
+            }))
+          },
+          selectedColor: {
+            id: validatedData.selectedColor.id,
+            value: validatedData.selectedColor.value,
+            color: validatedData.selectedColor.color,
+            label: validatedData.selectedColor.label
+          },
+          volumeOptions: {
+            set: validatedData.volumeOptions.map((option) => ({
+              ml: option.ml,
+              price: option.price
+            }))
+          },
+          quantity: validatedData.quantity,
+          isSale: validatedData.isSale,
+          specifications: {
+            set: Object.entries(validatedData.specifications).map(
+              ([key, value]) => ({
+                key,
+                value
+              })
+            )
+          },
+          fragrance: validatedData.fragrance,
+          availabilityStatus: validatedData.availabilityStatus,
+          productCategories: {
+            create: validatedData.categories.map((category) => ({
+              category: {
+                connectOrCreate: {
+                  where: { name: category },
+                  create: {
+                    name: category,
+                    slug: category.toLowerCase().replace(/\s+/g, '-')
+                  }
+                }
+              }
+            }))
+          }
+        },
+        include: {
+          productCategories: {
+            include: {
+              category: true
             }
-          }))
-        }
-      },
-      include: {
-        productCategories: {
-          include: {
-            category: true
           }
         }
-      }
-    });
+      });
 
-    return NextResponse.json(product, { status: 201 });
+      return NextResponse.json(product, { status: 201 });
+    } catch (error) {
+      if (error instanceof ZodError) {
+        return NextResponse.json(
+          { error: error.errors[0].message },
+          { status: 400 }
+        );
+      }
+      throw error;
+    }
   } catch (error) {
     console.error('Error creating product:', error);
-    if (error instanceof ZodError) {
-      return NextResponse.json(
-        { error: error.errors[0].message },
-        { status: 400 }
-      );
-    }
     return NextResponse.json(
-      { error: 'Error creating product' },
+      { error: 'Failed to create product' },
       { status: 500 }
     );
   }
-}
-
-// Helper function to convert File to base64
-async function convertFileToBase64(file: File): Promise<string> {
-  const buffer = await file.arrayBuffer();
-  const base64 = Buffer.from(buffer).toString('base64');
-  return `data:${file.type};base64,${base64}`;
 }

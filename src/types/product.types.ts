@@ -3,27 +3,51 @@ export type Discount = {
   percentage: number;
 };
 
-export type Gender = 'male' | 'female' | 'unisex';
+export type Gender = 'Men' | 'Women' | 'Unisex';
 
 export type VolumeOption = {
   ml: number;
   price: number;
-  stock: number;
 };
 
 export type Color = {
-  name: string;
-  code: string;
-  imageUrl: string;
+  id: string;
+  value: string;
+  color: string;
+  label: string;
 };
 
-export type Category = 'perfumes' | 'attars' | 'new-arrivals' | 'best-sellers';
+export type Category = 'Perfumes' | 'Attars' | 'New Arrivals' | 'Best Sellers';
+
+export type Fragrance =
+  | 'Floral'
+  | 'Woody'
+  | 'Citrus'
+  | 'Spicy'
+  | 'Musky'
+  | 'Sandalwood'
+  | 'Vanilla'
+  | 'Oriental'
+  | 'Gourmand'
+  | 'Chypre'
+  | 'Aquatic'
+  | 'Green'
+  | 'Fresh'
+  | 'Musk'
+  | 'Scented';
+
+export type AvailabilityStatus =
+  | 'In Stock'
+  | 'Out of Stock'
+  | 'Pre-Order'
+  | 'Low Stock';
 
 export type Product = {
   id: number;
   title: string;
   srcUrl: string;
   gallery?: string[];
+  brand: string;
   price: number;
   discountedPrice: number;
   discount: Discount;
@@ -37,6 +61,6 @@ export type Product = {
   quantity: number;
   isSale: boolean;
   specifications: Record<string, string>;
-  isInStock: boolean;
-  isOutOfStock: boolean;
+  fragrance: Fragrance[];
+  availabilityStatus: AvailabilityStatus;
 };
