@@ -4,12 +4,6 @@ import { prisma } from '@/lib/prisma';
 import { productSchema } from '@/lib/validations/product';
 import { ZodError } from 'zod';
 import { getSession } from '@/lib/auth';
-import {
-  Category,
-  Gender,
-  Fragrance,
-  AvailabilityStatus
-} from '@/types/product.types';
 
 export async function GET(request: Request) {
   try {

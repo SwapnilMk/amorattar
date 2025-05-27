@@ -186,10 +186,10 @@ const Header = ({ data }: { data: Product }) => {
                   key={option.ml}
                   onClick={() => handleVolumeChange(option.ml)}
                   className={cn(
-                    'rounded-full border px-4 py-2 text-sm',
+                    'rounded-full border px-4 py-2 text-sm transition-colors',
                     selectedVolume.ml === option.ml
-                      ? 'border-black bg-black text-white'
-                      : 'border-gray-200 hover:border-black'
+                      ? 'border-[#334958] bg-[#334958] text-white'
+                      : 'border-gray-200 hover:border-[#334958] hover:text-[#334958]'
                   )}
                 >
                   {option.ml}ml

@@ -114,7 +114,8 @@ const ProductCard = ({ data }: ProductCardProps) => {
         >
           <span className='relative z-10 flex items-center space-x-2'>
             <FaShoppingCart className='text-sm' />
-            <span>Add to Cart</span>
+            <span className='hidden sm:inline'>Add to Cart</span>
+            <span className='sm:hidden'>Cart</span>
           </span>
           <div className='absolute inset-0 -translate-x-full bg-white/20 transition-transform duration-300 group-hover:translate-x-0'></div>
         </Button>

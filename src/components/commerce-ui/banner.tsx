@@ -41,15 +41,16 @@ function Banner() {
           <h2 className='text-2xl font-bold text-amber-900 md:text-3xl lg:text-4xl'>
             Introducing the{' '}
             <span className='relative'>
-              Autumn Essentials
+              Royal Attar
               <span className='absolute bottom-0 left-0 h-0.5 w-full bg-amber-600'></span>
             </span>{' '}
             Collection
           </h2>
           <p className='max-w-lg text-amber-700'>
-            Our latest seasonal collection is now available. Discover premium
-            quality pieces designed for comfort and style that embrace the warm
-            colors of fall.
+            Discover our exquisite collection of handcrafted attars and
+            perfumes. Each fragrance is carefully distilled using traditional
+            methods, capturing the authentic scents of rare oud, rose, and
+            exotic spices.
           </p>
         </div>
         <div

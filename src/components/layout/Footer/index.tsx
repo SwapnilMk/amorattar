@@ -103,6 +103,7 @@ const Footer = () => {
               © 2025 AMORATTAR. Designed by{' '}
               <Link
                 href='https://github.com/swapnilMk/'
+                target='_blank'
                 className='font-medium text-black'
               >
                 SwapnilMk

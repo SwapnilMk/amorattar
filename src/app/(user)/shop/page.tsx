@@ -127,30 +127,57 @@ export default function ShopPage() {
               <PaginationPrevious
                 href='#'
                 className='border border-black/10'
-                onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                onClick={(e) => {
+                  if (currentPage === 1) return;
+                  setCurrentPage((prev) => Math.max(1, prev - 1));
+                }}
+                aria-disabled={currentPage === 1}
               />
               <PaginationContent>
                 {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                  (page) => (
-                    <PaginationItem key={page}>
-                      <PaginationLink
-                        href='#'
-                        className='text-sm font-medium text-black/50'
-                        isActive={currentPage === page}
-                        onClick={() => setCurrentPage(page)}
-                      >
-                        {page}
-                      </PaginationLink>
-                    </PaginationItem>
-                  )
+                  (page, index) => {
+                    // Show first page, last page, current page, and pages around current page
+                    if (
+                      page === 1 ||
+                      page === totalPages ||
+                      (page >= currentPage - 1 && page <= currentPage + 1)
+                    ) {
+                      return (
+                        <PaginationItem key={page}>
+                          <PaginationLink
+                            href='#'
+                            className='text-sm font-medium text-black/50'
+                            isActive={currentPage === page}
+                            onClick={() => setCurrentPage(page)}
+                          >
+                            {page}
+                          </PaginationLink>
+                        </PaginationItem>
+                      );
+                    }
+                    // Show ellipsis
+                    if (
+                      (page === 2 && currentPage > 3) ||
+                      (page === totalPages - 1 && currentPage < totalPages - 2)
+                    ) {
+                      return (
+                        <PaginationItem key={`ellipsis-${page}`}>
+                          <PaginationEllipsis />
+                        </PaginationItem>
+                      );
+                    }
+                    return null;
+                  }
                 )}
               </PaginationContent>
               <PaginationNext
                 href='#'
                 className='border border-black/10'
-                onClick={() =>
-                  setCurrentPage((prev) => Math.min(totalPages, prev + 1))
-                }
+                onClick={(e) => {
+                  if (currentPage === totalPages) return;
+                  setCurrentPage((prev) => Math.min(totalPages, prev + 1));
+                }}
+                aria-disabled={currentPage === totalPages}
               />
             </Pagination>
           </div>
