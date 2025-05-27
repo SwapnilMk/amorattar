@@ -1,16 +1,12 @@
 'use client';
 
 import { addToCart } from '@/lib/features/carts/cartsSlice';
-import { useAppDispatch, useAppSelector } from '@/lib/hooks/redux';
-import { RootState } from '@/lib/store';
+import { useAppDispatch } from '@/lib/hooks/redux';
 import { Product } from '@/types/product.types';
 import React from 'react';
 
 const AddToCartBtn = ({ data }: { data: Product & { quantity: number } }) => {
   const dispatch = useAppDispatch();
-  const { sizeSelection, colorSelection } = useAppSelector(
-    (state: RootState) => state.products
-  );
 
   return (
     <button
@@ -19,12 +15,15 @@ const AddToCartBtn = ({ data }: { data: Product & { quantity: number } }) => {
       onClick={() =>
         dispatch(
           addToCart({
-            id: data.id,
+            id: Number(data.id),
             name: data.title,
             srcUrl: data.srcUrl,
-            price: data.price,
-            attributes: [sizeSelection, colorSelection.name],
-            discount: data.discount,
+            price: data.selectedVolume.price,
+            attributes: [data.selectedColor.label],
+            discount: {
+              amount: data.discount,
+              percentage: data.discount
+            },
             quantity: data.quantity
           })
         )

@@ -1,5 +1,9 @@
-import BreadcrumbShop from '@/components/shop-page/BreadcrumbShop';
+'use client';
 
+import React, { useEffect, useState } from 'react';
+import { Product } from '@/types/product.types';
+import ProductListSec from '@/components/common/ProductListSec';
+import BreadcrumbShop from '@/components/shop-page/BreadcrumbShop';
 import {
   Select,
   SelectContent,
@@ -20,11 +24,56 @@ import {
   PaginationNext,
   PaginationPrevious
 } from '@/components/ui/pagination';
-import { relatedProductData } from '@/data/product';
-import { newArrivalsData } from '@/data/new-arrivals';
-import { topSellingData } from '@/data/top-selling';
 
 export default function ShopPage() {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [sortBy, setSortBy] = useState('most-popular');
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(
+          `/api/products?page=${currentPage}&sort=${sortBy}`
+        );
+        if (!response.ok) {
+          throw new Error('Failed to fetch products');
+        }
+        const data = await response.json();
+        setProducts(data.products);
+        setTotalPages(Math.ceil(data.total / data.perPage));
+      } catch (error) {
+        setError(
+          error instanceof Error ? error.message : 'Failed to fetch products'
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, [currentPage, sortBy]);
+
+  if (loading) {
+    return (
+      <div className='flex min-h-screen items-center justify-center'>
+        <div className='h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent'></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className='flex min-h-screen items-center justify-center'>
+        <p className='text-red-500'>{error}</p>
+      </div>
+    );
+  }
+
   return (
     <main className='pb-20'>
       <div className='mx-auto max-w-frame px-4 xl:px-0'>
@@ -41,16 +90,21 @@ export default function ShopPage() {
           <div className='flex w-full flex-col space-y-5'>
             <div className='flex flex-col lg:flex-row lg:justify-between'>
               <div className='flex items-center justify-between'>
-                <h1 className='text-2xl font-bold md:text-[32px]'>Casual</h1>
+                <h1 className='text-2xl font-bold md:text-[32px]'>
+                  All Products
+                </h1>
                 <MobileFilters />
               </div>
               <div className='flex flex-col sm:flex-row sm:items-center'>
                 <span className='mr-3 text-sm text-black/60 md:text-base'>
-                  Showing 1-10 of 100 Products
+                  Showing {products.length} Products
                 </span>
                 <div className='flex items-center'>
                   Sort by:{' '}
-                  <Select defaultValue='most-popular'>
+                  <Select
+                    defaultValue='most-popular'
+                    onValueChange={(value) => setSortBy(value)}
+                  >
                     <SelectTrigger className='w-fit border-none bg-transparent px-1.5 text-sm font-medium text-black shadow-none sm:text-base'>
                       <SelectValue />
                     </SelectTrigger>
@@ -64,73 +118,40 @@ export default function ShopPage() {
               </div>
             </div>
             <div className='grid w-full grid-cols-1 gap-4 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-3 lg:gap-5'>
-              {[
-                ...relatedProductData.slice(1, 4),
-                ...newArrivalsData.slice(1, 4),
-                ...topSellingData.slice(1, 4)
-              ].map((product) => (
+              {products.map((product) => (
                 <ProductCard key={product.id} data={product} />
               ))}
             </div>
             <hr className='border-t-black/10' />
             <Pagination className='justify-between'>
-              <PaginationPrevious href='#' className='border border-black/10' />
+              <PaginationPrevious
+                href='#'
+                className='border border-black/10'
+                onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+              />
               <PaginationContent>
-                <PaginationItem>
-                  <PaginationLink
-                    href='#'
-                    className='text-sm font-medium text-black/50'
-                    isActive
-                  >
-                    1
-                  </PaginationLink>
-                </PaginationItem>
-                <PaginationItem>
-                  <PaginationLink
-                    href='#'
-                    className='text-sm font-medium text-black/50'
-                  >
-                    2
-                  </PaginationLink>
-                </PaginationItem>
-                <PaginationItem className='hidden lg:block'>
-                  <PaginationLink
-                    href='#'
-                    className='text-sm font-medium text-black/50'
-                  >
-                    3
-                  </PaginationLink>
-                </PaginationItem>
-                <PaginationItem>
-                  <PaginationEllipsis className='text-sm font-medium text-black/50' />
-                </PaginationItem>
-                <PaginationItem className='hidden lg:block'>
-                  <PaginationLink
-                    href='#'
-                    className='text-sm font-medium text-black/50'
-                  >
-                    8
-                  </PaginationLink>
-                </PaginationItem>
-                <PaginationItem className='hidden sm:block'>
-                  <PaginationLink
-                    href='#'
-                    className='text-sm font-medium text-black/50'
-                  >
-                    9
-                  </PaginationLink>
-                </PaginationItem>
-                <PaginationItem>
-                  <PaginationLink
-                    href='#'
-                    className='text-sm font-medium text-black/50'
-                  >
-                    10
-                  </PaginationLink>
-                </PaginationItem>
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                  (page) => (
+                    <PaginationItem key={page}>
+                      <PaginationLink
+                        href='#'
+                        className='text-sm font-medium text-black/50'
+                        isActive={currentPage === page}
+                        onClick={() => setCurrentPage(page)}
+                      >
+                        {page}
+                      </PaginationLink>
+                    </PaginationItem>
+                  )
+                )}
               </PaginationContent>
-
-              <PaginationNext href='#' className='border border-black/10' />
+              <PaginationNext
+                href='#'
+                className='border border-black/10'
+                onClick={() =>
+                  setCurrentPage((prev) => Math.min(totalPages, prev + 1))
+                }
+              />
             </Pagination>
           </div>
         </div>

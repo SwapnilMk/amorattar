@@ -1,4 +1,6 @@
-import React from 'react';
+'use client';
+
+import React, { useEffect, useState } from 'react';
 import * as motion from 'framer-motion/client';
 import { cn } from '@/lib/utils';
 import { integralCF } from '@/styles/fonts';
@@ -13,11 +15,55 @@ import Link from 'next/link';
 
 type ProductListSecProps = {
   title: string;
-  data: Product[];
+  category?: string;
   viewAllLink?: string;
 };
 
-const ProductListSec = ({ title, data, viewAllLink }: ProductListSecProps) => {
+const ProductListSec = ({
+  title,
+  category,
+  viewAllLink
+}: ProductListSecProps) => {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const url = category
+          ? `/api/products?category=${category}`
+          : '/api/products';
+        const response = await fetch(url);
+        const data = await response.json();
+        setProducts(data.products);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, [category]);
+
+  if (loading) {
+    return (
+      <section className='mx-auto max-w-frame text-center'>
+        <h2
+          className={cn([
+            integralCF.className,
+            'mb-8 text-[32px] capitalize md:mb-14 md:text-5xl'
+          ])}
+        >
+          {title}
+        </h2>
+        <div className='flex justify-center'>
+          <div className='h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent'></div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className='mx-auto max-w-frame text-center'>
       <motion.h2
@@ -45,7 +91,7 @@ const ProductListSec = ({ title, data, viewAllLink }: ProductListSecProps) => {
           className='mb-6 w-full md:mb-9'
         >
           <CarouselContent className='mx-4 space-x-4 sm:space-x-5 xl:mx-0'>
-            {data.map((product) => (
+            {products.map((product) => (
               <CarouselItem
                 key={product.id}
                 className='w-full max-w-[198px] pl-0 sm:max-w-[295px]'

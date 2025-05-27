@@ -20,12 +20,15 @@ const ProductCard = ({ data }: ProductCardProps) => {
   const handleAddToCart = () => {
     dispatch(
       addToCart({
-        id: data.id,
+        id: Number(data.id),
         name: data.title,
         srcUrl: data.srcUrl,
-        price: data.price,
+        price: data.selectedVolume.price,
         attributes: [data.selectedColor.label],
-        discount: data.discount,
+        discount: {
+          amount: data.discount,
+          percentage: data.discount
+        },
         quantity: 1
       })
     );
@@ -38,11 +41,9 @@ const ProductCard = ({ data }: ProductCardProps) => {
   };
 
   const discountedPrice =
-    data.discount.percentage > 0
-      ? Math.round(data.price - (data.price * data.discount.percentage) / 100)
-      : data.discount.amount > 0
-        ? data.price - data.discount.amount
-        : data.price;
+    data.discount > 0
+      ? Math.round(data.selectedVolume.price * (1 - data.discount / 100))
+      : data.selectedVolume.price;
 
   return (
     <div className='group flex aspect-auto flex-col items-start rounded-lg border border-gray-100 p-4 transition-all hover:shadow-lg'>
@@ -91,14 +92,14 @@ const ProductCard = ({ data }: ProductCardProps) => {
           <span className='text-xl font-bold text-black'>
             ₹{discountedPrice}
           </span>
-          {(data.discount.percentage > 0 || data.discount.amount > 0) && (
+          {data.discount > 0 && (
             <span className='text-xl font-bold text-black/40 line-through'>
-              ₹{data.price}
+              ₹{data.selectedVolume.price}
             </span>
           )}
-          {data.discount.percentage > 0 && (
+          {data.discount > 0 && (
             <span className='rounded-full bg-[#FF3333]/10 px-2 py-1 text-xs font-medium text-[#FF3333]'>
-              {`-${data.discount.percentage}%`}
+              {`-${data.discount}%`}
             </span>
           )}
         </div>
