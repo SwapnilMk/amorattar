@@ -1,4 +1,6 @@
 export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { productSchema } from '@/lib/validations/product';
@@ -60,22 +62,37 @@ export async function GET(request: Request) {
       })
     ]);
 
-    return NextResponse.json({
-      products,
-      total,
-      perPage: limit,
-      pagination: {
+    return new NextResponse(
+      JSON.stringify({
+        products,
         total,
-        page,
-        limit,
-        pages: Math.ceil(total / limit)
+        perPage: limit,
+        pagination: {
+          total,
+          page,
+          limit,
+          pages: Math.ceil(total / limit)
+        }
+      }),
+      {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-store, no-cache, must-revalidate'
+        }
       }
-    });
+    );
   } catch (error) {
     console.error('Error fetching products:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch products' },
-      { status: 500 }
+    return new NextResponse(
+      JSON.stringify({ error: 'Failed to fetch products' }),
+      {
+        status: 500,
+        headers: {
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-store, no-cache, must-revalidate'
+        }
+      }
     );
   }
 }
