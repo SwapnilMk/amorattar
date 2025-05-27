@@ -12,12 +12,29 @@ import {
 import ProductCard from './ProductCard';
 import { Product } from '@/types/product.types';
 import Link from 'next/link';
+import { Skeleton } from '@/components/ui/skeleton';
 
 type ProductListSecProps = {
   title: string;
   category?: string;
   viewAllLink?: string;
 };
+
+const ProductSkeleton = () => (
+  <div className='flex aspect-auto flex-col items-start rounded-lg border border-gray-100 p-4'>
+    <div className='mb-2.5 aspect-square w-full overflow-hidden rounded-[13px] bg-[#F0EEED] lg:max-w-[295px] lg:rounded-[20px] xl:mb-4'>
+      <Skeleton className='h-full w-full' />
+    </div>
+    <Skeleton className='mb-1 h-4 w-20' />
+    <Skeleton className='mb-2 h-6 w-3/4' />
+    <Skeleton className='mb-2 h-4 w-24' />
+    <Skeleton className='mb-2 h-6 w-32' />
+    <div className='mt-auto flex w-full space-x-2'>
+      <Skeleton className='h-10 flex-1 rounded-full' />
+      <Skeleton className='h-10 w-10 rounded-full' />
+    </div>
+  </div>
+);
 
 const ProductListSec = ({
   title,
@@ -46,24 +63,6 @@ const ProductListSec = ({
     fetchProducts();
   }, [category]);
 
-  if (loading) {
-    return (
-      <section className='mx-auto max-w-frame text-center'>
-        <h2
-          className={cn([
-            integralCF.className,
-            'mb-8 text-[32px] capitalize md:mb-14 md:text-5xl'
-          ])}
-        >
-          {title}
-        </h2>
-        <div className='flex justify-center'>
-          <div className='h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent'></div>
-        </div>
-      </section>
-    );
-  }
-
   return (
     <section className='mx-auto max-w-frame text-center'>
       <motion.h2
@@ -91,14 +90,24 @@ const ProductListSec = ({
           className='mb-6 w-full md:mb-9'
         >
           <CarouselContent className='mx-4 space-x-4 sm:space-x-5 xl:mx-0'>
-            {products.map((product) => (
-              <CarouselItem
-                key={product.id}
-                className='w-full max-w-[198px] pl-0 sm:max-w-[295px]'
-              >
-                <ProductCard data={product} />
-              </CarouselItem>
-            ))}
+            {loading
+              ? // Show 4 skeleton items while loading
+                Array.from({ length: 4 }).map((_, index) => (
+                  <CarouselItem
+                    key={index}
+                    className='w-full max-w-[198px] pl-0 sm:max-w-[295px]'
+                  >
+                    <ProductSkeleton />
+                  </CarouselItem>
+                ))
+              : products.map((product) => (
+                  <CarouselItem
+                    key={product.id}
+                    className='w-full max-w-[198px] pl-0 sm:max-w-[295px]'
+                  >
+                    <ProductCard data={product} />
+                  </CarouselItem>
+                ))}
           </CarouselContent>
         </Carousel>
         {viewAllLink && (

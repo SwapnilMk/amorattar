@@ -16,7 +16,7 @@ const FragranceStyle = () => {
           transition={{ duration: 0.6 }}
           className={cn([
             integralCF.className,
-            'mb-8 text-[32px] capitalize leading-[36px] md:mb-14 md:text-5xl'
+            'mb-8 text-[32px] capitalize leading-[36px] text-[#273F4F] md:mb-14 md:text-5xl'
           ])}
         >
           Browse by Fragrance Style
@@ -31,12 +31,12 @@ const FragranceStyle = () => {
           <DressStyleCard
             title='Floral'
             url='/shop#floral'
-            className="h-[190px] bg-[url('/images/fragrance-style-floral.png')] md:max-w-[260px] lg:max-w-[360px] xl:max-w-[407px]"
+            className="h-[190px] bg-[url('/images/fragrances/floral.jpg')] bg-cover bg-center backdrop-blur-sm md:max-w-[260px] lg:max-w-[360px] xl:max-w-[407px]"
           />
           <DressStyleCard
             title='Woody'
             url='/shop#woody'
-            className="h-[190px] bg-[url('/images/fragrance-style-woody.png')] md:max-w-[684px]"
+            className="h-[190px] bg-[url('/images/fragrances/Woody.jpg')] bg-cover bg-center backdrop-blur-sm md:max-w-[684px]"
           />
         </motion.div>
         <motion.div
@@ -49,12 +49,12 @@ const FragranceStyle = () => {
           <DressStyleCard
             title='Citrus'
             url='/shop#citrus'
-            className="h-[190px] bg-[url('/images/fragrance-style-citrus.png')] md:max-w-[684px]"
+            className="h-[190px] bg-[url('/images/fragrances/Citrus.jpg')] bg-cover bg-center backdrop-blur-sm md:max-w-[684px]"
           />
           <DressStyleCard
             title='Oriental'
             url='/shop#oriental'
-            className="h-[190px] bg-[url('/images/fragrance-style-oriental.png')] md:max-w-[260px] lg:max-w-[360px] xl:max-w-[407px]"
+            className="h-[190px] bg-[url('/images/fragrances/Oriental.jpg')] bg-cover bg-center backdrop-blur-sm md:max-w-[260px] lg:max-w-[360px] xl:max-w-[407px]"
           />
         </motion.div>
       </section>
