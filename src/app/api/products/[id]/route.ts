@@ -19,7 +19,7 @@ export async function GET(
     const product = await prisma.product.findUnique({
       where: { id: params.id },
       include: {
-        productCategories: {
+        categories: {
           include: {
             category: true
           }
@@ -62,7 +62,7 @@ export async function PUT(
       const product = await prisma.product.findUnique({
         where: { id: params.id },
         include: {
-          productCategories: {
+          categories: {
             include: {
               category: true
             }
@@ -87,13 +87,12 @@ export async function PUT(
         where: { id: product.id },
         data: {
           title: validatedData.title,
-          slug: validatedData.slug,
           srcUrl: validatedData.srcUrl,
           gallery: validatedData.gallery,
           brand: validatedData.brand,
           price: validatedData.price,
           discountedPrice: validatedData.discountedPrice,
-          discount: validatedData.discount.amount, // Store only the amount
+          discount: validatedData.discount,
           rating: validatedData.rating,
           description: validatedData.description,
           gender: validatedData.gender,
@@ -117,7 +116,6 @@ export async function PUT(
               price: option.price
             }))
           },
-          quantity: validatedData.quantity,
           isSale: validatedData.isSale,
           specifications: {
             set: Object.entries(validatedData.specifications).map(
@@ -129,7 +127,7 @@ export async function PUT(
           },
           fragrance: validatedData.fragrance,
           availabilityStatus: validatedData.availabilityStatus,
-          productCategories: {
+          categories: {
             create: validatedData.categories.map((category) => ({
               category: {
                 connectOrCreate: {
@@ -144,7 +142,7 @@ export async function PUT(
           }
         },
         include: {
-          productCategories: {
+          categories: {
             include: {
               category: true
             }
@@ -188,7 +186,7 @@ export async function DELETE(
     const product = await prisma.product.findUnique({
       where: { id: params.id },
       include: {
-        productCategories: true
+        categories: true
       }
     });
 

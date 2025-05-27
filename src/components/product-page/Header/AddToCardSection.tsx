@@ -17,12 +17,15 @@ const AddToCardSection = ({ data }: AddToCardSectionProps) => {
   const handleAddToCart = () => {
     dispatch(
       addToCart({
-        id: data.id,
+        id: Number(data.id),
         name: data.title,
         srcUrl: data.srcUrl,
-        price: data.price,
+        price: data.selectedVolume.price,
         attributes: [data.selectedColor.label],
-        discount: data.discount,
+        discount: {
+          amount: data.discount,
+          percentage: data.discount
+        },
         quantity: 1
       })
     );
