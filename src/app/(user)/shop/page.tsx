@@ -40,13 +40,21 @@ export default function ShopPage() {
         const response = await fetch(
           `/api/products?page=${currentPage}&sort=${sortBy}`
         );
+
         if (!response.ok) {
-          throw new Error('Failed to fetch products');
+          throw new Error(`HTTP error! status: ${response.status}`);
         }
+
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+          throw new Error('Server returned non-JSON response');
+        }
+
         const data = await response.json();
         setProducts(data.products);
         setTotalPages(Math.ceil(data.total / data.perPage));
       } catch (error) {
+        console.error('Error fetching products:', error);
         setError(
           error instanceof Error ? error.message : 'Failed to fetch products'
         );
