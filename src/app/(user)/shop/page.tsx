@@ -38,7 +38,14 @@ export default function ShopPage() {
       try {
         setLoading(true);
         const response = await fetch(
-          `/api/products?page=${currentPage}&sort=${sortBy}`
+          `/api/products?page=${currentPage}&sort=${sortBy}`,
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            cache: 'no-store'
+          }
         );
 
         if (!response.ok) {
