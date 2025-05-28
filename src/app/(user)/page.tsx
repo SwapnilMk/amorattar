@@ -20,7 +20,7 @@ export default function Home() {
       try {
         const [newArrivalsRes, topSellingRes] = await Promise.all([
           fetch('/api/products?category=new-arrivals'),
-          fetch('/api/products?category=top-selling')
+          fetch('/api/products?category=best-sellers')
         ]);
 
         const [newArrivalsData, topSellingData] = await Promise.all([
@@ -66,9 +66,9 @@ export default function Home() {
         </div>
         <div className='mb-[50px] sm:mb-20'>
           <ProductListSec
-            title='top selling'
-            category='top-selling'
-            viewAllLink='/shop#top-selling'
+            title='Best Sellers'
+            category='best-sellers'
+            viewAllLink='/shop#best-sellers'
           />
         </div>
         <div className='mx-auto max-w-frame px-4 py-10 xl:px-0'>

@@ -32,8 +32,10 @@ const SizeSection = () => {
                 key={index}
                 type='button'
                 className={cn([
-                  'm-1 flex max-h-[39px] items-center justify-center rounded-full bg-[#F0F0F0] px-5 py-2.5 text-sm',
-                  selected === size && 'bg-black font-medium text-white'
+                  'm-1 flex max-h-[39px] items-center justify-center rounded-full bg-[#F9CB43]/20 px-5 py-2.5 text-sm transition-all duration-300',
+                  selected === size
+                    ? 'bg-[#F9CB43] font-medium text-black'
+                    : 'hover:bg-[#F9CB43]/30'
                 ])}
                 onClick={() => setSelected(size)}
               >
