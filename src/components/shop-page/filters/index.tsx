@@ -21,9 +21,10 @@ const Filters = () => {
       <DressStyleSection />
       <Button
         type='button'
-        className='h-12 w-full rounded-full bg-black py-4 text-sm font-medium'
+        className='group relative h-12 w-full overflow-hidden rounded-full bg-[#F9CB43] py-4 text-sm font-medium text-black transition-all duration-300 hover:bg-[#F9CB43]/90 hover:text-black'
       >
-        Apply Filter
+        <span className='relative z-10'>Apply Filter</span>
+        <div className='absolute inset-0 -translate-x-full bg-white/20 transition-transform duration-300 group-hover:translate-x-0'></div>
       </Button>
     </>
   );
