@@ -6,8 +6,9 @@ import SessionProvider from '@/components/providers/SessionProvider';
 import { getSession } from '@/lib/auth';
 
 export const metadata: Metadata = {
-  title: 'amorattar',
-  description: 'Premium attar and perfume shop',
+  title: 'Amorattar - Premium Attar and Perfume Shop',
+  description:
+    'Discover our exclusive collection of premium attars and perfumes. Shop authentic fragrances with worldwide shipping.',
   manifest: '/favicon/site.webmanifest',
   icons: {
     icon: [
@@ -26,6 +27,31 @@ export const metadata: Metadata = {
         url: '/favicon/android-chrome-512x512.png'
       }
     ]
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'en_US',
+    url: 'https://amorattar.com',
+    siteName: 'Amorattar',
+    title: 'Amorattar - Premium Attar and Perfume Shop',
+    description:
+      'Discover our exclusive collection of premium attars and perfumes. Shop authentic fragrances with worldwide shipping.',
+    images: [
+      {
+        url: '/og-image.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Amorattar - Premium Attar and Perfume Shop'
+      }
+    ]
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Amorattar - Premium Attar and Perfume Shop',
+    description:
+      'Discover our exclusive collection of premium attars and perfumes. Shop authentic fragrances with worldwide shipping.',
+    images: ['/og-image.jpg'],
+    creator: '@amorattar'
   },
   appleWebApp: {
     capable: true,

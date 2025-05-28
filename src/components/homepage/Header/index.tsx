@@ -111,7 +111,7 @@ const Header = () => {
             whileInView={{ y: '0', opacity: 1, rotate: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 2.3, duration: 0.8 }}
-            className="relative min-h-[448px] bg-[url('/images/header-res-attars.png')] bg-cover bg-top bg-no-repeat md:min-h-[428px] md:bg-[url('/images/header-attars.png')] md:px-4 xl:bg-[center_top_-1.6rem]"
+            className='relative min-h-[448px] bg-cover bg-top bg-no-repeat md:min-h-[428px] md:px-4 xl:bg-[center_top_-1.6rem]'
           >
             <Image
               priority
