@@ -1,7 +1,9 @@
+'use client';
+
 import { cn } from '@/lib/utils';
 import { dancingScript } from '@/styles/fonts';
 import Link from 'next/link';
-import React from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { NavMenu } from '../navbar.types';
 import { MenuList } from './MenuList';
 import {
@@ -13,6 +15,9 @@ import Image from 'next/image';
 import InputGroup from '@/components/ui/input-group';
 import ResTopNavbar from './ResTopNavbar';
 import CartBtn from './CartBtn';
+import SearchResults from './SearchResults';
+import { useDebounce } from '@/hooks/useDebounce';
+import { useRouter } from 'next/navigation';
 
 const data: NavMenu = [
   {
@@ -83,6 +88,71 @@ const data: NavMenu = [
 ];
 
 const TopNavbar = () => {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [showResults, setShowResults] = useState(false);
+  const searchContainerRef = useRef<HTMLDivElement>(null);
+  const debouncedSearchQuery = useDebounce(searchQuery, 300);
+  const router = useRouter();
+
+  const handleSearch = useCallback(async (query: string) => {
+    if (!query.trim()) {
+      setSearchResults([]);
+      return;
+    }
+
+    setIsSearching(true);
+    try {
+      const response = await fetch(
+        `/api/search?q=${encodeURIComponent(query)}`
+      );
+      const data = await response.json();
+      setSearchResults(data.products);
+    } catch (error) {
+      console.error('Error searching products:', error);
+      setSearchResults([]);
+    } finally {
+      setIsSearching(false);
+    }
+  }, []);
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+      setShowResults(false);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (searchQuery.trim()) {
+        router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+        setShowResults(false);
+      }
+    }
+  };
+
+  useEffect(() => {
+    handleSearch(debouncedSearchQuery);
+  }, [debouncedSearchQuery, handleSearch]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        searchContainerRef.current &&
+        !searchContainerRef.current.contains(event.target as Node)
+      ) {
+        setShowResults(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   return (
     <nav className='sticky top-0 z-20 bg-white'>
       <div className='relative mx-auto flex max-w-frame items-center justify-between px-4 py-2 md:py-6 xl:px-0'>
@@ -154,24 +224,40 @@ const TopNavbar = () => {
             </NavigationMenu>
           </div>
           <div className='flex items-center'>
-            <InputGroup className='mr-3 bg-[#F0F0F0] lg:mr-10'>
-              <InputGroup.Text>
-                <Image
-                  priority
-                  src='/icons/search.svg'
-                  height={20}
-                  width={20}
-                  alt='search'
-                  className='min-h-5 min-w-5'
+            <div ref={searchContainerRef} className='relative mr-3 lg:mr-10'>
+              <InputGroup className='w-[300px] bg-[#F0F0F0] lg:w-[400px]'>
+                <InputGroup.Text>
+                  <Image
+                    priority
+                    src='/icons/search.svg'
+                    height={20}
+                    width={20}
+                    alt='search'
+                    className='min-h-5 min-w-5'
+                  />
+                </InputGroup.Text>
+                <InputGroup.Input
+                  type='search'
+                  name='search'
+                  placeholder='Search for perfumes and attar...'
+                  className='bg-transparent placeholder:text-black/40'
+                  value={searchQuery}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                    setShowResults(true);
+                  }}
+                  onKeyDown={handleKeyDown}
+                  onFocus={() => setShowResults(true)}
                 />
-              </InputGroup.Text>
-              <InputGroup.Input
-                type='search'
-                name='search'
-                placeholder='Search for perfumes and attar...'
-                className='bg-transparent placeholder:text-black/40'
-              />
-            </InputGroup>
+              </InputGroup>
+              {showResults && (
+                <SearchResults
+                  results={searchResults}
+                  isLoading={isSearching}
+                  onClose={() => setShowResults(false)}
+                />
+              )}
+            </div>
             <CartBtn />
           </div>
         </div>

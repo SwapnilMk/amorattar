@@ -23,11 +23,16 @@ const ProductCard = ({ data }: ProductCardProps) => {
         id: data.id,
         title: data.title,
         srcUrl: data.srcUrl,
-        price: data.selectedVolume.price,
+        price: data.selectedVolume ? data.selectedVolume.price : data.price,
         discountedPrice:
           data.discount > 0
-            ? Math.round(data.selectedVolume.price * (1 - data.discount / 100))
-            : data.selectedVolume.price,
+            ? Math.round(
+                (data.selectedVolume ? data.selectedVolume.price : data.price) *
+                  (1 - data.discount / 100)
+              )
+            : data.selectedVolume
+              ? data.selectedVolume.price
+              : data.price,
         discount: data.discount,
         quantity: 1,
         selectedColor: data.selectedColor,
@@ -42,10 +47,13 @@ const ProductCard = ({ data }: ProductCardProps) => {
     window.open(whatsappUrl, '_blank');
   };
 
-  const discountedPrice =
-    data.discount > 0
+  const discountedPrice = data.selectedVolume
+    ? data.discount > 0
       ? Math.round(data.selectedVolume.price * (1 - data.discount / 100))
-      : data.selectedVolume.price;
+      : data.selectedVolume.price
+    : data.discount > 0
+      ? Math.round(data.price * (1 - data.discount / 100))
+      : data.price;
 
   return (
     <div className='group flex aspect-auto flex-col items-start rounded-lg border border-gray-100 p-4 transition-all hover:shadow-lg'>
@@ -96,7 +104,7 @@ const ProductCard = ({ data }: ProductCardProps) => {
           </span>
           {data.discount > 0 && (
             <span className='text-xl font-bold text-black/40 line-through'>
-              ₹{data.selectedVolume.price}
+              ₹{data.selectedVolume ? data.selectedVolume.price : data.price}
             </span>
           )}
           {data.discount > 0 && (
