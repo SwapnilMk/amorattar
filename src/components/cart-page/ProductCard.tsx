@@ -21,10 +21,16 @@ type ProductCardProps = {
 const ProductCard = ({ data }: ProductCardProps) => {
   const dispatch = useAppDispatch();
 
+  if (!data || !data.title) {
+    return null;
+  }
+
+  const productSlug = data.title.toLowerCase().replace(/\s+/g, '-');
+
   return (
     <div className='flex items-start space-x-4'>
       <Link
-        href={`/shop/product/${data.id}/${data.name.split(' ').join('-')}`}
+        href={`/shop/product/${data.id}/${productSlug}`}
         className='aspect-square w-full min-w-[100px] max-w-[100px] overflow-hidden rounded-lg bg-[#F0EEED] sm:max-w-[124px]'
       >
         <Image
@@ -32,17 +38,17 @@ const ProductCard = ({ data }: ProductCardProps) => {
           width={124}
           height={124}
           className='h-full w-full rounded-md object-cover transition-all duration-500 hover:scale-110'
-          alt={data.name}
+          alt={data.title}
           priority
         />
       </Link>
       <div className='flex w-full flex-col self-stretch'>
         <div className='flex items-center justify-between'>
           <Link
-            href={`/shop/product/${data.id}/${data.name.split(' ').join('-')}`}
+            href={`/shop/product/${data.id}/${productSlug}`}
             className='text-base font-bold text-black xl:text-xl'
           >
-            {data.name}
+            {data.title}
           </Link>
           <Button
             variant='ghost'
@@ -52,7 +58,8 @@ const ProductCard = ({ data }: ProductCardProps) => {
               dispatch(
                 remove({
                   id: data.id,
-                  attributes: data.attributes,
+                  selectedColor: data.selectedColor,
+                  selectedVolume: data.selectedVolume,
                   quantity: data.quantity
                 })
               )
@@ -62,54 +69,37 @@ const ProductCard = ({ data }: ProductCardProps) => {
           </Button>
         </div>
         <div className='-mt-1'>
-          <span className='mr-1 text-xs text-black md:text-sm'>Size:</span>
+          <span className='mr-1 text-xs text-black md:text-sm'>Volume:</span>
           <span className='text-xs text-black/60 md:text-sm'>
-            {data.attributes[0]}
+            {data.selectedVolume.ml}ml
           </span>
         </div>
         <div className='-mt-1.5 mb-auto'>
           <span className='mr-1 text-xs text-black md:text-sm'>Color:</span>
           <span className='text-xs text-black/60 md:text-sm'>
-            {data.attributes[1]}
+            {data.selectedColor.label}
           </span>
         </div>
         <div className='flex flex-wrap items-center justify-between'>
           <div className='flex items-center space-x-[5px] xl:space-x-2.5'>
-            {data.discount.percentage > 0 ? (
+            {data.discount > 0 ? (
               <span className='text-xl font-bold text-black xl:text-2xl'>
-                {`$${Math.round(
-                  data.price - (data.price * data.discount.percentage) / 100
-                )}`}
-              </span>
-            ) : data.discount.amount > 0 ? (
-              <span className='text-xl font-bold text-black xl:text-2xl'>
-                {`$${data.price - data.discount.amount}`}
+                ₹{data.discountedPrice.toFixed(2)}
               </span>
             ) : (
               <span className='text-xl font-bold text-black xl:text-2xl'>
-                ${data.price}
+                ₹{data.price.toFixed(2)}
               </span>
             )}
-            {data.discount.percentage > 0 && (
+            {data.discount > 0 && (
               <span className='text-xl font-bold text-black/40 line-through xl:text-2xl'>
-                ${data.price}
+                ₹{data.price.toFixed(2)}
               </span>
             )}
-            {data.discount.amount > 0 && (
-              <span className='text-xl font-bold text-black/40 line-through xl:text-2xl'>
-                ${data.price}
-              </span>
-            )}
-            {data.discount.percentage > 0 ? (
+            {data.discount > 0 && (
               <span className='rounded-full bg-[#FF3333]/10 px-3.5 py-1.5 text-[10px] font-medium text-[#FF3333] xl:text-xs'>
-                {`-${data.discount.percentage}%`}
+                {`-${data.discount}%`}
               </span>
-            ) : (
-              data.discount.amount > 0 && (
-                <span className='rounded-full bg-[#FF3333]/10 px-3.5 py-1.5 text-[10px] font-medium text-[#FF3333] xl:text-xs'>
-                  {`-$${data.discount.amount}`}
-                </span>
-              )
             )}
           </div>
           <CartCounter
@@ -120,12 +110,17 @@ const ProductCard = ({ data }: ProductCardProps) => {
                 ? dispatch(
                     remove({
                       id: data.id,
-                      attributes: data.attributes,
+                      selectedColor: data.selectedColor,
+                      selectedVolume: data.selectedVolume,
                       quantity: data.quantity
                     })
                   )
                 : dispatch(
-                    removeCartItem({ id: data.id, attributes: data.attributes })
+                    removeCartItem({ 
+                      id: data.id, 
+                      selectedColor: data.selectedColor,
+                      selectedVolume: data.selectedVolume
+                    })
                   )
             }
             isZeroDelete
