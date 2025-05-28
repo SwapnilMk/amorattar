@@ -2,11 +2,15 @@
   "rewrites": [
     {
       "source": "/shop/product/:id/:slug",
-      "destination": "/shop/product/[...slug]"
+      "destination": "/(user)/shop/product/[...slug]"
     },
     {
       "source": "/shop",
-      "destination": "/shop"
+      "destination": "/(user)/shop"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/"
     }
   ]
 }
