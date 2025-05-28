@@ -116,8 +116,8 @@ const ProductCard = ({ data }: ProductCardProps) => {
                     })
                   )
                 : dispatch(
-                    removeCartItem({ 
-                      id: data.id, 
+                    removeCartItem({
+                      id: data.id,
                       selectedColor: data.selectedColor,
                       selectedVolume: data.selectedVolume
                     })

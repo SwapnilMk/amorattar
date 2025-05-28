@@ -53,29 +53,29 @@ export default function CartPage() {
   const renderCartContent = () => {
     if (isLoading) {
       return (
-        <div className="space-y-4">
-          <Skeleton className="h-32 w-full" />
-          <Skeleton className="h-32 w-full" />
-          <Skeleton className="h-32 w-full" />
+        <div className='space-y-4'>
+          <Skeleton className='h-32 w-full' />
+          <Skeleton className='h-32 w-full' />
+          <Skeleton className='h-32 w-full' />
         </div>
       );
     }
 
     if (!items.length) {
       return (
-        <div className="mt-32 flex flex-col items-center text-gray-300">
-          <TbBasketExclamation strokeWidth={1} className="text-6xl" />
-          <span className="mb-4 block">Your shopping cart is empty.</span>
-          <Button 
-            className="group relative flex items-center justify-center space-x-2 overflow-hidden rounded-full bg-[#F9CB43] px-6 py-3 text-black transition-all duration-300 hover:bg-[#F9CB43]/90"
+        <div className='mt-32 flex flex-col items-center text-gray-300'>
+          <TbBasketExclamation strokeWidth={1} className='text-6xl' />
+          <span className='mb-4 block'>Your shopping cart is empty.</span>
+          <Button
+            className='group relative flex items-center justify-center space-x-2 overflow-hidden rounded-full bg-[#F9CB43] px-6 py-3 text-black transition-all duration-300 hover:bg-[#F9CB43]/90'
             asChild
           >
-            <Link href="/shop">
-              <span className="relative z-10 flex items-center space-x-2">
-                <FaArrowRight className="mr-2 transition-all group-hover:translate-x-1" />
+            <Link href='/shop'>
+              <span className='relative z-10 flex items-center space-x-2'>
+                <FaArrowRight className='mr-2 transition-all group-hover:translate-x-1' />
                 <span>Continue Shopping</span>
               </span>
-              <div className="absolute inset-0 -translate-x-full bg-white/20 transition-transform duration-300 group-hover:translate-x-0"></div>
+              <div className='absolute inset-0 -translate-x-full bg-white/20 transition-transform duration-300 group-hover:translate-x-0'></div>
             </Link>
           </Button>
         </div>
@@ -93,66 +93,70 @@ export default function CartPage() {
         >
           your cart
         </h2>
-        <div className="flex flex-col items-start space-y-5 lg:flex-row lg:space-x-5 lg:space-y-0">
-          <div className="w-full flex-col space-y-4 rounded-[20px] border border-black/10 p-3.5 md:space-y-6 md:px-6">
+        <div className='flex flex-col items-start space-y-5 lg:flex-row lg:space-x-5 lg:space-y-0'>
+          <div className='w-full flex-col space-y-4 rounded-[20px] border border-black/10 p-3.5 md:space-y-6 md:px-6'>
             {items.map((product, idx, arr) => (
               <React.Fragment key={product.id}>
                 <ProductCard data={product} />
-                {arr.length - 1 !== idx && <hr className="border-t-black/10" />}
+                {arr.length - 1 !== idx && <hr className='border-t-black/10' />}
               </React.Fragment>
             ))}
           </div>
-          <div className="w-full flex-col space-y-4 rounded-[20px] border border-black/10 p-5 md:space-y-6 md:px-6 lg:max-w-[505px]">
-            <h6 className="text-xl font-bold text-black md:text-2xl">
+          <div className='w-full flex-col space-y-4 rounded-[20px] border border-black/10 p-5 md:space-y-6 md:px-6 lg:max-w-[505px]'>
+            <h6 className='text-xl font-bold text-black md:text-2xl'>
               Order Summary
             </h6>
-            <div className="flex flex-col space-y-5">
-              <div className="flex items-center justify-between">
-                <span className="text-black/60 md:text-xl">Subtotal</span>
-                <span className="font-bold md:text-xl">₹{formatPrice(totalPrice)}</span>
+            <div className='flex flex-col space-y-5'>
+              <div className='flex items-center justify-between'>
+                <span className='text-black/60 md:text-xl'>Subtotal</span>
+                <span className='font-bold md:text-xl'>
+                  ₹{formatPrice(totalPrice)}
+                </span>
               </div>
-              {totalPrice && adjustedTotalPrice && totalPrice > adjustedTotalPrice && (
-                <div className="flex items-center justify-between">
-                  <span className="text-black/60 md:text-xl">
-                    Discount (-
-                    {Math.round(
-                      ((totalPrice - adjustedTotalPrice) / totalPrice) * 100
-                    )}
-                    %)
-                  </span>
-                  <span className="font-bold text-red-600 md:text-xl">
-                    -₹{formatPrice(totalPrice - adjustedTotalPrice)}
-                  </span>
-                </div>
-              )}
-              <div className="flex items-center justify-between">
-                <span className="text-black/60 md:text-xl">Delivery Fee</span>
-                <span className="font-bold md:text-xl">Free</span>
+              {totalPrice &&
+                adjustedTotalPrice &&
+                totalPrice > adjustedTotalPrice && (
+                  <div className='flex items-center justify-between'>
+                    <span className='text-black/60 md:text-xl'>
+                      Discount (-
+                      {Math.round(
+                        ((totalPrice - adjustedTotalPrice) / totalPrice) * 100
+                      )}
+                      %)
+                    </span>
+                    <span className='font-bold text-red-600 md:text-xl'>
+                      -₹{formatPrice(totalPrice - adjustedTotalPrice)}
+                    </span>
+                  </div>
+                )}
+              <div className='flex items-center justify-between'>
+                <span className='text-black/60 md:text-xl'>Delivery Fee</span>
+                <span className='font-bold md:text-xl'>Free</span>
               </div>
-              <hr className="border-t-black/10" />
-              <div className="flex items-center justify-between">
-                <span className="text-black md:text-xl">Total</span>
-                <span className="text-xl font-bold md:text-2xl">
+              <hr className='border-t-black/10' />
+              <div className='flex items-center justify-between'>
+                <span className='text-black md:text-xl'>Total</span>
+                <span className='text-xl font-bold md:text-2xl'>
                   ₹{formatPrice(adjustedTotalPrice)}
                 </span>
               </div>
             </div>
             <Button
               onClick={handleWhatsAppClick}
-              className="group h-[54px] w-full rounded-full bg-[#25D366] py-4 text-sm font-medium text-white transition-colors hover:bg-[#128C7E] md:h-[60px] md:text-base"
+              className='group h-[54px] w-full rounded-full bg-[#25D366] py-4 text-sm font-medium text-white transition-colors hover:bg-[#128C7E] md:h-[60px] md:text-base'
               disabled={!items.length}
             >
-              <FaWhatsapp className="mr-2 text-lg transition-all group-hover:translate-x-1" />
+              <FaWhatsapp className='mr-2 text-lg transition-all group-hover:translate-x-1' />
               <span>DM Order on WhatsApp</span>
             </Button>
             <Button
-              variant="outline"
-              className="group h-[54px] w-full rounded-full py-4 text-sm font-medium transition-colors hover:bg-black hover:text-white md:h-[60px] md:text-base"
+              variant='outline'
+              className='group h-[54px] w-full rounded-full py-4 text-sm font-medium transition-colors hover:bg-black hover:text-white md:h-[60px] md:text-base'
               asChild
             >
-              <Link href="/shop">
+              <Link href='/shop'>
                 <span>Continue Shopping</span>
-                <FaArrowRight className="ml-2 transition-all group-hover:translate-x-1" />
+                <FaArrowRight className='ml-2 transition-all group-hover:translate-x-1' />
               </Link>
             </Button>
           </div>
@@ -162,8 +166,8 @@ export default function CartPage() {
   };
 
   return (
-    <main className="pb-20">
-      <div className="mx-auto max-w-frame px-4 xl:px-0">
+    <main className='pb-20'>
+      <div className='mx-auto max-w-frame px-4 xl:px-0'>
         {renderCartContent()}
       </div>
     </main>
