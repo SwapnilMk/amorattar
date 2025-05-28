@@ -1,16 +1,3 @@
 {
-  "rewrites": [
-    {
-      "source": "/shop/product/:id/:slug",
-      "destination": "/shop/product/[...slug]"
-    },
-    {
-      "source": "/shop",
-      "destination": "/shop"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/"
-    }
-  ]
+  "rewrites": []
 }
