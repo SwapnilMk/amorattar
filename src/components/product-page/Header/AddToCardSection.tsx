@@ -21,9 +21,10 @@ const AddToCardSection = ({ data }: AddToCardSectionProps) => {
         title: data.title,
         srcUrl: data.srcUrl,
         price: data.selectedVolume.price,
-        discountedPrice: data.discount > 0 
-          ? Math.round(data.selectedVolume.price * (1 - data.discount / 100))
-          : data.selectedVolume.price,
+        discountedPrice:
+          data.discount > 0
+            ? Math.round(data.selectedVolume.price * (1 - data.discount / 100))
+            : data.selectedVolume.price,
         discount: data.discount,
         quantity: 1,
         selectedColor: data.selectedColor,

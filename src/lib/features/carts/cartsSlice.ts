@@ -8,9 +8,8 @@ const calcAdjustedTotalPrice = (
   quantity?: number
 ): number => {
   return (
-    (data.discount > 0
-      ? data.discountedPrice
-      : data.price) * (quantity ? quantity : data.quantity)
+    (data.discount > 0 ? data.discountedPrice : data.price) *
+    (quantity ? quantity : data.quantity)
   );
 };
 
@@ -137,5 +136,6 @@ const cartsSlice = createSlice({
   }
 });
 
-export const { addToCart, removeCartItem, remove, clearCart } = cartsSlice.actions;
+export const { addToCart, removeCartItem, remove, clearCart } =
+  cartsSlice.actions;
 export default cartsSlice.reducer;
