@@ -5,6 +5,10 @@
       "destination": "/shop/product/[...slug]"
     },
     {
+      "source": "/shop",
+      "destination": "/shop"
+    },
+    {
       "source": "/(.*)",
       "destination": "/"
     }
