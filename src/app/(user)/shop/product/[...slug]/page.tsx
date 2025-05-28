@@ -23,25 +23,29 @@ export default function ProductPage({
         // The first part of the slug array should be the product ID
         const productId = params.slug[0];
         if (!productId) {
+          console.error('Product ID is missing from URL');
           throw new Error('Product ID is required');
         }
 
+        console.log('Fetching product with ID:', productId);
         const response = await fetch(`/api/products/${productId}`, {
           method: 'GET',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
           },
           cache: 'no-store'
         });
 
         if (!response.ok) {
+          console.error('Failed to fetch product:', response.status, response.statusText);
           if (response.status === 404) {
             notFound();
           }
-          throw new Error('Failed to fetch product');
+          throw new Error(`Failed to fetch product: ${response.statusText}`);
         }
 
         const data = await response.json();
+        console.log('Product data received:', data);
         setProductData(data);
       } catch (error) {
         console.error('Error fetching product:', error);
@@ -65,6 +69,7 @@ export default function ProductPage({
   }
 
   if (error || !productData) {
+    console.error('Product not found or error occurred:', error);
     notFound();
   }
 
