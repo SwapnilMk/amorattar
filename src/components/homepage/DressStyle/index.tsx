@@ -31,7 +31,7 @@ const FragranceStyle = () => {
           <DressStyleCard
             title='Floral'
             url='/shop#floral'
-            className="h-[190px] bg-[url('/images/fragrances/floral.jpg')] bg-cover bg-center backdrop-blur-sm md:max-w-[260px] lg:max-w-[360px] xl:max-w-[407px]"
+            className="h-[190px] bg-[url('/images/fragrances/Floral.jpg')] bg-cover bg-center backdrop-blur-sm md:max-w-[260px] lg:max-w-[360px] xl:max-w-[407px]"
           />
           <DressStyleCard
             title='Woody'

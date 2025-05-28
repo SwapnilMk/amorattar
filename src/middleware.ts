@@ -18,14 +18,18 @@ export async function middleware(request: NextRequest) {
     );
 
     // Check if it's a protected API route
-    const isProtectedRoute = request.nextUrl.pathname.startsWith('/api/admin') ||
+    const isProtectedRoute =
+      request.nextUrl.pathname.startsWith('/api/admin') ||
       request.nextUrl.pathname.startsWith('/api/dashboard') ||
       request.nextUrl.pathname.startsWith('/api/orders');
 
     if (isProtectedRoute) {
       const token = request.cookies.get('token')?.value;
       if (!token) {
-        return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+        return NextResponse.json(
+          { error: 'Not authenticated' },
+          { status: 401 }
+        );
       }
 
       const payload = await verifyJWT(token);

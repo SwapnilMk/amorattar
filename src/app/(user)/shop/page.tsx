@@ -42,7 +42,7 @@ export default function ShopPage() {
           {
             method: 'GET',
             headers: {
-              'Content-Type': 'application/json',
+              'Content-Type': 'application/json'
             },
             cache: 'no-store'
           }
