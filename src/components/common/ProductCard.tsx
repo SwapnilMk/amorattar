@@ -20,16 +20,17 @@ const ProductCard = ({ data }: ProductCardProps) => {
   const handleAddToCart = () => {
     dispatch(
       addToCart({
-        id: Number(data.id),
-        name: data.title,
+        id: data.id,
+        title: data.title,
         srcUrl: data.srcUrl,
         price: data.selectedVolume.price,
-        attributes: [data.selectedColor.label],
-        discount: {
-          amount: data.discount,
-          percentage: data.discount
-        },
-        quantity: 1
+        discountedPrice: data.discount > 0 
+          ? Math.round(data.selectedVolume.price * (1 - data.discount / 100))
+          : data.selectedVolume.price,
+        discount: data.discount,
+        quantity: 1,
+        selectedColor: data.selectedColor,
+        selectedVolume: data.selectedVolume
       })
     );
   };

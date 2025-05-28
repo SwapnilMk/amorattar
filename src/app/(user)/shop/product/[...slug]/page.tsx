@@ -31,13 +31,17 @@ export default function ProductPage({
         const response = await fetch(`/api/products/${productId}`, {
           method: 'GET',
           headers: {
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/json'
           },
           cache: 'no-store'
         });
 
         if (!response.ok) {
-          console.error('Failed to fetch product:', response.status, response.statusText);
+          console.error(
+            'Failed to fetch product:',
+            response.status,
+            response.statusText
+          );
           if (response.status === 404) {
             notFound();
           }

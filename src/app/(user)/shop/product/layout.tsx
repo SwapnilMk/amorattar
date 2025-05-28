@@ -4,4 +4,4 @@ export default function ProductLayout({
   children: React.ReactNode;
 }) {
   return <>{children}</>;
-} 
+}

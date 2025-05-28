@@ -1,14 +1,14 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { FaMinus, FaPlus } from 'react-icons/fa6';
 import { cn } from '@/lib/utils';
 
 type CartCounterProps = {
   isZeroDelete?: boolean;
-  onAdd?: (value: number) => void;
-  onRemove?: (value: number) => void;
+  onAdd?: () => void;
+  onRemove?: () => void;
   className?: string;
   initialValue?: number;
 };
@@ -22,9 +22,13 @@ const CartCounter = ({
 }: CartCounterProps) => {
   const [counter, setCounter] = useState<number>(initialValue);
 
+  useEffect(() => {
+    setCounter(initialValue);
+  }, [initialValue]);
+
   const addToCart = () => {
     if (onAdd) {
-      onAdd(counter + 1);
+      onAdd();
     }
     setCounter(counter + 1);
   };
@@ -33,7 +37,7 @@ const CartCounter = ({
     if ((counter === 1 && !isZeroDelete) || counter <= 0) return;
 
     if (onRemove) {
-      onRemove(counter - 1);
+      onRemove();
     }
     if (counter - 1 <= 0) return;
     setCounter(counter - 1);
@@ -51,7 +55,7 @@ const CartCounter = ({
         size='icon'
         type='button'
         className='h-5 w-5 text-xl hover:bg-transparent sm:h-6 sm:w-6'
-        onClick={() => remove()}
+        onClick={remove}
       >
         <FaMinus />
       </Button>
@@ -63,7 +67,7 @@ const CartCounter = ({
         size='icon'
         type='button'
         className='h-5 w-5 text-xl hover:bg-transparent sm:h-6 sm:w-6'
-        onClick={() => addToCart()}
+        onClick={addToCart}
       >
         <FaPlus />
       </Button>

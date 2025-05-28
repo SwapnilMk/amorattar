@@ -46,15 +46,15 @@ export async function GET(request: Request) {
     const [products, total] = await Promise.all([
       prisma.product.findMany({
         where: whereClause,
-      skip,
-      take: limit,
-      include: {
-        categories: {
-          include: {
-            category: true
+        skip,
+        take: limit,
+        include: {
+          categories: {
+            include: {
+              category: true
+            }
           }
-        }
-      },
+        },
         orderBy
       }),
       prisma.product.count({
@@ -64,15 +64,15 @@ export async function GET(request: Request) {
 
     return new NextResponse(
       JSON.stringify({
-      products,
+        products,
         total,
         perPage: limit,
-      pagination: {
-        total,
-        page,
-        limit,
-        pages: Math.ceil(total / limit)
-      }
+        pagination: {
+          total,
+          page,
+          limit,
+          pages: Math.ceil(total / limit)
+        }
       }),
       {
         status: 200,
