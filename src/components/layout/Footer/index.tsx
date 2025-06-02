@@ -20,7 +20,7 @@ const socialsData: SocialNetworks[] = [
   {
     id: 2,
     icon: <FaSnapchat />,
-    url: '#'
+    url: 'https://www.snapchat.com/add/amorattar6'
   },
   {
     id: 3,

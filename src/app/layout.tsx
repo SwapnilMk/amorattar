@@ -6,6 +6,7 @@ import SessionProvider from '@/components/providers/SessionProvider';
 import { getSession } from '@/lib/auth';
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://amorattar.vercel.app/'),
   title: 'Amorattar - Premium Attar and Perfume Shop',
   description:
     'Discover our exclusive collection of premium attars and perfumes. Shop authentic fragrances with worldwide shipping.',

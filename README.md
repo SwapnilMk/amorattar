@@ -44,6 +44,7 @@ A modern e-commerce platform built with Next.js, TypeScript, and Tailwind CSS, s
   - Redux Toolkit (State Management)
 
 - **Backend**:
+
   - Next.js API Routes
   - MongoDB with Prisma ORM
   - JWT Authentication
@@ -100,6 +101,7 @@ yarn install
 ```bash
 cp .env.example .env
 ```
+
 Edit `.env` with your configuration values.
 
 4. Run the development server:
@@ -111,8 +113,6 @@ yarn dev
 ```
 
 5. Open [http://localhost:3000](http://localhost:3000) in your browser.
-
-
 
 ## 🔧 Key Components
 

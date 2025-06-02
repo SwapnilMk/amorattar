@@ -19,11 +19,6 @@ const footerLinksData: FooterLinks[] = [
         url: '/shop#attars'
       },
       {
-        id: 13,
-        label: 'Home Fragrances',
-        url: '/shop#home-fragrances'
-      },
-      {
         id: 14,
         label: 'Gift Sets',
         url: '/shop#gifting'
@@ -48,11 +43,6 @@ const footerLinksData: FooterLinks[] = [
         id: 23,
         label: 'Signature Attars',
         url: '/shop#signature-attars'
-      },
-      {
-        id: 24,
-        label: 'Scent Guide',
-        url: '/scent-guide'
       }
     ]
   },
@@ -64,16 +54,6 @@ const footerLinksData: FooterLinks[] = [
         id: 31,
         label: 'Contact Us',
         url: '/contact'
-      },
-      {
-        id: 32,
-        label: 'Order Tracking',
-        url: '/order-tracking'
-      },
-      {
-        id: 33,
-        label: 'Returns & Refunds',
-        url: '/returns'
       },
       {
         id: 34,
@@ -90,11 +70,6 @@ const footerLinksData: FooterLinks[] = [
         id: 41,
         label: 'About Us',
         url: '/about'
-      },
-      {
-        id: 42,
-        label: 'Our Stores',
-        url: '/stores'
       },
       {
         id: 43,
