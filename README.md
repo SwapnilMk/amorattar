@@ -22,12 +22,15 @@ A modern e-commerce platform built with Next.js, TypeScript, and Tailwind CSS, s
   - Price comparison and discounts
   - Stock status indicators
 
-- **User Features**:
-  - User authentication
-  - Order tracking
-  - Profile management
-  - Address management
-  - Payment integration
+- **Admin Dashboard**:
+  - Secure authentication system
+  - Product management (CRUD operations)
+  - Order management and tracking
+  - User management
+  - Sales analytics and reports
+  - Inventory management
+  - Category management
+  - Discount and promotion management
 
 ## 🛠️ Tech Stack
 
@@ -39,6 +42,12 @@ A modern e-commerce platform built with Next.js, TypeScript, and Tailwind CSS, s
   - Shadcn UI Components
   - Framer Motion (Animations)
   - Redux Toolkit (State Management)
+
+- **Backend**:
+  - Next.js API Routes
+  - MongoDB with Prisma ORM
+  - JWT Authentication
+  - Bcrypt for password hashing
 
 - **Styling**:
   - Custom color scheme (#334958 as primary)
@@ -56,6 +65,7 @@ src/
 │   ├── common/           # Shared components
 │   ├── layout/           # Layout components
 │   ├── product-page/     # Product-specific components
+│   ├── admin/            # Admin dashboard components
 │   └── ui/               # UI components
 ├── lib/                  # Utility functions and hooks
 ├── styles/              # Global styles and fonts
@@ -74,7 +84,7 @@ src/
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/yourusername/amorattar.git
+git clone https://github.com/SwapnilMk/amorattar.git
 ```
 
 2. Install dependencies:
@@ -85,7 +95,14 @@ npm install
 yarn install
 ```
 
-3. Run the development server:
+3. Set up environment variables:
+
+```bash
+cp .env.example .env
+```
+Edit `.env` with your configuration values.
+
+4. Run the development server:
 
 ```bash
 npm run dev
@@ -93,17 +110,9 @@ npm run dev
 yarn dev
 ```
 
-4. Open [http://localhost:3000](http://localhost:3000) in your browser.
+5. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-## 📱 Responsive Design
 
-- Mobile-first approach
-- Breakpoints:
-  - xs: 480px
-  - sm: 640px
-  - md: 768px
-  - lg: 1024px
-  - xl: 1280px
 
 ## 🔧 Key Components
 
@@ -112,6 +121,7 @@ yarn dev
 - **Cart System**: Real-time cart updates with quantity indicators
 - **Filters**: Advanced product filtering system
 - **Pagination**: Custom pagination with ellipsis for large datasets
+- **Admin Dashboard**: Secure admin interface with comprehensive management tools
 
 ## 📄 License
 
@@ -127,4 +137,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Support
 
-For support, email support@amorattar.com or join our Slack channel.
+For support, email mswapnil218@gmail.com or join our Slack channel.
