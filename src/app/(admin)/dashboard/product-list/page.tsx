@@ -167,11 +167,13 @@ export default function ProductList() {
                       <TableCell className='text-right'>
                         <div className='flex justify-end gap-2'>
                           <Button
+                            asChild
                             variant='ghost'
                             size='icon'
-                            onClick={() => handleEditProduct(product)}
                           >
+                            <Link href={`/dashboard/product-list/${product.id}/edit`}>
                             <IconEdit className='h-4 w-4' />
+                            </Link>
                           </Button>
                           <Button
                             variant='ghost'

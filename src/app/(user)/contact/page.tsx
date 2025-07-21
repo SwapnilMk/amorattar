@@ -5,7 +5,8 @@ import {
   FaPhone,
   FaEnvelope,
   FaMapMarkerAlt,
-  FaWhatsapp
+  FaWhatsapp,
+  FaInstagram
 } from 'react-icons/fa';
 import { Button } from '@/components/ui/button';
 
@@ -45,10 +46,27 @@ export default function ContactPage() {
 
             <div className='rounded-lg bg-white p-6 shadow-lg'>
               <div className='flex items-center space-x-4'>
+                <FaInstagram className='text-2xl text-pink-500' />
+                <div>
+                  <h3 className='mb-1 text-xl font-semibold'>Instagram</h3>
+                  <a
+                    href='https://instagram.com/amorattar6'
+                    target='_blank'
+                    rel='noopener noreferrer'
+                    className='text-blue-600 hover:underline'
+                  >
+                    @amorattar6
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            <div className='rounded-lg bg-white p-6 shadow-lg'>
+              <div className='flex items-center space-x-4'>
                 <FaEnvelope className='text-2xl text-blue-500' />
                 <div>
                   <h3 className='mb-1 text-xl font-semibold'>Email</h3>
-                  <p className='text-gray-600'>support@amorattar.com</p>
+                  <p className='text-gray-600'>amorattar6@gmail.com</p>
                 </div>
               </div>
             </div>
@@ -59,11 +77,9 @@ export default function ContactPage() {
                 <div>
                   <h3 className='mb-1 text-xl font-semibold'>Address</h3>
                   <p className='text-gray-600'>
-                    123 Fragrance Street
+                    24karat, SV Road, Jogeshwari W,
                     <br />
-                    Mumbai, Maharashtra
-                    <br />
-                    India - 400001
+                    Mumbai-400102
                   </p>
                 </div>
               </div>

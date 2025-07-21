@@ -116,7 +116,12 @@ export async function PUT(
               price: option.price
             }))
           },
+          selectedVolume: {
+            ml: validatedData.selectedVolume.ml,
+            price: validatedData.selectedVolume.price
+          },
           isSale: validatedData.isSale,
+          // Convert specifications from record to array for DB
           specifications: {
             set: Object.entries(validatedData.specifications).map(
               ([key, value]) => ({
