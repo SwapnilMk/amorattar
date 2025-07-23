@@ -58,7 +58,7 @@ export default function Home() {
         </div>
         <ProductListSec
           title='NEW ARRIVALS'
-          category='new-arrivals'
+          category='New Arrivals'
           viewAllLink='/shop#new-arrivals'
         />
         <div className='mx-auto max-w-frame px-4 py-10 xl:px-0'>
@@ -67,7 +67,7 @@ export default function Home() {
         <div className='mb-[50px] sm:mb-20'>
           <ProductListSec
             title='Best Sellers'
-            category='best-sellers'
+            category='Best Sellers'
             viewAllLink='/shop#best-sellers'
           />
         </div>

@@ -28,11 +28,6 @@ type Category = {
   id: string;
   name: string;
   slug: string;
-  productCategories: Array<{
-    id: string;
-    productId: string;
-    categoryId: string;
-  }>;
   createdAt: string;
   updatedAt: string;
 };
@@ -209,85 +204,86 @@ export default function ManageCategory() {
             ) : filteredCategories.length === 0 ? (
               <div>No categories found</div>
             ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Products</TableHead>
-                    <TableHead>Created At</TableHead>
-                    <TableHead className='text-right'>Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredCategories.map((category) => (
-                    <TableRow key={category.id}>
-                      <TableCell>{category.name}</TableCell>
-                      <TableCell>
-                        {category.productCategories?.length ?? 0}
-                      </TableCell>
-                      <TableCell>
-                        {new Date(category.createdAt).toLocaleDateString()}
-                      </TableCell>
-                      <TableCell className='text-right'>
-                        <div className='flex justify-end gap-2'>
-                          <Dialog
-                            open={isEditDialogOpen}
-                            onOpenChange={setIsEditDialogOpen}
-                          >
-                            <DialogTrigger asChild>
-                              <Button
-                                variant='ghost'
-                                size='icon'
-                                onClick={() => {
-                                  setSelectedCategory(category);
-                                  setEditCategoryName(category.name);
-                                }}
-                              >
-                                <IconEdit className='h-4 w-4' />
-                              </Button>
-                            </DialogTrigger>
-                            <DialogContent>
-                              <DialogHeader>
-                                <DialogTitle>Edit Category</DialogTitle>
-                                <DialogDescription>
-                                  Update category name
-                                </DialogDescription>
-                              </DialogHeader>
-                              <form onSubmit={handleEditCategory}>
-                                <div className='space-y-4 py-4'>
-                                  <div className='space-y-2'>
-                                    <Label htmlFor='editCategoryName'>
-                                      Category Name
-                                    </Label>
-                                    <Input
-                                      id='editCategoryName'
-                                      value={editCategoryName}
-                                      onChange={(e) =>
-                                        setEditCategoryName(e.target.value)
-                                      }
-                                      placeholder='Enter category name'
-                                    />
-                                  </div>
-                                </div>
-                                <DialogFooter>
-                                  <Button type='submit'>Save Changes</Button>
-                                </DialogFooter>
-                              </form>
-                            </DialogContent>
-                          </Dialog>
-                          <Button
-                            variant='ghost'
-                            size='icon'
-                            onClick={() => handleDeleteCategory(category.id)}
-                          >
-                            <IconTrash className='h-4 w-4' />
-                          </Button>
-                        </div>
-                      </TableCell>
+              <div className='grid w-full overflow-x-auto [&>div]:max-h-[400px] [&>div]:rounded [&>div]:border'>
+                <Table>
+                  <TableHeader>
+                    <TableRow className="sticky top-0 bg-background after:absolute after:inset-x-0 after:bottom-0 after:h-px after:bg-border after:content-[''] [&>*]:whitespace-nowrap">
+                      <TableHead>Name</TableHead>
+                      <TableHead>Created At</TableHead>
+                      <TableHead className='text-right'>Actions</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody className='overflow-hidden'>
+                    {filteredCategories.map((category) => (
+                      <TableRow
+                        key={category.id}
+                        className='odd:bg-muted/50 [&>*]:whitespace-nowrap'
+                      >
+                        <TableCell>{category.name}</TableCell>
+                        <TableCell>
+                          {new Date(category.createdAt).toLocaleDateString()}
+                        </TableCell>
+                        <TableCell className='text-right'>
+                          <div className='flex justify-end gap-2'>
+                            <Dialog
+                              open={isEditDialogOpen}
+                              onOpenChange={setIsEditDialogOpen}
+                            >
+                              <DialogTrigger asChild>
+                                <Button
+                                  variant='ghost'
+                                  size='icon'
+                                  onClick={() => {
+                                    setSelectedCategory(category);
+                                    setEditCategoryName(category.name);
+                                  }}
+                                >
+                                  <IconEdit className='h-4 w-4' />
+                                </Button>
+                              </DialogTrigger>
+                              <DialogContent>
+                                <DialogHeader>
+                                  <DialogTitle>Edit Category</DialogTitle>
+                                  <DialogDescription>
+                                    Update category name
+                                  </DialogDescription>
+                                </DialogHeader>
+                                <form onSubmit={handleEditCategory}>
+                                  <div className='space-y-4 py-4'>
+                                    <div className='space-y-2'>
+                                      <Label htmlFor='editCategoryName'>
+                                        Category Name
+                                      </Label>
+                                      <Input
+                                        id='editCategoryName'
+                                        value={editCategoryName}
+                                        onChange={(e) =>
+                                          setEditCategoryName(e.target.value)
+                                        }
+                                        placeholder='Enter category name'
+                                      />
+                                    </div>
+                                  </div>
+                                  <DialogFooter>
+                                    <Button type='submit'>Save Changes</Button>
+                                  </DialogFooter>
+                                </form>
+                              </DialogContent>
+                            </Dialog>
+                            <Button
+                              variant='ghost'
+                              size='icon'
+                              onClick={() => handleDeleteCategory(category.id)}
+                            >
+                              <IconTrash className='h-4 w-4' />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
             )}
           </CardContent>
         </Card>

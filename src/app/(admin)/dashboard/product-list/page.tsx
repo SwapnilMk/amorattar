@@ -17,7 +17,7 @@ import { useEffect, useState } from 'react';
 import { Product } from '@/types/product.types';
 import { Badge } from '@/components/ui/badge';
 import { Star } from 'lucide-react';
-import { CardContent } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import Image from 'next/image';
 import { IconEdit, IconTrash } from '@tabler/icons-react';
 
@@ -96,101 +96,125 @@ export default function ProductList() {
           </div>
         </div>
 
-        <CardContent>
-          <div className='rounded-md border'>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className='w-[300px]'>Product Name</TableHead>
-                  <TableHead>Brand</TableHead>
-                  <TableHead>Discount</TableHead>
-                  <TableHead>Rating</TableHead>
-                  <TableHead className='text-right'>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {loading ? (
-                  <TableRow>
-                    <TableCell colSpan={5} className='text-center'>
-                      Loading...
-                    </TableCell>
+        <Card>
+          <CardContent>
+            <div className='grid w-full overflow-x-auto [&>div]:max-h-[400px] [&>div]:rounded [&>div]:border'>
+              <Table>
+                <TableHeader>
+                  <TableRow className="sticky top-0 bg-background after:absolute after:inset-x-0 after:bottom-0 after:h-px after:bg-border after:content-[''] [&>*]:whitespace-nowrap">
+                    <TableHead className='w-[300px]'>Product Name</TableHead>
+                    <TableHead>Brand</TableHead>
+                    <TableHead>Volume Options</TableHead>
+                    <TableHead>Rating</TableHead>
+                    <TableHead className='text-right'>Actions</TableHead>
                   </TableRow>
-                ) : products.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={5} className='text-center'>
-                      No products found
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  products.map((product) => (
-                    <TableRow key={product.id}>
-                      <TableCell>
-                        <div className='flex items-center gap-3'>
-                          <div className='relative h-12 w-12 overflow-hidden rounded-md'>
-                            <Image
-                              src={product.srcUrl}
-                              alt={product.title}
-                              fill
-                              className='object-cover'
-                            />
-                          </div>
-                          <div className='space-y-1'>
-                            <p className='font-medium'>{product.title}</p>
-                            <div className='flex flex-wrap gap-1'>
-                              {product.categories?.map((cat) => (
-                                <Badge
-                                  key={cat.category.id}
-                                  variant='secondary'
-                                  className='text-xs'
-                                >
-                                  {cat.category.name}
-                                </Badge>
-                              ))}
-                            </div>
-                          </div>
-                        </div>
-                      </TableCell>
-                      <TableCell>{product.brand}</TableCell>
-                      <TableCell>
-                        {product.discount > 0 && (
-                          <Badge variant='destructive'>
-                            {product.discount}% OFF
-                          </Badge>
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        <div className='flex items-center gap-1'>
-                          <Star className='h-4 w-4 fill-yellow-400 text-yellow-400' />
-                          <span>{product.rating.toFixed(1)}</span>
-                        </div>
-                      </TableCell>
-                      <TableCell className='text-right'>
-                        <div className='flex justify-end gap-2'>
-                          <Button
-                            asChild
-                            variant='ghost'
-                            size='icon'
-                          >
-                            <Link href={`/dashboard/product-list/${product.id}/edit`}>
-                            <IconEdit className='h-4 w-4' />
-                            </Link>
-                          </Button>
-                          <Button
-                            variant='ghost'
-                            size='icon'
-                            onClick={() => handleDeleteProduct(product.id)}
-                          >
-                            <IconTrash className='h-4 w-4' />
-                          </Button>
-                        </div>
+                </TableHeader>
+                <TableBody className='overflow-hidden'>
+                  {loading ? (
+                    <TableRow>
+                      <TableCell colSpan={5} className='text-center'>
+                        Loading...
                       </TableCell>
                     </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-          </div>
-        </CardContent>
+                  ) : products.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={5} className='text-center'>
+                        No products found
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    products.map((product) => (
+                      <TableRow
+                        key={product.id}
+                        className='odd:bg-muted/50 [&>*]:whitespace-nowrap'
+                      >
+                        <TableCell>
+                          <div className='flex items-center gap-3'>
+                            <div className='relative h-12 w-12 overflow-hidden rounded-md'>
+                              <Image
+                                src={product.srcUrl}
+                                alt={product.title}
+                                fill
+                                className='object-cover'
+                              />
+                            </div>
+                            <div className='space-y-1'>
+                              <p className='font-medium'>{product.title}</p>
+                              <div className='flex flex-wrap gap-1'>
+                                {product.categories?.map((cat) => (
+                                  <Badge
+                                    key={cat}
+                                    variant='secondary'
+                                    className='text-xs'
+                                  >
+                                    {cat}
+                                  </Badge>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell>{product.brand}</TableCell>
+                        <TableCell>
+                          {product.volumeOptions &&
+                          product.volumeOptions.length > 0 ? (
+                            <div className='flex flex-col gap-1'>
+                              {product.volumeOptions.map((opt, idx) => (
+                                <div
+                                  key={idx}
+                                  className='flex items-center gap-2 text-xs'
+                                >
+                                  <span>{opt.ml}ml</span>
+                                  <span>₹{opt.price}</span>
+                                  {opt.discount > 0 && (
+                                    <Badge
+                                      variant='destructive'
+                                      className='text-xs'
+                                    >
+                                      {opt.discount}% OFF
+                                    </Badge>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          ) : (
+                            <span className='text-xs text-muted-foreground'>
+                              No options
+                            </span>
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          <div className='flex items-center gap-1'>
+                            <Star className='h-4 w-4 fill-yellow-400 text-yellow-400' />
+                            <span>{product.rating.toFixed(1)}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell className='text-right'>
+                          <div className='flex justify-end gap-2'>
+                            <Button asChild variant='ghost' size='icon'>
+                              <Link
+                                href={`/dashboard/product-list/${product.id}/edit`}
+                              >
+                                <IconEdit className='h-4 w-4' />
+                              </Link>
+                            </Button>
+                            <Button
+                              variant='ghost'
+                              size='icon'
+                              onClick={() => handleDeleteProduct(product.id)}
+                            >
+                              <IconTrash className='h-4 w-4' />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </PageContainer>
   );

@@ -16,26 +16,6 @@ model User {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 }
-model Category {
-  id        String    @id @default(auto()) @map("_id") @db.ObjectId
-  name      String    @unique
-  slug      String    @unique
-  products ProductCategory[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-}
-
-model ProductCategory {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId
-  productId  String   @db.ObjectId
-  categoryId String   @db.ObjectId
-  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
-  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  @@unique([productId, categoryId])
-}
 
 type Discount {
   amount     Float
@@ -52,6 +32,8 @@ type Color {
 type VolumeOption {
   ml    Int
   price Float
+  discount Float
+  discountedPrice Float
 }
 
 type Specification {
@@ -71,7 +53,7 @@ model Product {
   rating            Float             @default(0)
   description       String
   gender            String[]
-  categories        ProductCategory[]
+  categories        String[]
   colors            Color[]
   selectedColor     Color
   volumeOptions     VolumeOption[]
@@ -91,4 +73,12 @@ model Review {
   content   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Category {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  name      String    @unique
+  slug      String    @unique
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }

@@ -44,16 +44,8 @@ export default function ProductPage({
         const formattedProduct: Product = {
           ...productData,
           gender: productData.gender as Gender[],
-          categories: productData.categories.map((cat: any) => ({
-            ...cat,
-            createdAt: new Date(cat.createdAt).toISOString(),
-            updatedAt: new Date(cat.updatedAt).toISOString(),
-            category: {
-              ...cat.category,
-              createdAt: new Date(cat.category.createdAt).toISOString(),
-              updatedAt: new Date(cat.category.updatedAt).toISOString()
-            }
-          })),
+          // categories is already a string array, so just assign it
+          categories: productData.categories as string[],
           colors: productData.colors as any,
           selectedColor: productData.selectedColor as any,
           volumeOptions: productData.volumeOptions as any,
@@ -106,7 +98,7 @@ export default function ProductPage({
       <div className='mb-[50px] sm:mb-20'>
         <ProductListSec
           title='You might also like'
-          category={product.categories[0]?.category.slug}
+          category={product.categories[0]}
         />
       </div>
     </main>

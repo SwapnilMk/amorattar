@@ -17,14 +17,7 @@ export async function GET(
 ) {
   try {
     const product = await prisma.product.findUnique({
-      where: { id: params.id },
-      include: {
-        categories: {
-          include: {
-            category: true
-          }
-        }
-      }
+      where: { id: params.id }
     });
 
     if (!product) {
@@ -60,14 +53,7 @@ export async function PUT(
       const validatedData = productSchema.parse(body);
 
       const product = await prisma.product.findUnique({
-        where: { id: params.id },
-        include: {
-          categories: {
-            include: {
-              category: true
-            }
-          }
-        }
+        where: { id: params.id }
       });
 
       if (!product) {
@@ -76,11 +62,6 @@ export async function PUT(
           { status: 404 }
         );
       }
-
-      // Delete existing product categories
-      await prisma.productCategory.deleteMany({
-        where: { productId: product.id }
-      });
 
       // Update product with new data
       const updatedProduct = await prisma.product.update({
@@ -113,12 +94,16 @@ export async function PUT(
           volumeOptions: {
             set: validatedData.volumeOptions.map((option) => ({
               ml: option.ml,
-              price: option.price
+              price: option.price,
+              discount: option.discount,
+              discountedPrice: option.discountedPrice
             }))
           },
           selectedVolume: {
             ml: validatedData.selectedVolume.ml,
-            price: validatedData.selectedVolume.price
+            price: validatedData.selectedVolume.price,
+            discount: validatedData.selectedVolume.discount,
+            discountedPrice: validatedData.selectedVolume.discountedPrice
           },
           isSale: validatedData.isSale,
           // Convert specifications from record to array for DB
@@ -132,32 +117,14 @@ export async function PUT(
           },
           fragrance: validatedData.fragrance,
           availabilityStatus: validatedData.availabilityStatus,
-          categories: {
-            create: validatedData.categories.map((category) => ({
-              category: {
-                connectOrCreate: {
-                  where: { name: category },
-                  create: {
-                    name: category,
-                    slug: category.toLowerCase().replace(/\s+/g, '-')
-                  }
-                }
-              }
-            }))
-          }
-        },
-        include: {
-          categories: {
-            include: {
-              category: true
-            }
-          }
+          categories: validatedData.categories
         }
       });
 
       return NextResponse.json(updatedProduct);
     } catch (error) {
       if (error instanceof ZodError) {
+        console.error('Zod validation errors:', error.errors);
         return NextResponse.json(
           { error: error.errors[0].message },
           { status: 400 }
@@ -189,20 +156,12 @@ export async function DELETE(
     }
 
     const product = await prisma.product.findUnique({
-      where: { id: params.id },
-      include: {
-        categories: true
-      }
+      where: { id: params.id }
     });
 
     if (!product) {
       return NextResponse.json({ error: 'Product not found' }, { status: 404 });
     }
-
-    // Delete product categories first
-    await prisma.productCategory.deleteMany({
-      where: { productId: product.id }
-    });
 
     // Delete the product
     await prisma.product.delete({

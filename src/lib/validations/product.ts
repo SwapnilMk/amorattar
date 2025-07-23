@@ -9,21 +9,15 @@ export const colorSchema = z.object({
 
 export const volumeOptionSchema = z.object({
   ml: z.number().min(1, 'Volume must be at least 1ml'),
-  price: z.number().min(0, 'Price must be positive')
+  price: z.number().min(0, 'Price must be positive'),
+  discount: z.number().min(0).max(100).default(0),
+  discountedPrice: z.number().min(0, 'Discounted price must be positive')
 });
 
 export const specificationSchema = z.object({
   key: z.string().min(1, 'Specification key is required'),
   value: z.string().min(1, 'Specification value is required')
 });
-
-export const categoryEnum = z.enum([
-  'Perfumes',
-  'Attars',
-  'New Arrivals',
-  'Best Sellers'
-] as const);
-export type CategoryType = z.infer<typeof categoryEnum>;
 
 export const productSchema = z.object({
   title: z.string().min(1, 'Title is required'),
@@ -39,7 +33,7 @@ export const productSchema = z.object({
   gender: z
     .array(z.enum(['Men', 'Women', 'Unisex'] as const))
     .min(1, 'At least one gender is required'),
-  categories: z.array(categoryEnum).min(1, 'At least one category is required'),
+  categories: z.array(z.string()).min(1, 'At least one category is required'),
   colors: z.array(colorSchema).min(1, 'At least one color is required'),
   selectedColor: colorSchema,
   volumeOptions: z
@@ -49,25 +43,7 @@ export const productSchema = z.object({
   isSale: z.boolean().default(false),
   specifications: z.record(z.string(), z.string()),
   fragrance: z
-    .array(
-      z.enum([
-        'Floral',
-        'Woody',
-        'Citrus',
-        'Spicy',
-        'Musky',
-        'Sandalwood',
-        'Vanilla',
-        'Oriental',
-        'Gourmand',
-        'Chypre',
-        'Aquatic',
-        'Green',
-        'Fresh',
-        'Musk',
-        'Scented'
-      ] as const)
-    )
+    .array(z.string())
     .min(1, 'At least one fragrance type is required'),
   availabilityStatus: z.enum([
     'In Stock',

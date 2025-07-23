@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import PageContainer from '@/components/layout/page-container';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -20,7 +20,7 @@ import Image from 'next/image';
 import { useRouter, useParams } from 'next/navigation';
 import { useSession } from '@/components/providers/SessionProvider';
 import { toast } from 'sonner';
-import { CreateProductInput, CategoryType } from '@/lib/validations/product';
+import { CreateProductInput } from '@/lib/validations/product';
 import {
   Gender,
   Fragrance,
@@ -48,6 +48,7 @@ import {
 import { Check, ChevronsUpDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Star } from 'lucide-react';
+import MultipleSelector, { Option } from '@/components/ui/multiselect';
 
 const initialFormData: CreateProductInput = {
   title: '',
@@ -60,8 +61,8 @@ const initialFormData: CreateProductInput = {
   discount: 0,
   rating: 0,
   description: '',
-  gender: ['Unisex'] as Gender[],
-  categories: ['Perfumes'] as CategoryType[],
+  gender: ['Unisex'],
+  categories: ['Perfumes'],
   colors: [],
   selectedColor: {
     id: '',
@@ -72,12 +73,22 @@ const initialFormData: CreateProductInput = {
   volumeOptions: [],
   selectedVolume: {
     ml: 0,
-    price: 0
+    price: 0,
+    discount: 0,
+    discountedPrice: 0
   },
   isSale: false,
   specifications: {},
-  fragrance: ['Floral'] as Fragrance[],
+  fragrance: ['Floral'],
   availabilityStatus: 'In Stock'
+};
+
+// Local type for volume options with all fields
+type VolumeOptionFull = {
+  ml: number;
+  price: number;
+  discount: number;
+  discountedPrice: number;
 };
 
 const fragranceTypes = [
@@ -95,8 +106,202 @@ const fragranceTypes = [
   'Green',
   'Fresh',
   'Musk',
-  'Scented'
+  'Scented',
+  'Fruity',
+  'Herbal',
+  'Leather',
+  'Amber',
+  'Powdery',
+  'Aldehydic',
+  'Balsamic',
+  'Resinous',
+  'Smoky',
+  'Earthy',
+  'Animalic',
+  'Metallic',
+  'Ozonic',
+  'Sweet',
+  'Spicy Oriental',
+  'Citrus Fresh',
+  'Floral Fruity',
+  'Woody Oriental',
+  'Green Floral',
+  'Aquatic Fresh',
+  'Coconut',
+  'Mint',
+  'Tea',
+  'Coffee',
+  'Chocolate',
+  'Vanillic',
+  'Spicy Fresh',
+  'Citrus Woody',
+  'Floral Green',
+  'Marine',
+  'Incense',
+  'Pine',
+  'Cedar',
+  'Patchouli',
+  'Rose',
+  'Jasmine',
+  'Violet',
+  'Peach',
+  'Apple',
+  'Berry',
+  'Tropical',
+  'Champaca',
+  'Tobacco',
+  'Rum',
+  'Gin',
+  'Whiskey',
+  'Honey',
+  'Milk',
+  'Caramel',
+  'Fig',
+  'Plum',
+  'Pear',
+  'Melon',
+  'Watermelon',
+  'Lotus',
+  'Magnolia',
+  'Gardenia',
+  'Tiare',
+  'Ylang-Ylang',
+  'Neroli',
+  'Orange Blossom',
+  'Lily',
+  'Mimosa',
+  'Freesia',
+  'Peony',
+  'Dewy',
+  'Aromatic',
+  'Cypress',
+  'Bergamot',
+  'Lime',
+  'Mandarin',
+  'Grapefruit',
+  'Pomegranate',
+  'Red Fruits',
+  'Blackcurrant',
+  'Currant',
+  'Raspberry',
+  'Strawberry',
+  'Cherry',
+  'Apricot',
+  'Pineapple',
+  'Mango',
+  'Papaya',
+  'Guava',
+  'Passionfruit',
+  'Lychee',
+  'Sage',
+  'Basil',
+  'Thyme',
+  'Oud',
+  'Ambergris',
+  'Cashmere',
+  'Suede',
+  'Vetiver',
+  'Moss',
+  'Hay',
+  'Wheat',
+  'Rice',
+  'Saffron',
+  'Cardamom',
+  'Clove',
+  'Nutmeg',
+  'Cinnamon',
+  'Pepper',
+  'Ginger',
+  'Anise',
+  'Fennel',
+  'Licorice',
+  'Salt',
+  'Seaweed',
+  'Tar',
+  'Gunpowder',
+  'Stone',
+  'Concrete',
+  'Dusty',
+  'Chalky',
+  'Iris',
+  'Aldehyde',
+  'Soap',
+  'Powder',
+  'Makeup',
+  'Lipstick',
+  'Leather Suede',
+  'Animal Musk',
+  'Barnyard',
+  'Horse',
+  'Amberwood',
+  'Balsam',
+  'Myrrh',
+  'Frankincense',
+  'Labdanum',
+  'Styrax',
+  'Tolu',
+  'Peru Balsam',
+  'Opoponax',
+  'Galbanum',
+  'Costus',
+  'Castoreum',
+  'Civet',
+  'Beeswax',
+  'Oak',
+  'Maple',
+  'Walnut',
+  'Chestnut',
+  'Hazelnut',
+  'Almond',
+  'Pistachio',
+  'Macadamia',
+  'Cashew',
+  'Coconut Water',
+  'Cucumber',
+  'Tomato Leaf',
+  'Bell Pepper',
+  'Carrot',
+  'Celery',
+  'Pumpkin',
+  'Zucchini',
+  'Spinach',
+  'Artichoke',
+  'Asparagus',
+  'Rhubarb',
+  'Turnip',
+  'Radish',
+  'Beet',
+  'Parsnip',
+  'Sweet Potato',
+  'Yam',
+  'Potato',
+  'Onion',
+  'Garlic',
+  'Shallot',
+  'Leek',
+  'Chive',
+  'Scallion',
+  'Truffle',
+  'Mushroom',
+  'Earth',
+  'Soil',
+  'Rain',
+  'Petrichor',
+  'Fog',
+  'Mist',
+  'Cloud',
+  'Wind',
+  'Sun',
+  'Moon',
+  'Star',
+  'Galaxy',
+  'Cosmos',
+  'Universe'
 ] as const;
+const fragranceOptions: Option[] = fragranceTypes.map((type) => ({
+  value: type,
+  label: type
+}));
 
 export default function EditProduct() {
   const router = useRouter();
@@ -123,7 +328,11 @@ export default function EditProduct() {
     key: '',
     value: ''
   });
-  const [categoriesList, setCategoriesList] = useState<CategoryType[]>([]);
+  const [categories, setCategories] = useState<
+    { id: string; name: string; slug: string }[]
+  >([]);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [isEdit, setIsEdit] = useState(true); // Added isEdit state
 
   // Fetch categories dynamically
   useEffect(() => {
@@ -132,9 +341,9 @@ export default function EditProduct() {
         const res = await fetch('/api/categories');
         if (!res.ok) throw new Error('Failed to fetch categories');
         const data = await res.json();
-        setCategoriesList(data.map((cat: any) => cat.name));
+        setCategories(Array.isArray(data) ? data : []);
       } catch (error) {
-        setCategoriesList(['Perfumes', 'Attars', 'New Arrivals', 'Best Sellers']); // fallback
+        setCategories([]);
       }
     }
     fetchCategories();
@@ -152,21 +361,31 @@ export default function EditProduct() {
         setFormData({
           ...initialFormData,
           ...data,
-          categories: data.categories?.map((cat: any) => cat.category.name) || [],
+          categories: Array.isArray(data.categories) ? data.categories : [],
           colors: data.colors || [],
           selectedColor: data.selectedColor || initialFormData.selectedColor,
-          volumeOptions: data.volumeOptions || [],
-          selectedVolume: data.selectedVolume || initialFormData.selectedVolume,
-          // Convert specifications from array (DB) to record (UI)
+          volumeOptions: (data.volumeOptions || []).map((opt: any) => ({
+            ml: opt.ml,
+            price: opt.price,
+            discount: opt.discount ?? 0,
+            discountedPrice: opt.discountedPrice ?? 0
+          })),
+          selectedVolume:
+            data.selectedVolume && typeof data.selectedVolume === 'object'
+              ? {
+                  ml: data.selectedVolume.ml ?? 0,
+                  price: data.selectedVolume.price ?? 0,
+                  discount: data.selectedVolume.discount ?? 0,
+                  discountedPrice: data.selectedVolume.discountedPrice ?? 0
+                }
+              : initialFormData.selectedVolume,
           specifications: data.specifications
             ? Object.fromEntries(
                 (Array.isArray(data.specifications)
                   ? data.specifications
                   : Object.entries(data.specifications)
                 ).map((spec: any) =>
-                  Array.isArray(spec)
-                    ? spec
-                    : [spec.key, spec.value]
+                  Array.isArray(spec) ? spec : [spec.key, spec.value]
                 )
               )
             : {},
@@ -177,6 +396,7 @@ export default function EditProduct() {
         });
         setMainImagePreview(data.srcUrl || '');
         setGalleryPreviews(data.gallery || []);
+        setIsEdit(true); // Set isEdit to true for edit
       } catch (error) {
         setError('Failed to fetch product');
       } finally {
@@ -196,9 +416,9 @@ export default function EditProduct() {
       ...prev,
       [name]:
         name === 'price' ||
-          name === 'discountedPrice' ||
-          name === 'quantity' ||
-          name === 'rating'
+        name === 'discountedPrice' ||
+        name === 'quantity' ||
+        name === 'rating'
           ? parseFloat(value) || 0
           : value
     }));
@@ -213,7 +433,7 @@ export default function EditProduct() {
     }));
   };
 
-  const handleCategoryChange = (value: CategoryType) => {
+  const handleCategoryChange = (value: string) => {
     setFormData((prev) => ({
       ...prev,
       categories: prev.categories.includes(value)
@@ -222,7 +442,7 @@ export default function EditProduct() {
     }));
   };
 
-  const handleFragranceChange = (value: Fragrance) => {
+  const handleFragranceChange = (value: string) => {
     setFormData((prev) => ({
       ...prev,
       fragrance: prev.fragrance.includes(value)
@@ -376,7 +596,7 @@ export default function EditProduct() {
     }));
   };
 
-  const handleVolumeSelect = (volume: VolumeOption) => {
+  const handleVolumeSelect = (volume: VolumeOptionFull) => {
     setFormData((prev) => ({
       ...prev,
       selectedVolume: volume,
@@ -393,7 +613,9 @@ export default function EditProduct() {
 
     const newVolume = {
       ml: newVolumeOption.ml,
-      price: newVolumeOption.price
+      price: newVolumeOption.price,
+      discount: 0,
+      discountedPrice: newVolumeOption.price
     };
 
     setFormData((prev) => ({
@@ -456,7 +678,9 @@ export default function EditProduct() {
       const data = {
         ...formData,
         slug,
-        categories: formData.categories, // just names
+        categories: formData.categories.filter(
+          (c): c is string => typeof c === 'string' && !!c
+        ),
         specifications: formData.specifications // API expects record, API will convert to array
       };
       const response = await fetch(`/api/products/${params.id}`, {
@@ -471,7 +695,8 @@ export default function EditProduct() {
         throw new Error(error.error || 'Failed to update product');
       }
       toast.success('Product updated successfully');
-      router.push('/dashboard/product-list');
+      setShowSuccessModal(true);
+      // router.push('/dashboard/product-list'); // Remove immediate redirect
     } catch (error) {
       toast.error(
         error instanceof Error ? error.message : 'Failed to update product'
@@ -492,9 +717,7 @@ export default function EditProduct() {
           </Button>
           <h1 className='text-2xl font-bold'>Edit Product</h1>
         </div>
-        {error && (
-          <div className='text-red-500 text-sm mb-2'>{error}</div>
-        )}
+        {error && <div className='mb-2 text-sm text-red-500'>{error}</div>}
         <form onSubmit={handleSubmit} className='space-y-6'>
           <Card>
             <CardHeader>
@@ -593,17 +816,25 @@ export default function EditProduct() {
                 </div>
                 <div className='space-y-2'>
                   <Label>Availability Status</Label>
-                  <Select onValueChange={(value) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      availabilityStatus: value as AvailabilityStatus
-                    }))
-                  } value={formData.availabilityStatus}>
+                  <Select
+                    onValueChange={(value) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        availabilityStatus: value as AvailabilityStatus
+                      }))
+                    }
+                    value={formData.availabilityStatus}
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder='Select availability status' />
                     </SelectTrigger>
                     <SelectContent>
-                      {['In Stock', 'Out of Stock', 'Pre-Order', 'Low Stock'].map((status) => (
+                      {[
+                        'In Stock',
+                        'Out of Stock',
+                        'Pre-Order',
+                        'Low Stock'
+                      ].map((status) => (
                         <SelectItem key={status} value={status}>
                           {status}
                         </SelectItem>
@@ -631,16 +862,30 @@ export default function EditProduct() {
               <div className='space-y-2'>
                 <Label>Categories</Label>
                 <div className='flex flex-wrap gap-2'>
-                  {categoriesList.map((category) => (
-                    <Badge
-                      key={category}
-                      variant={formData.categories.includes(category) ? 'default' : 'secondary'}
-                      className='cursor-pointer'
-                      onClick={() => handleCategoryChange(category)}
-                    >
-                      {category}
-                    </Badge>
-                  ))}
+                  {categories.length > 0 ? (
+                    categories.map((category) => {
+                      const isSelected = formData.categories
+                        .map((c) =>
+                          typeof c === 'string' ? c.trim().toLowerCase() : ''
+                        )
+                        .includes(category.name.trim().toLowerCase());
+                      return (
+                        <Badge
+                          key={category.name}
+                          variant={isSelected ? 'default' : 'secondary'}
+                          className='flex cursor-pointer items-center gap-1'
+                          onClick={() => handleCategoryChange(category.name)}
+                        >
+                          {isSelected && <Check className='mr-1 h-3 w-3' />}
+                          {category.name}
+                        </Badge>
+                      );
+                    })
+                  ) : (
+                    <span className='text-muted-foreground'>
+                      No categories found
+                    </span>
+                  )}
                 </div>
               </div>
               <div className='space-y-2'>
@@ -649,9 +894,13 @@ export default function EditProduct() {
                   {(['Men', 'Women', 'Unisex'] as const).map((gender) => (
                     <Badge
                       key={gender}
-                      variant={formData.gender.includes(gender) ? 'default' : 'secondary'}
+                      variant={
+                        formData.gender.includes(gender)
+                          ? 'default'
+                          : 'secondary'
+                      }
                       className='cursor-pointer'
-                      onClick={() => handleGenderChange(gender)}
+                      onClick={() => handleGenderChange(gender as Gender)}
                     >
                       {gender}
                     </Badge>
@@ -673,7 +922,12 @@ export default function EditProduct() {
                     <Input
                       placeholder='Color Value'
                       value={newColor.value}
-                      onChange={(e) => setNewColor((prev) => ({ ...prev, value: e.target.value }))}
+                      onChange={(e) =>
+                        setNewColor((prev) => ({
+                          ...prev,
+                          value: e.target.value
+                        }))
+                      }
                     />
                     <div className='space-y-2'>
                       <Label>Color Picker</Label>
@@ -691,7 +945,13 @@ export default function EditProduct() {
                         <PopoverContent className='w-full p-3'>
                           <HexColorPicker
                             color={newColor.color}
-                            onChange={(color) => setNewColor((prev) => ({ ...prev, color }))}
+                            onChange={(color) =>
+                              setNewColor((prev) => ({
+                                ...prev,
+                                color,
+                                value: color // auto-fill value with color code
+                              }))
+                            }
                           />
                         </PopoverContent>
                       </Popover>
@@ -699,9 +959,18 @@ export default function EditProduct() {
                     <Input
                       placeholder='Color Label'
                       value={newColor.label}
-                      onChange={(e) => setNewColor((prev) => ({ ...prev, label: e.target.value }))}
+                      onChange={(e) =>
+                        setNewColor((prev) => ({
+                          ...prev,
+                          label: e.target.value
+                        }))
+                      }
                     />
-                    <Button type='button' onClick={handleAddColor} className='w-full'>
+                    <Button
+                      type='button'
+                      onClick={handleAddColor}
+                      className='w-full'
+                    >
                       Add Color
                     </Button>
                   </div>
@@ -716,10 +985,15 @@ export default function EditProduct() {
                         onClick={() => handleColorSelect(color)}
                       >
                         <div className='flex items-center space-x-4'>
-                          <div className='h-8 w-8 rounded-full border' style={{ backgroundColor: color.color }} />
+                          <div
+                            className='h-8 w-8 rounded-full border'
+                            style={{ backgroundColor: color.color }}
+                          />
                           <div>
                             <p className='font-medium'>{color.label}</p>
-                            <p className='text-sm text-muted-foreground'>{color.value}</p>
+                            <p className='text-sm text-muted-foreground'>
+                              {color.value}
+                            </p>
                           </div>
                         </div>
                         <Button
@@ -753,13 +1027,23 @@ export default function EditProduct() {
                       type='number'
                       placeholder='Volume (ml)'
                       value={newVolumeOption.ml || ''}
-                      onChange={(e) => setNewVolumeOption((prev) => ({ ...prev, ml: parseInt(e.target.value) || 0 }))}
+                      onChange={(e) =>
+                        setNewVolumeOption((prev) => ({
+                          ...prev,
+                          ml: parseInt(e.target.value) || 0
+                        }))
+                      }
                     />
                     <Input
                       type='number'
                       placeholder='Price (in ₹)'
                       value={newVolumeOption.price || ''}
-                      onChange={(e) => setNewVolumeOption((prev) => ({ ...prev, price: parseFloat(e.target.value) || 0 }))}
+                      onChange={(e) =>
+                        setNewVolumeOption((prev) => ({
+                          ...prev,
+                          price: parseFloat(e.target.value) || 0
+                        }))
+                      }
                     />
                     <Button type='button' onClick={handleAddVolumeOption}>
                       Add Volume Option
@@ -777,7 +1061,54 @@ export default function EditProduct() {
                       >
                         <div>
                           <p className='font-medium'>{option.ml}ml</p>
-                          <p className='text-sm text-muted-foreground'>₹{option.price}</p>
+                          <p className='text-sm text-muted-foreground'>
+                            ₹{option.price} | Discount: {option.discount || 0}%
+                            | ₹{option.discountedPrice}
+                          </p>
+                          <div className='mt-1 flex gap-2'>
+                            <Input
+                              type='number'
+                              min={0}
+                              max={100}
+                              value={option.discount}
+                              onChange={(e) => {
+                                const discount =
+                                  parseFloat(e.target.value) || 0;
+                                setFormData((prev) => {
+                                  const updatedOptions = prev.volumeOptions.map(
+                                    (opt, i) =>
+                                      i === index
+                                        ? {
+                                            ...opt,
+                                            discount,
+                                            discountedPrice:
+                                              opt.price * (1 - discount / 100)
+                                          }
+                                        : opt
+                                  );
+                                  const updatedSelected =
+                                    prev.selectedVolume.ml === option.ml
+                                      ? {
+                                          ...prev.selectedVolume,
+                                          discount,
+                                          discountedPrice:
+                                            option.price * (1 - discount / 100)
+                                        }
+                                      : prev.selectedVolume;
+                                  return {
+                                    ...prev,
+                                    volumeOptions: updatedOptions,
+                                    selectedVolume: updatedSelected
+                                  };
+                                });
+                              }}
+                              className='w-20'
+                              placeholder='Discount %'
+                            />
+                            <span className='text-xs text-muted-foreground'>
+                              %
+                            </span>
+                          </div>
                         </div>
                         <Button
                           variant='ghost'
@@ -786,8 +1117,18 @@ export default function EditProduct() {
                             e.stopPropagation();
                             setFormData((prev) => ({
                               ...prev,
-                              volumeOptions: prev.volumeOptions.filter((_, i) => i !== index),
-                              selectedVolume: prev.selectedVolume.ml === option.ml ? { ml: 0, price: 0 } : prev.selectedVolume
+                              volumeOptions: prev.volumeOptions.filter(
+                                (_, i) => i !== index
+                              ),
+                              selectedVolume:
+                                prev.selectedVolume.ml === option.ml
+                                  ? {
+                                      ml: 0,
+                                      price: 0,
+                                      discount: 0,
+                                      discountedPrice: 0
+                                    }
+                                  : (prev.selectedVolume as VolumeOptionFull)
                             }));
                           }}
                         >
@@ -803,55 +1144,10 @@ export default function EditProduct() {
 
           <Card>
             <CardHeader>
-              <CardTitle>Pricing</CardTitle>
+              <CardTitle>Rating & Sale Status</CardTitle>
             </CardHeader>
             <CardContent className='space-y-4'>
               <div className='grid gap-4 md:grid-cols-2'>
-                <div className='space-y-2'>
-                  <Label htmlFor='price'>Price</Label>
-                  <Input
-                    id='price'
-                    name='price'
-                    type='number'
-                    value={formData.price}
-                    onChange={handleChange}
-                    placeholder='Enter price'
-                    required
-                    disabled
-                  />
-                </div>
-                <div className='space-y-2'>
-                  <Label htmlFor='discount'>Discount Percentage</Label>
-                  <Input
-                    id='discount'
-                    name='discount'
-                    type='number'
-                    value={formData.discount}
-                    onChange={(e) => {
-                      const discount = parseFloat(e.target.value) || 0;
-                      setFormData((prev) => ({
-                        ...prev,
-                        discount,
-                        discountedPrice: prev.price * (1 - discount / 100)
-                      }));
-                    }}
-                    placeholder='Enter discount percentage'
-                    min={0}
-                    max={100}
-                  />
-                </div>
-                <div className='space-y-2'>
-                  <Label htmlFor='discountedPrice'>Discounted Price</Label>
-                  <Input
-                    id='discountedPrice'
-                    name='discountedPrice'
-                    type='number'
-                    value={formData.discountedPrice}
-                    onChange={handleChange}
-                    placeholder='Enter discounted price'
-                    disabled
-                  />
-                </div>
                 <div className='space-y-2'>
                   <Label>Rating</Label>
                   <div className='flex items-center gap-2'>
@@ -880,7 +1176,9 @@ export default function EditProduct() {
                     <Switch
                       id='isSale'
                       checked={formData.isSale}
-                      onCheckedChange={(checked) => setFormData((prev) => ({ ...prev, isSale: checked }))}
+                      onCheckedChange={(checked) =>
+                        setFormData((prev) => ({ ...prev, isSale: checked }))
+                      }
                     />
                     <Label htmlFor='isSale'>Mark as Sale</Label>
                   </div>
@@ -901,12 +1199,22 @@ export default function EditProduct() {
                     <Input
                       placeholder='Key'
                       value={newSpecification.key}
-                      onChange={(e) => setNewSpecification((prev) => ({ ...prev, key: e.target.value }))}
+                      onChange={(e) =>
+                        setNewSpecification((prev) => ({
+                          ...prev,
+                          key: e.target.value
+                        }))
+                      }
                     />
                     <Input
                       placeholder='Value'
                       value={newSpecification.value}
-                      onChange={(e) => setNewSpecification((prev) => ({ ...prev, value: e.target.value }))}
+                      onChange={(e) =>
+                        setNewSpecification((prev) => ({
+                          ...prev,
+                          value: e.target.value
+                        }))
+                      }
                     />
                     <Button type='button' onClick={handleAddSpecification}>
                       Add Specification
@@ -916,27 +1224,34 @@ export default function EditProduct() {
                 <div className='space-y-2'>
                   <Label>Specifications</Label>
                   <div className='grid gap-2'>
-                    {Object.entries(formData.specifications).map(([key, value]) => (
-                      <div key={key} className='flex items-center justify-between rounded-lg border p-4'>
-                        <div>
-                          <p className='font-medium'>{key}</p>
-                          <p className='text-sm text-muted-foreground'>{value}</p>
-                        </div>
-                        <Button
-                          variant='ghost'
-                          size='icon'
-                          onClick={() => {
-                            setFormData((prev) => {
-                              const newSpecs = { ...prev.specifications };
-                              delete newSpecs[key];
-                              return { ...prev, specifications: newSpecs };
-                            });
-                          }}
+                    {Object.entries(formData.specifications).map(
+                      ([key, value]) => (
+                        <div
+                          key={key}
+                          className='flex items-center justify-between rounded-lg border p-4'
                         >
-                          <X className='h-4 w-4' />
-                        </Button>
-                      </div>
-                    ))}
+                          <div>
+                            <p className='font-medium'>{key}</p>
+                            <p className='text-sm text-muted-foreground'>
+                              {value}
+                            </p>
+                          </div>
+                          <Button
+                            variant='ghost'
+                            size='icon'
+                            onClick={() => {
+                              setFormData((prev) => {
+                                const newSpecs = { ...prev.specifications };
+                                delete newSpecs[key];
+                                return { ...prev, specifications: newSpecs };
+                              });
+                            }}
+                          >
+                            <X className='h-4 w-4' />
+                          </Button>
+                        </div>
+                      )
+                    )}
                   </div>
                 </div>
               </div>
@@ -951,43 +1266,26 @@ export default function EditProduct() {
               <div className='space-y-4'>
                 <div className='space-y-2'>
                   <Label>Add Fragrance Type</Label>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant='outline'
-                        role='combobox'
-                        className='w-full justify-between'
-                      >
-                        Select fragrance type
-                        <ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className='w-full p-0'>
-                      <Command>
-                        <CommandInput placeholder='Search fragrance type...' />
-                        <CommandEmpty>No fragrance type found.</CommandEmpty>
-                        <CommandGroup className='max-h-[200px] overflow-auto'>
-                          {fragranceTypes.map((fragrance) => (
-                            <CommandItem
-                              key={fragrance}
-                              value={fragrance}
-                              onSelect={() => handleFragranceChange(fragrance as Fragrance)}
-                            >
-                              <Check
-                                className={cn(
-                                  'mr-2 h-4 w-4',
-                                  formData.fragrance.includes(fragrance)
-                                    ? 'opacity-100'
-                                    : 'opacity-0'
-                                )}
-                              />
-                              {fragrance}
-                            </CommandItem>
-                          ))}
-                        </CommandGroup>
-                      </Command>
-                    </PopoverContent>
-                  </Popover>
+                  <MultipleSelector
+                    value={formData.fragrance.map((f) => ({
+                      value: f,
+                      label: f
+                    }))}
+                    defaultOptions={fragranceOptions}
+                    options={fragranceOptions}
+                    placeholder='Select fragrance types'
+                    onChange={(selected: Option[]) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        fragrance: selected.map((opt) => opt.value)
+                      }))
+                    }
+                    hideClearAllButton
+                    hidePlaceholderWhenSelected
+                    emptyIndicator={
+                      <p className='text-center text-sm'>No results found</p>
+                    }
+                  />
                 </div>
                 <div className='flex flex-wrap gap-2'>
                   {formData.fragrance.map((fragrance) => (
@@ -1013,6 +1311,31 @@ export default function EditProduct() {
           </div>
         </form>
       </div>
+      {/* Success Modal */}
+      {showSuccessModal && (
+        <div className='fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50'>
+          <div className='flex flex-col items-center rounded-lg bg-white p-8 shadow-lg'>
+            <h2 className='mb-4 text-xl font-bold'>
+              Product {isEdit ? 'Updated' : 'Created'}!
+            </h2>
+            <p className='mb-2'>
+              Your product <strong>{formData.title}</strong> was{' '}
+              {isEdit ? 'updated' : 'added'} successfully.
+            </p>
+            <div className='mt-4 flex gap-2'>
+              <Button onClick={() => router.push('/dashboard/product-list')}>
+                Go to Product List
+              </Button>
+              <Button
+                variant='outline'
+                onClick={() => setShowSuccessModal(false)}
+              >
+                {isEdit ? 'Continue Editing' : 'Add Another Product'}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </PageContainer>
   );
-} 
+}

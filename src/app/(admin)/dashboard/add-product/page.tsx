@@ -14,19 +14,19 @@ import {
 } from '@/components/ui/select';
 import { IconArrowLeft } from '@tabler/icons-react';
 import Link from 'next/link';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useSession } from '@/components/providers/SessionProvider';
 import { toast } from 'sonner';
-import { CreateProductInput, CategoryType } from '@/lib/validations/product';
-import {
+import { CreateProductInput } from '@/lib/validations/product';
+import type {
+  VolumeOption,
+  Color,
   Gender,
   Fragrance,
-  Color,
-  AvailabilityStatus,
-  VolumeOption
+  AvailabilityStatus
 } from '@/types/product.types';
 import { Badge } from '@/components/ui/badge';
 import { X } from 'lucide-react';
@@ -38,16 +38,10 @@ import {
   PopoverContent,
   PopoverTrigger
 } from '@/components/ui/popover';
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem
-} from '@/components/ui/command';
-import { Check, ChevronsUpDown } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { ChevronsUpDown } from 'lucide-react';
 import { Star } from 'lucide-react';
+import MultipleSelector, { Option } from '@/components/ui/multiselect';
+import { fragranceTypes } from '@/constants/data';
 
 const initialFormData: CreateProductInput = {
   title: '',
@@ -60,8 +54,8 @@ const initialFormData: CreateProductInput = {
   discount: 0,
   rating: 0,
   description: '',
-  gender: ['Unisex'] as Gender[],
-  categories: ['Perfumes'] as CategoryType[],
+  gender: [] as Gender[],
+  categories: [],
   colors: [],
   selectedColor: {
     id: '',
@@ -72,38 +66,36 @@ const initialFormData: CreateProductInput = {
   volumeOptions: [],
   selectedVolume: {
     ml: 0,
-    price: 0
+    price: 0,
+    discount: 0,
+    discountedPrice: 0
   },
   isSale: false,
   specifications: {},
-  fragrance: ['Floral'] as Fragrance[],
+  fragrance: [] as Fragrance[],
   availabilityStatus: 'In Stock'
 };
 
-const fragranceTypes = [
-  'Floral',
-  'Woody',
-  'Citrus',
-  'Spicy',
-  'Musky',
-  'Sandalwood',
-  'Vanilla',
-  'Oriental',
-  'Gourmand',
-  'Chypre',
-  'Aquatic',
-  'Green',
-  'Fresh',
-  'Musk',
-  'Scented'
-] as const;
+const fragranceOptions: Option[] = fragranceTypes.map((type) => ({
+  value: type,
+  label: type
+}));
 
 export default function AddProduct() {
   const router = useRouter();
   const { user } = useSession();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>('');
-  const [formData, setFormData] = useState<CreateProductInput>(initialFormData);
+  const [formData, setFormData] = useState<
+    Omit<
+      CreateProductInput,
+      'volumeOptions' | 'selectedVolume' | 'fragrance'
+    > & {
+      volumeOptions: VolumeOption[];
+      selectedVolume: VolumeOption;
+      fragrance: string[];
+    }
+  >(initialFormData as any);
   const [mainImage, setMainImage] = useState<File | null>(null);
   const [mainImagePreview, setMainImagePreview] = useState<string>('');
   const [galleryImages, setGalleryImages] = useState<File[]>([]);
@@ -114,14 +106,29 @@ export default function AddProduct() {
     color: '',
     label: ''
   });
-  const [newVolumeOption, setNewVolumeOption] = useState({
+  // Update newVolumeOption to include discount and discountedPrice
+  const [newVolumeOption, setNewVolumeOption] = useState<VolumeOption>({
     ml: 0,
-    price: 0
+    price: 0,
+    discount: 0,
+    discountedPrice: 0
   });
   const [newSpecification, setNewSpecification] = useState({
     key: '',
     value: ''
   });
+  // --- Add categories state and fetch logic ---
+  const [categories, setCategories] = useState<
+    { id: string; name: string; slug: string }[]
+  >([]);
+  useEffect(() => {
+    fetch('/api/categories')
+      .then((res) => res.json())
+      .then((data) =>
+        Array.isArray(data) ? setCategories(data) : setCategories([])
+      )
+      .catch(() => setCategories([]));
+  }, []);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -148,7 +155,7 @@ export default function AddProduct() {
     }));
   };
 
-  const handleCategoryChange = (value: CategoryType) => {
+  const handleCategoryChange = (value: string) => {
     setFormData((prev) => ({
       ...prev,
       categories: prev.categories.includes(value)
@@ -305,39 +312,39 @@ export default function AddProduct() {
     }));
   };
 
+  // Update handleVolumeSelect to update selectedVolume
   const handleVolumeSelect = (volume: VolumeOption) => {
     setFormData((prev) => ({
       ...prev,
-      selectedVolume: volume,
-      price: volume.price,
-      discountedPrice: volume.price * (1 - prev.discount / 100)
+      selectedVolume: volume
     }));
   };
 
+  // Update handleAddVolumeOption to use new structure
   const handleAddVolumeOption = () => {
     if (!newVolumeOption.ml || !newVolumeOption.price) {
       toast.error('Please fill in all volume option fields');
       return;
     }
-
+    const discount = newVolumeOption.discount || 0;
+    const discountedPrice = newVolumeOption.price * (1 - discount / 100);
     const newVolume = {
       ml: newVolumeOption.ml,
-      price: newVolumeOption.price
+      price: newVolumeOption.price,
+      discount,
+      discountedPrice
     };
-
     setFormData((prev) => ({
       ...prev,
       volumeOptions: [...prev.volumeOptions, newVolume],
       selectedVolume:
-        prev.volumeOptions.length === 0 ? newVolume : prev.selectedVolume,
-      price: prev.volumeOptions.length === 0 ? newVolume.price : prev.price,
-      discountedPrice:
-        prev.volumeOptions.length === 0 ? newVolume.price : prev.discountedPrice
+        prev.volumeOptions.length === 0 ? newVolume : prev.selectedVolume
     }));
-
     setNewVolumeOption({
       ml: 0,
-      price: 0
+      price: 0,
+      discount: 0,
+      discountedPrice: 0
     });
   };
 
@@ -384,7 +391,8 @@ export default function AddProduct() {
       const data = {
         ...formData,
         slug,
-        categories: formData.categories // Send just the category names
+        categories: formData.categories, // Send just the category names
+        fragrance: formData.fragrance as any // Cast to any to satisfy backend
       };
 
       const response = await fetch('/api/products', {
@@ -397,11 +405,13 @@ export default function AddProduct() {
 
       if (!response.ok) {
         const error = await response.json();
+        console.error('API Error:', error); // Log the full error response
         throw new Error(error.error || 'Failed to create product');
       }
 
       toast.success('Product created successfully');
-      router.push('/dashboard/product-list');
+      setShowSuccessModal(true);
+      // router.push('/dashboard/product-list'); // Remove immediate redirect
     } catch (error) {
       console.error('Error creating product:', error);
       toast.error(
@@ -426,6 +436,9 @@ export default function AddProduct() {
     setGalleryPreviews((prev) => prev.filter((_, i) => i !== index));
     setGalleryImages((prev) => prev.filter((_, i) => i !== index));
   };
+
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [isEdit] = useState(false); // Always false for add product
 
   return (
     <PageContainer>
@@ -586,27 +599,26 @@ export default function AddProduct() {
               <div className='space-y-2'>
                 <Label>Categories</Label>
                 <div className='flex flex-wrap gap-2'>
-                  {(
-                    [
-                      'Perfumes',
-                      'Attars',
-                      'New Arrivals',
-                      'Best Sellers'
-                    ] as CategoryType[]
-                  ).map((category) => (
-                    <Badge
-                      key={category}
-                      variant={
-                        formData.categories.includes(category)
-                          ? 'default'
-                          : 'secondary'
-                      }
-                      className='cursor-pointer'
-                      onClick={() => handleCategoryChange(category)}
-                    >
-                      {category}
-                    </Badge>
-                  ))}
+                  {categories.length > 0 ? (
+                    categories.map((category) => (
+                      <Badge
+                        key={category.name}
+                        variant={
+                          formData.categories.includes(category.name)
+                            ? 'default'
+                            : 'secondary'
+                        }
+                        className='cursor-pointer'
+                        onClick={() => handleCategoryChange(category.name)}
+                      >
+                        {category.name}
+                      </Badge>
+                    ))
+                  ) : (
+                    <span className='text-muted-foreground'>
+                      No categories found
+                    </span>
+                  )}
                 </div>
               </div>
               <div className='space-y-2'>
@@ -649,6 +661,7 @@ export default function AddProduct() {
                           value: e.target.value
                         }))
                       }
+                      disabled
                     />
                     <div className='space-y-2'>
                       <Label>Color Picker</Label>
@@ -669,7 +682,8 @@ export default function AddProduct() {
                             onChange={(color) =>
                               setNewColor((prev) => ({
                                 ...prev,
-                                color
+                                color,
+                                value: color // auto-fill value with color code
                               }))
                             }
                           />
@@ -780,18 +794,59 @@ export default function AddProduct() {
                     {formData.volumeOptions.map((option, index) => (
                       <div
                         key={index}
-                        className={`flex cursor-pointer items-center justify-between rounded-lg border p-4 ${
-                          formData.selectedVolume.ml === option.ml
-                            ? 'border-primary'
-                            : 'border-border'
-                        }`}
+                        className={`flex cursor-pointer items-center justify-between rounded-lg border p-4 ${formData.selectedVolume.ml === option.ml ? 'border-primary' : 'border-border'}`}
                         onClick={() => handleVolumeSelect(option)}
                       >
                         <div>
                           <p className='font-medium'>{option.ml}ml</p>
                           <p className='text-sm text-muted-foreground'>
-                            ${option.price}
+                            ₹{option.price} | Discount: {option.discount || 0}%
+                            | ₹{option.discountedPrice}
                           </p>
+                          <div className='mt-1 flex gap-2'>
+                            <Input
+                              type='number'
+                              min={0}
+                              max={100}
+                              value={option.discount > 0 ? option.discount : ''}
+                              onChange={(e) => {
+                                const discount =
+                                  parseFloat(e.target.value) || 0;
+                                setFormData((prev) => {
+                                  const updatedOptions = prev.volumeOptions.map(
+                                    (opt, i) =>
+                                      i === index
+                                        ? {
+                                            ...opt,
+                                            discount,
+                                            discountedPrice:
+                                              opt.price * (1 - discount / 100)
+                                          }
+                                        : opt
+                                  );
+                                  const updatedSelected =
+                                    prev.selectedVolume.ml === option.ml
+                                      ? {
+                                          ...prev.selectedVolume,
+                                          discount,
+                                          discountedPrice:
+                                            option.price * (1 - discount / 100)
+                                        }
+                                      : prev.selectedVolume;
+                                  return {
+                                    ...prev,
+                                    volumeOptions: updatedOptions,
+                                    selectedVolume: updatedSelected
+                                  };
+                                });
+                              }}
+                              className='w-20'
+                              placeholder='Discount %'
+                            />
+                            <span className='text-xs text-muted-foreground'>
+                              %
+                            </span>
+                          </div>
                         </div>
                         <Button
                           variant='ghost'
@@ -805,7 +860,12 @@ export default function AddProduct() {
                               ),
                               selectedVolume:
                                 prev.selectedVolume.ml === option.ml
-                                  ? { ml: 0, price: 0 }
+                                  ? {
+                                      ml: 0,
+                                      price: 0,
+                                      discount: 0,
+                                      discountedPrice: 0
+                                    }
                                   : prev.selectedVolume
                             }));
                           }}
@@ -822,55 +882,10 @@ export default function AddProduct() {
 
           <Card>
             <CardHeader>
-              <CardTitle>Pricing</CardTitle>
+              <CardTitle>Rating & Sale Status</CardTitle>
             </CardHeader>
             <CardContent className='space-y-4'>
               <div className='grid gap-4 md:grid-cols-2'>
-                <div className='space-y-2'>
-                  <Label htmlFor='price'>Price</Label>
-                  <Input
-                    id='price'
-                    name='price'
-                    type='number'
-                    value={formData.price}
-                    onChange={handleChange}
-                    placeholder='Enter price'
-                    required
-                    disabled
-                  />
-                </div>
-                <div className='space-y-2'>
-                  <Label htmlFor='discount'>Discount Percentage</Label>
-                  <Input
-                    id='discount'
-                    name='discount'
-                    type='number'
-                    value={formData.discount}
-                    onChange={(e) => {
-                      const discount = parseFloat(e.target.value) || 0;
-                      setFormData((prev) => ({
-                        ...prev,
-                        discount,
-                        discountedPrice: prev.price * (1 - discount / 100)
-                      }));
-                    }}
-                    placeholder='Enter discount percentage'
-                    min={0}
-                    max={100}
-                  />
-                </div>
-                <div className='space-y-2'>
-                  <Label htmlFor='discountedPrice'>Discounted Price</Label>
-                  <Input
-                    id='discountedPrice'
-                    name='discountedPrice'
-                    type='number'
-                    value={formData.discountedPrice}
-                    onChange={handleChange}
-                    placeholder='Enter discounted price'
-                    disabled
-                  />
-                </div>
                 <div className='space-y-2'>
                   <Label>Rating</Label>
                   <div className='flex items-center gap-2'>
@@ -996,56 +1011,26 @@ export default function AddProduct() {
               <div className='space-y-4'>
                 <div className='space-y-2'>
                   <Label>Add Fragrance Type</Label>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant='outline'
-                        role='combobox'
-                        className='w-full justify-between'
-                      >
-                        Select fragrance type
-                        <ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className='w-full p-0'>
-                      <Command>
-                        <CommandInput placeholder='Search fragrance type...' />
-                        <CommandEmpty>No fragrance type found.</CommandEmpty>
-                        <CommandGroup className='max-h-[200px] overflow-auto'>
-                          {fragranceTypes.map((fragrance) => (
-                            <CommandItem
-                              key={fragrance}
-                              value={fragrance}
-                              onSelect={() => handleFragranceChange(fragrance)}
-                            >
-                              <Check
-                                className={cn(
-                                  'mr-2 h-4 w-4',
-                                  formData.fragrance.includes(fragrance)
-                                    ? 'opacity-100'
-                                    : 'opacity-0'
-                                )}
-                              />
-                              {fragrance}
-                            </CommandItem>
-                          ))}
-                        </CommandGroup>
-                      </Command>
-                    </PopoverContent>
-                  </Popover>
-                </div>
-                <div className='flex flex-wrap gap-2'>
-                  {formData.fragrance.map((fragrance) => (
-                    <Badge
-                      key={fragrance}
-                      variant='default'
-                      className='cursor-pointer'
-                      onClick={() => handleFragranceChange(fragrance)}
-                    >
-                      {fragrance}
-                      <X className='ml-1 h-3 w-3' />
-                    </Badge>
-                  ))}
+                  <MultipleSelector
+                    value={formData.fragrance.map((f) => ({
+                      value: f,
+                      label: f
+                    }))}
+                    defaultOptions={fragranceOptions}
+                    options={fragranceOptions}
+                    placeholder='Select fragrance types'
+                    onChange={(selected) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        fragrance: selected.map((opt) => opt.value)
+                      }))
+                    }
+                    hideClearAllButton
+                    hidePlaceholderWhenSelected
+                    emptyIndicator={
+                      <p className='text-center text-sm'>No results found</p>
+                    }
+                  />
                 </div>
               </div>
             </CardContent>
@@ -1053,11 +1038,36 @@ export default function AddProduct() {
 
           <div className='flex justify-end'>
             <Button type='submit' disabled={loading}>
-              {loading ? 'Creating...' : 'Create Product'}
+              {loading ? 'Adding...' : 'Add Product'}
             </Button>
           </div>
         </form>
       </div>
+      {/* Success Modal */}
+      {showSuccessModal && (
+        <div className='fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50'>
+          <div className='flex flex-col items-center rounded-lg bg-white p-8 shadow-lg'>
+            <h2 className='mb-4 text-xl font-bold'>
+              Product {isEdit ? 'Updated' : 'Created'}!
+            </h2>
+            <p className='mb-2'>
+              Your product <strong>{formData.title}</strong> was{' '}
+              {isEdit ? 'updated' : 'added'} successfully.
+            </p>
+            <div className='mt-4 flex gap-2'>
+              <Button onClick={() => router.push('/dashboard/product-list')}>
+                Go to Product List
+              </Button>
+              <Button
+                variant='outline'
+                onClick={() => setShowSuccessModal(false)}
+              >
+                {isEdit ? 'Continue Editing' : 'Add Another Product'}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </PageContainer>
   );
 }

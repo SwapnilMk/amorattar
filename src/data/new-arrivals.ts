@@ -1,7 +1,6 @@
 import {
   Product,
   Gender,
-  ProductCategory,
   AvailabilityStatus,
   Fragrance
 } from '@/types/product.types';
@@ -20,36 +19,7 @@ export const newArrivalsData: Product[] = [
     description:
       'Jasmine Bloom Perfume is a luxurious and unique fragrance that combines the rich, warm notes of jasmine with the deep, mysterious notes of musk. This attar is perfect for those who want to make a bold statement and stand out from the crowd.',
     gender: ['Women'] as Gender[],
-    categories: [
-      {
-        id: '19',
-        productId: '1',
-        categoryId: '19',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        category: {
-          id: '19',
-          name: 'Perfumes',
-          slug: 'perfumes',
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        }
-      },
-      {
-        id: '20',
-        productId: '1',
-        categoryId: '20',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        category: {
-          id: '20',
-          name: 'New Arrivals',
-          slug: 'new-arrivals',
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        }
-      }
-    ],
+    categories: ['Perfumes', 'New Arrivals'],
     colors: [
       {
         id: 'jasmine-pink',
@@ -77,11 +47,11 @@ export const newArrivalsData: Product[] = [
       label: 'Pink'
     },
     volumeOptions: [
-      { ml: 6, price: 120 },
-      { ml: 12, price: 220 },
-      { ml: 20, price: 380 }
+      { ml: 6, price: 120, discount: 0, discountedPrice: 120 },
+      { ml: 12, price: 220, discount: 0, discountedPrice: 220 },
+      { ml: 20, price: 380, discount: 0, discountedPrice: 380 }
     ],
-    selectedVolume: { ml: 6, price: 120 },
+    selectedVolume: { ml: 6, price: 120, discount: 0, discountedPrice: 120 },
     isSale: false,
     specifications: [
       { key: 'Fragrance Type', value: 'Perfume' },
@@ -108,36 +78,7 @@ export const newArrivalsData: Product[] = [
     description:
       'Oud Mystique Attar is a luxurious and unique fragrance that combines the rich, warm notes of oud with the deep, mysterious notes of musk. This attar is perfect for those who want to make a bold statement and stand out from the crowd.',
     gender: ['Men', 'Unisex'] as Gender[],
-    categories: [
-      {
-        id: '21',
-        productId: '2',
-        categoryId: '21',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        category: {
-          id: '21',
-          name: 'Attars',
-          slug: 'attars',
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        }
-      },
-      {
-        id: '22',
-        productId: '2',
-        categoryId: '22',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        category: {
-          id: '22',
-          name: 'New Arrivals',
-          slug: 'new-arrivals',
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        }
-      }
-    ],
+    categories: ['Attars', 'New Arrivals'],
     colors: [
       {
         id: 'oud-brown',
@@ -165,11 +106,11 @@ export const newArrivalsData: Product[] = [
       label: 'Brown'
     },
     volumeOptions: [
-      { ml: 6, price: 260 },
-      { ml: 12, price: 480 },
-      { ml: 20, price: 780 }
+      { ml: 6, price: 260, discount: 20, discountedPrice: 208 },
+      { ml: 12, price: 480, discount: 20, discountedPrice: 384 },
+      { ml: 20, price: 780, discount: 20, discountedPrice: 624 }
     ],
-    selectedVolume: { ml: 6, price: 260 },
+    selectedVolume: { ml: 6, price: 260, discount: 20, discountedPrice: 208 },
     isSale: true,
     specifications: [
       { key: 'Fragrance Type', value: 'Attar' },
@@ -196,36 +137,7 @@ export const newArrivalsData: Product[] = [
     description:
       'Lemon Grove Spray is a refreshing and invigorating fragrance that combines the zesty notes of lemon with subtle floral undertones. Perfect for daily wear and special occasions.',
     gender: ['Unisex'] as Gender[],
-    categories: [
-      {
-        id: '23',
-        productId: '3',
-        categoryId: '23',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        category: {
-          id: '23',
-          name: 'Perfumes',
-          slug: 'perfumes',
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        }
-      },
-      {
-        id: '24',
-        productId: '3',
-        categoryId: '24',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        category: {
-          id: '24',
-          name: 'New Arrivals',
-          slug: 'new-arrivals',
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        }
-      }
-    ],
+    categories: ['Perfumes', 'New Arrivals'],
     colors: [
       {
         id: 'lemon-yellow',
@@ -253,11 +165,11 @@ export const newArrivalsData: Product[] = [
       label: 'Yellow'
     },
     volumeOptions: [
-      { ml: 6, price: 160 },
-      { ml: 12, price: 300 },
-      { ml: 20, price: 480 }
+      { ml: 6, price: 160, discount: 10, discountedPrice: 144 },
+      { ml: 12, price: 300, discount: 10, discountedPrice: 270 },
+      { ml: 20, price: 480, discount: 10, discountedPrice: 432 }
     ],
-    selectedVolume: { ml: 6, price: 160 },
+    selectedVolume: { ml: 6, price: 160, discount: 10, discountedPrice: 144 },
     isSale: true,
     specifications: [
       { key: 'Fragrance Type', value: 'Spray' },

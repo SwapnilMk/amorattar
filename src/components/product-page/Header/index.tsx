@@ -13,14 +13,19 @@ import VariantColorSelectorBasic from './ColorSelection';
 import { Separator } from '@/components/ui/separator';
 
 const Header = ({ data }: { data: Product }) => {
-  const [selectedVolume, setSelectedVolume] = useState(data.volumeOptions[0]);
+  const [selectedVolumeIndex, setSelectedVolumeIndex] = useState(() => {
+    const idx = data.volumeOptions.findIndex(
+      (v) =>
+        v.ml === data.selectedVolume.ml && v.price === data.selectedVolume.price
+    );
+    return idx !== -1 ? idx : 0;
+  });
+  const selectedVolume =
+    data.volumeOptions[selectedVolumeIndex] || data.volumeOptions[0];
   const [selectedColor, setSelectedColor] = useState<Color>(data.selectedColor);
 
-  const handleVolumeChange = (ml: number) => {
-    const volume = data.volumeOptions.find((v) => v.ml === ml);
-    if (volume) {
-      setSelectedVolume(volume);
-    }
+  const handleVolumeChange = (index: number) => {
+    setSelectedVolumeIndex(index);
   };
 
   return (
@@ -35,32 +40,33 @@ const Header = ({ data }: { data: Product }) => {
 
           {/* Categories */}
           <div className='mb-3 flex flex-wrap gap-2'>
-            {data.categories.map((category) => (
-              <Link
-                key={category.id}
-                href={`/shop?category=${category.category.slug}`}
-                className='no-underline'
-              >
-                <Badge
-                  variant='outline'
-                  className={cn(
-                    'px-3 py-1 text-sm capitalize transition-colors hover:bg-black hover:text-white',
-                    {
-                      'bg-blue-50 text-blue-700':
-                        category.category.name === 'Perfumes',
-                      'bg-amber-50 text-amber-700':
-                        category.category.name === 'Attars',
-                      'bg-green-50 text-green-700':
-                        category.category.name === 'New Arrivals',
-                      'bg-purple-50 text-purple-700':
-                        category.category.name === 'Best Sellers'
-                    }
-                  )}
+            {data.categories.map((category) => {
+              const slug = category.toLowerCase().replace(/ /g, '-');
+              return (
+                <Link
+                  key={category}
+                  href={`/shop?category=${slug}`}
+                  className='no-underline'
                 >
-                  {category.category.name}
-                </Badge>
-              </Link>
-            ))}
+                  <Badge
+                    variant='outline'
+                    className={cn(
+                      'px-3 py-1 text-sm capitalize transition-colors hover:bg-black hover:text-white',
+                      {
+                        'bg-blue-50 text-blue-700': category === 'Perfumes',
+                        'bg-amber-50 text-amber-700': category === 'Attars',
+                        'bg-green-50 text-green-700':
+                          category === 'New Arrivals',
+                        'bg-purple-50 text-purple-700':
+                          category === 'Best Sellers'
+                      }
+                    )}
+                  >
+                    {category}
+                  </Badge>
+                </Link>
+              );
+            })}
           </div>
 
           <h1
@@ -91,16 +97,19 @@ const Header = ({ data }: { data: Product }) => {
           {/* Price and Discount */}
           <div className='mb-5 flex items-center space-x-2.5 sm:space-x-3'>
             <span className='text-2xl font-bold text-black sm:text-[32px]'>
-              ₹{selectedVolume.price}
+              ₹
+              {selectedVolume.discount > 0
+                ? selectedVolume.discountedPrice
+                : selectedVolume.price}
             </span>
-            {data.discount > 0 && (
+            {selectedVolume.discount > 0 && (
               <span className='text-2xl font-bold text-black/40 line-through sm:text-[32px]'>
-                ₹{data.price}
+                ₹{selectedVolume.price}
               </span>
             )}
-            {data.discount > 0 && (
+            {selectedVolume.discount > 0 && (
               <span className='rounded-full bg-[#FF3333]/10 px-3.5 py-1.5 text-[10px] font-medium text-[#FF3333] sm:text-xs'>
-                {`-${data.discount}%`}
+                {`-${selectedVolume.discount}%`}
               </span>
             )}
             {data.isSale && (
@@ -181,13 +190,13 @@ const Header = ({ data }: { data: Product }) => {
           <div className='mb-5'>
             <h3 className='mb-3 text-sm font-medium'>Select Volume</h3>
             <div className='flex gap-2'>
-              {data.volumeOptions.map((option) => (
+              {data.volumeOptions.map((option, index) => (
                 <button
-                  key={option.ml}
-                  onClick={() => handleVolumeChange(option.ml)}
+                  key={index}
+                  onClick={() => handleVolumeChange(index)}
                   className={cn(
                     'rounded-full border px-4 py-2 text-sm transition-colors',
-                    selectedVolume.ml === option.ml
+                    selectedVolumeIndex === index
                       ? 'border-[#334958] bg-[#334958] text-white'
                       : 'border-gray-200 hover:border-[#334958] hover:text-[#334958]'
                   )}

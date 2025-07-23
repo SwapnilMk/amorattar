@@ -1,7 +1,6 @@
 import {
   Product,
   Gender,
-  ProductCategory,
   AvailabilityStatus,
   Fragrance
 } from '@/types/product.types';
@@ -20,36 +19,7 @@ export const topSellingData: Product[] = [
     description:
       'Royal Oud Attar is a luxurious and unique fragrance that combines the rich, warm notes of oud with the deep, mysterious notes of musk. This attar is perfect for those who want to make a bold statement and stand out from the crowd.',
     gender: ['Men', 'Unisex'] as Gender[],
-    categories: [
-      {
-        id: '1',
-        productId: '1',
-        categoryId: '1',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        category: {
-          id: '1',
-          name: 'Attars',
-          slug: 'attars',
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        }
-      },
-      {
-        id: '2',
-        productId: '1',
-        categoryId: '2',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        category: {
-          id: '2',
-          name: 'Best Sellers',
-          slug: 'best-sellers',
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        }
-      }
-    ],
+    categories: ['Attars', 'Best Sellers'],
     colors: [
       {
         id: 'royal-oud-brown',
@@ -71,11 +41,11 @@ export const topSellingData: Product[] = [
       label: 'Brown'
     },
     volumeOptions: [
-      { ml: 6, price: 299 },
-      { ml: 12, price: 550 },
-      { ml: 20, price: 900 }
+      { ml: 6, price: 299, discount: 20, discountedPrice: 239.2 },
+      { ml: 12, price: 550, discount: 20, discountedPrice: 440 },
+      { ml: 20, price: 900, discount: 20, discountedPrice: 720 }
     ],
-    selectedVolume: { ml: 6, price: 299 },
+    selectedVolume: { ml: 6, price: 299, discount: 20, discountedPrice: 239.2 },
     isSale: true,
     specifications: [
       { key: 'Fragrance Type', value: 'Attar' },
@@ -102,36 +72,7 @@ export const topSellingData: Product[] = [
     description:
       'Rose Gold Perfume is a luxurious and unique fragrance that combines the rich, warm notes of rose with the deep, mysterious notes of musk. This perfume is perfect for those who want to make a bold statement and stand out from the crowd.',
     gender: ['Women'] as Gender[],
-    categories: [
-      {
-        id: '3',
-        productId: '2',
-        categoryId: '3',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        category: {
-          id: '3',
-          name: 'Perfumes',
-          slug: 'perfumes',
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        }
-      },
-      {
-        id: '4',
-        productId: '2',
-        categoryId: '4',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        category: {
-          id: '4',
-          name: 'Best Sellers',
-          slug: 'best-sellers',
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        }
-      }
-    ],
+    categories: ['Perfumes', 'Best Sellers'],
     colors: [
       {
         id: 'rose-gold-pink',
@@ -153,11 +94,11 @@ export const topSellingData: Product[] = [
       label: 'Pink'
     },
     volumeOptions: [
-      { ml: 6, price: 199 },
-      { ml: 12, price: 380 },
-      { ml: 20, price: 600 }
+      { ml: 6, price: 199, discount: 0, discountedPrice: 199 },
+      { ml: 12, price: 380, discount: 0, discountedPrice: 380 },
+      { ml: 20, price: 600, discount: 0, discountedPrice: 600 }
     ],
-    selectedVolume: { ml: 6, price: 199 },
+    selectedVolume: { ml: 6, price: 199, discount: 0, discountedPrice: 199 },
     isSale: false,
     specifications: [
       { key: 'Fragrance Type', value: 'Perfume' },
@@ -184,36 +125,7 @@ export const topSellingData: Product[] = [
     description:
       'Musk Mystique Eau de Parfum is a luxurious and unique fragrance that combines the rich, warm notes of musk with the deep, mysterious notes of amber. This perfume is perfect for those who want to make a bold statement and stand out from the crowd.',
     gender: ['Unisex'] as Gender[],
-    categories: [
-      {
-        id: '9',
-        productId: '3',
-        categoryId: '9',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        category: {
-          id: '9',
-          name: 'Perfumes',
-          slug: 'perfumes',
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        }
-      },
-      {
-        id: '10',
-        productId: '3',
-        categoryId: '10',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        category: {
-          id: '10',
-          name: 'Best Sellers',
-          slug: 'best-sellers',
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        }
-      }
-    ],
+    categories: ['Perfumes', 'Best Sellers'],
     colors: [
       {
         id: 'musk-mystique-black',
@@ -235,11 +147,11 @@ export const topSellingData: Product[] = [
       label: 'Black'
     },
     volumeOptions: [
-      { ml: 6, price: 249 },
-      { ml: 12, price: 450 },
-      { ml: 20, price: 750 }
+      { ml: 6, price: 249, discount: 20, discountedPrice: 199.2 },
+      { ml: 12, price: 450, discount: 20, discountedPrice: 360 },
+      { ml: 20, price: 750, discount: 20, discountedPrice: 600 }
     ],
-    selectedVolume: { ml: 6, price: 249 },
+    selectedVolume: { ml: 6, price: 249, discount: 20, discountedPrice: 199.2 },
     isSale: true,
     specifications: [
       { key: 'Fragrance Type', value: 'Eau de Parfum' },
@@ -266,36 +178,7 @@ export const topSellingData: Product[] = [
     description:
       'Rose Attar Elegance is a luxurious and unique fragrance that combines the rich, warm notes of rose with the deep, mysterious notes of musk. This attar is perfect for those who want to make a bold statement and stand out from the crowd.',
     gender: ['Women', 'Unisex'] as Gender[],
-    categories: [
-      {
-        id: '11',
-        productId: '5',
-        categoryId: '11',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        category: {
-          id: '11',
-          name: 'Attars',
-          slug: 'attars',
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        }
-      },
-      {
-        id: '12',
-        productId: '5',
-        categoryId: '12',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        category: {
-          id: '12',
-          name: 'Best Sellers',
-          slug: 'best-sellers',
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        }
-      }
-    ],
+    categories: ['Attars', 'Best Sellers'],
     colors: [
       {
         id: 'rose-attar-red',
@@ -323,11 +206,11 @@ export const topSellingData: Product[] = [
       label: 'Red'
     },
     volumeOptions: [
-      { ml: 6, price: 232 },
-      { ml: 12, price: 420 },
-      { ml: 20, price: 680 }
+      { ml: 6, price: 232, discount: 20, discountedPrice: 185.6 },
+      { ml: 12, price: 420, discount: 20, discountedPrice: 336 },
+      { ml: 20, price: 680, discount: 20, discountedPrice: 544 }
     ],
-    selectedVolume: { ml: 6, price: 232 },
+    selectedVolume: { ml: 6, price: 232, discount: 20, discountedPrice: 185.6 },
     isSale: true,
     specifications: [
       { key: 'Fragrance Type', value: 'Attar' },
@@ -354,36 +237,7 @@ export const topSellingData: Product[] = [
     description:
       'Sandalwood Bliss Perfume is a luxurious and unique fragrance that combines the rich, warm notes of sandalwood with the deep, mysterious notes of musk. This attar is perfect for those who want to make a bold statement and stand out from the crowd.',
     gender: ['Men', 'Unisex'] as Gender[],
-    categories: [
-      {
-        id: '13',
-        productId: '6',
-        categoryId: '13',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        category: {
-          id: '13',
-          name: 'Perfumes',
-          slug: 'perfumes',
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        }
-      },
-      {
-        id: '14',
-        productId: '6',
-        categoryId: '14',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        category: {
-          id: '14',
-          name: 'Best Sellers',
-          slug: 'best-sellers',
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        }
-      }
-    ],
+    categories: ['Perfumes', 'Best Sellers'],
     colors: [
       {
         id: 'sandalwood-bliss-brown',
@@ -411,11 +265,11 @@ export const topSellingData: Product[] = [
       label: 'Brown'
     },
     volumeOptions: [
-      { ml: 6, price: 145 },
-      { ml: 12, price: 280 },
-      { ml: 20, price: 450 }
+      { ml: 6, price: 145, discount: 0, discountedPrice: 145 },
+      { ml: 12, price: 280, discount: 0, discountedPrice: 280 },
+      { ml: 20, price: 450, discount: 0, discountedPrice: 450 }
     ],
-    selectedVolume: { ml: 6, price: 145 },
+    selectedVolume: { ml: 6, price: 145, discount: 0, discountedPrice: 145 },
     isSale: false,
     specifications: [
       { key: 'Fragrance Type', value: 'Perfume' },
@@ -442,36 +296,7 @@ export const topSellingData: Product[] = [
     description:
       'Citrus Zest Spray is a refreshing and energizing fragrance that combines the vibrant notes of citrus fruits with a subtle woody base. Perfect for daily wear and casual occasions.',
     gender: ['Unisex'] as Gender[],
-    categories: [
-      {
-        id: '15',
-        productId: '7',
-        categoryId: '15',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        category: {
-          id: '15',
-          name: 'Perfumes',
-          slug: 'perfumes',
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        }
-      },
-      {
-        id: '16',
-        productId: '7',
-        categoryId: '16',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        category: {
-          id: '16',
-          name: 'Best Sellers',
-          slug: 'best-sellers',
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        }
-      }
-    ],
+    categories: ['Perfumes', 'Best Sellers'],
     colors: [
       {
         id: 'citrus-zest-orange',
@@ -487,11 +312,11 @@ export const topSellingData: Product[] = [
       label: 'Orange'
     },
     volumeOptions: [
-      { ml: 6, price: 80 },
-      { ml: 12, price: 150 },
-      { ml: 20, price: 240 }
+      { ml: 6, price: 80, discount: 0, discountedPrice: 80 },
+      { ml: 12, price: 150, discount: 0, discountedPrice: 150 },
+      { ml: 20, price: 240, discount: 0, discountedPrice: 240 }
     ],
-    selectedVolume: { ml: 6, price: 80 },
+    selectedVolume: { ml: 6, price: 80, discount: 0, discountedPrice: 80 },
     isSale: false,
     specifications: [
       { key: 'Fragrance Type', value: 'Spray' },
@@ -518,36 +343,7 @@ export const topSellingData: Product[] = [
     description:
       'Oud Royale Attar is a luxurious and unique fragrance that combines the rich, warm notes of oud with the deep, mysterious notes of musk. This attar is perfect for those who want to make a bold statement and stand out from the crowd.',
     gender: ['Men', 'Unisex'] as Gender[],
-    categories: [
-      {
-        id: '17',
-        productId: '8',
-        categoryId: '17',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        category: {
-          id: '17',
-          name: 'Attars',
-          slug: 'attars',
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        }
-      },
-      {
-        id: '18',
-        productId: '8',
-        categoryId: '18',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        category: {
-          id: '18',
-          name: 'Best Sellers',
-          slug: 'best-sellers',
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        }
-      }
-    ],
+    categories: ['Attars', 'Best Sellers'],
     colors: [
       {
         id: 'oud-royale-brown',
@@ -563,11 +359,11 @@ export const topSellingData: Product[] = [
       label: 'Brown'
     },
     volumeOptions: [
-      { ml: 6, price: 210 },
-      { ml: 12, price: 400 },
-      { ml: 20, price: 650 }
+      { ml: 6, price: 210, discount: 0, discountedPrice: 210 },
+      { ml: 12, price: 400, discount: 0, discountedPrice: 400 },
+      { ml: 20, price: 650, discount: 0, discountedPrice: 650 }
     ],
-    selectedVolume: { ml: 6, price: 210 },
+    selectedVolume: { ml: 6, price: 210, discount: 0, discountedPrice: 210 },
     isSale: false,
     specifications: [
       { key: 'Fragrance Type', value: 'Attar' },

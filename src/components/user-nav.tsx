@@ -63,21 +63,6 @@ export function UserNav() {
             </div>
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuGroup>
-            <DropdownMenuItem>
-              <IconCircleCheck className='mr-2 h-4 w-4' />
-              Profile
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <IconCreditCard className='mr-2 h-4 w-4' />
-              Billing
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <IconBell className='mr-2 h-4 w-4' />
-              Settings
-            </DropdownMenuItem>
-          </DropdownMenuGroup>
-          <DropdownMenuSeparator />
           <DropdownMenuItem onClick={handleLogout}>
             <IconLogout className='mr-2 h-4 w-4' />
             Log out

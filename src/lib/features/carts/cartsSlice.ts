@@ -1,5 +1,3 @@
-import { compareArrays } from '@/lib/utils';
-import { Discount } from '@/types/product.types';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 const calcAdjustedTotalPrice = (

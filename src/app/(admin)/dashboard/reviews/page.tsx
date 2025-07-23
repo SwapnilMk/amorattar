@@ -258,23 +258,24 @@ export default function ReviewsPage() {
             ) : filteredReviews.length === 0 ? (
               <div>No reviews found</div>
             ) : (
-              <div className='rounded-md border'>
+              <div className='grid w-full overflow-x-auto [&>div]:max-h-[400px] [&>div]:rounded [&>div]:border'>
                 <Table>
                   <TableHeader>
-                    <TableRow>
-                      <TableHead className='w-[200px]'>Name</TableHead>
-                      <TableHead className='w-[100px]'>Rating</TableHead>
-                      <TableHead className='w-[300px]'>Content</TableHead>
-                      <TableHead className='w-[120px]'>Date</TableHead>
-                      <TableHead className='w-[100px] text-right'>
-                        Actions
-                      </TableHead>
+                    <TableRow className="sticky top-0 bg-background after:absolute after:inset-x-0 after:bottom-0 after:h-px after:bg-border after:content-[''] [&>*]:whitespace-nowrap">
+                      <TableHead className='pl-4'>Name</TableHead>
+                      <TableHead>Rating</TableHead>
+                      <TableHead>Content</TableHead>
+                      <TableHead>Date</TableHead>
+                      <TableHead className='text-right'>Actions</TableHead>
                     </TableRow>
                   </TableHeader>
-                  <TableBody>
+                  <TableBody className='overflow-hidden'>
                     {filteredReviews.map((review) => (
-                      <TableRow key={review.id}>
-                        <TableCell>
+                      <TableRow
+                        key={review.id}
+                        className='odd:bg-muted/50 [&>*]:whitespace-nowrap'
+                      >
+                        <TableCell className='pl-4'>
                           <div className='flex items-center gap-2'>
                             <Avatar>
                               <AvatarFallback>

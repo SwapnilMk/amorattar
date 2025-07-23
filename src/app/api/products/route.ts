@@ -20,11 +20,7 @@ export async function GET(request: Request) {
     if (category) {
       whereClause = {
         categories: {
-          some: {
-            category: {
-              slug: category
-            }
-          }
+          has: category
         }
       };
     }
@@ -43,24 +39,17 @@ export async function GET(request: Request) {
         break;
     }
 
-    const [products, total] = await Promise.all([
-      prisma.product.findMany({
-        where: whereClause,
-        skip,
-        take: limit,
-        include: {
-          categories: {
-            include: {
-              category: true
-            }
-          }
-        },
-        orderBy
-      }),
-      prisma.product.count({
-        where: whereClause
-      })
-    ]);
+    // In GET handler, fetch products with categories as a string array (no include for categories relation)
+    const products = await prisma.product.findMany({
+      where: whereClause,
+      skip,
+      take: limit,
+      orderBy
+    });
+
+    const total = await prisma.product.count({
+      where: whereClause
+    });
 
     return new NextResponse(
       JSON.stringify({
@@ -109,10 +98,11 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
+    console.log('POST /api/products received body:', body); // Debug log
     try {
       const validatedData = productSchema.parse(body);
 
-      // Create product with categories
+      // In POST handler, create product with categories as a string array
       const product = await prisma.product.create({
         data: {
           title: validatedData.title,
@@ -142,12 +132,16 @@ export async function POST(request: Request) {
           volumeOptions: {
             set: validatedData.volumeOptions.map((option) => ({
               ml: option.ml,
-              price: option.price
+              price: option.price,
+              discount: option.discount,
+              discountedPrice: option.discountedPrice
             }))
           },
           selectedVolume: {
             ml: validatedData.selectedVolume.ml,
-            price: validatedData.selectedVolume.price
+            price: validatedData.selectedVolume.price,
+            discount: validatedData.selectedVolume.discount,
+            discountedPrice: validatedData.selectedVolume.discountedPrice
           },
           isSale: validatedData.isSale,
           specifications: {
@@ -160,69 +154,21 @@ export async function POST(request: Request) {
           },
           fragrance: validatedData.fragrance,
           availabilityStatus: validatedData.availabilityStatus,
-          categories: {
-            create: validatedData.categories.map((categoryName) => ({
-              category: {
-                connectOrCreate: {
-                  where: { name: categoryName },
-                  create: {
-                    name: categoryName,
-                    slug: categoryName.toLowerCase().replace(/\s+/g, '-')
-                  }
-                }
-              }
-            }))
-          }
-        },
-        include: {
-          categories: {
-            include: {
-              category: true
-            }
-          }
+          categories: validatedData.categories
         }
       });
 
-      // After creating the product, ensure all categories are properly connected
-      await Promise.all(
-        validatedData.categories.map(async (categoryName) => {
-          const category = await prisma.category.findUnique({
-            where: { name: categoryName }
-          });
-
-          if (category) {
-            await prisma.productCategory.upsert({
-              where: {
-                productId_categoryId: {
-                  productId: product.id,
-                  categoryId: category.id
-                }
-              },
-              create: {
-                productId: product.id,
-                categoryId: category.id
-              },
-              update: {}
-            });
-          }
-        })
-      );
+      // Remove any logic that creates or connects categories via a join table
 
       // Fetch the updated product with categories
       const updatedProduct = await prisma.product.findUnique({
-        where: { id: product.id },
-        include: {
-          categories: {
-            include: {
-              category: true
-            }
-          }
-        }
+        where: { id: product.id }
       });
 
       return NextResponse.json(updatedProduct, { status: 201 });
     } catch (error) {
       if (error instanceof ZodError) {
+        console.error('Zod validation errors:', error.errors); // Debug log
         return NextResponse.json(
           { error: error.errors[0].message },
           { status: 400 }

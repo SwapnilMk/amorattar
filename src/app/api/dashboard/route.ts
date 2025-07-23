@@ -17,12 +17,12 @@ export async function GET() {
     }
 
     // Get all stats in parallel
-    const [totalProducts, totalReviews, totalCategories, totalUsers] =
+    const [totalProducts, totalReviews, totalUsers, totalCategories] =
       await Promise.all([
         prisma.product.count(),
         prisma.review.count(),
-        prisma.category.count(),
-        prisma.user.count()
+        prisma.user.count(),
+        prisma.category.count()
       ]);
 
     return NextResponse.json({

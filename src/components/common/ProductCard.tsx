@@ -48,12 +48,10 @@ const ProductCard = ({ data }: ProductCardProps) => {
   };
 
   const discountedPrice = data.selectedVolume
-    ? data.discount > 0
-      ? Math.round(data.selectedVolume.price * (1 - data.discount / 100))
+    ? data.selectedVolume.discount > 0
+      ? data.selectedVolume.discountedPrice
       : data.selectedVolume.price
-    : data.discount > 0
-      ? Math.round(data.price * (1 - data.discount / 100))
-      : data.price;
+    : data.price;
 
   return (
     <div className='group flex aspect-auto flex-col items-start rounded-lg border border-gray-100 p-4 transition-all hover:shadow-lg'>
@@ -102,14 +100,14 @@ const ProductCard = ({ data }: ProductCardProps) => {
           <span className='text-xl font-bold text-black'>
             ₹{discountedPrice}
           </span>
-          {data.discount > 0 && (
+          {data.selectedVolume && data.selectedVolume.discount > 0 && (
             <span className='text-xl font-bold text-black/40 line-through'>
-              ₹{data.selectedVolume ? data.selectedVolume.price : data.price}
+              ₹{data.selectedVolume.price}
             </span>
           )}
-          {data.discount > 0 && (
+          {data.selectedVolume && data.selectedVolume.discount > 0 && (
             <span className='rounded-full bg-[#FF3333]/10 px-2 py-1 text-xs font-medium text-[#FF3333]'>
-              {`-${data.discount}%`}
+              {`-${data.selectedVolume.discount}%`}
             </span>
           )}
         </div>
