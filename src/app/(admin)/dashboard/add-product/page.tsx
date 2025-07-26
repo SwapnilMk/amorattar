@@ -81,6 +81,13 @@ const fragranceOptions: Option[] = fragranceTypes.map((type) => ({
   label: type
 }));
 
+const DEFAULT_SPECIFICATIONS = {
+  'Concentration': 'Long-lasting fragrance (Attar – Pure oil-based, no mixture / Perfume – Eau De Parfum or higher)',
+  'Occasion': 'Office, Daily Wear, Casual Outings, Special Events',
+  'Volume (in ml)': 'Perfume: 8ml / 10ml / 20ml / 30ml / 50ml / 100ml; Attar: 6ml / 12ml / 24ml / 48ml',
+  'Bottle Material': 'Premium Glass Bottle'
+};
+
 export default function AddProduct() {
   const router = useRouter();
   const { user } = useSession();
@@ -388,11 +395,18 @@ export default function AddProduct() {
         slug: slugify(category, { lower: true })
       }));
 
+      // --- Specification logic ---
+      let specifications = formData.specifications;
+      if (!specifications || Object.keys(specifications).length === 0) {
+        specifications = { ...DEFAULT_SPECIFICATIONS };
+      }
+
       const data = {
         ...formData,
         slug,
         categories: formData.categories, // Send just the category names
-        fragrance: formData.fragrance as any // Cast to any to satisfy backend
+        fragrance: formData.fragrance as any, // Cast to any to satisfy backend
+        specifications // Use the logic above
       };
 
       const response = await fetch('/api/products', {

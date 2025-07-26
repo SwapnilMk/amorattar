@@ -18,6 +18,7 @@ type ProductListSecProps = {
   title: string;
   category?: string;
   viewAllLink?: string;
+  products?: Product[];
 };
 
 const ProductSkeleton = () => (
@@ -39,12 +40,20 @@ const ProductSkeleton = () => (
 const ProductListSec = ({
   title,
   category,
-  viewAllLink
+  viewAllLink,
+  products: customProducts
 }: ProductListSecProps) => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // If custom products are provided, use them instead of fetching
+    if (customProducts) {
+      setProducts(customProducts);
+      setLoading(false);
+      return;
+    }
+
     const fetchProducts = async () => {
       try {
         const url = category
@@ -61,7 +70,7 @@ const ProductListSec = ({
     };
 
     fetchProducts();
-  }, [category]);
+  }, [category, customProducts]);
 
   return (
     <section className='mx-auto max-w-frame text-center'>

@@ -24,8 +24,11 @@ import {
   PaginationNext,
   PaginationPrevious
 } from '@/components/ui/pagination';
+import { useSearchParams } from 'next/navigation';
 
 export default function ShopPage() {
+  const searchParams = useSearchParams();
+  const recentParam = searchParams.get('recent');
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -37,8 +40,20 @@ export default function ShopPage() {
     const fetchProducts = async () => {
       try {
         setLoading(true);
+        
+        // Build query parameters
+        const params = new URLSearchParams({
+          page: currentPage.toString(),
+          sort: sortBy
+        });
+        
+        // Add recent parameter if it exists
+        if (recentParam === 'true') {
+          params.append('recent', 'true');
+        }
+
         const response = await fetch(
-          `/api/products?page=${currentPage}&sort=${sortBy}`,
+          `/api/products?${params.toString()}`,
           {
             method: 'GET',
             headers: {
@@ -71,7 +86,7 @@ export default function ShopPage() {
     };
 
     fetchProducts();
-  }, [currentPage, sortBy]);
+  }, [currentPage, sortBy, recentParam]);
 
   if (loading) {
     return (
@@ -93,7 +108,7 @@ export default function ShopPage() {
     <main className='pb-20'>
       <div className='mx-auto max-w-frame px-4 xl:px-0'>
         <hr className='mb-5 h-[1px] border-t-black/10 sm:mb-6' />
-        <BreadcrumbShop />
+        <BreadcrumbShop title={recentParam === 'true' ? 'Recent Products' : 'Shop'} />
         <div className='flex items-start md:space-x-5'>
           <div className='hidden min-w-[295px] max-w-[295px] space-y-5 rounded-[20px] border border-black/10 px-5 py-5 md:block md:space-y-6 md:px-6'>
             <div className='flex items-center justify-between'>
@@ -106,7 +121,7 @@ export default function ShopPage() {
             <div className='flex flex-col lg:flex-row lg:justify-between'>
               <div className='flex items-center justify-between'>
                 <h1 className='text-2xl font-bold md:text-[32px]'>
-                  All Products
+                  {recentParam === 'true' ? 'Recent Products' : 'All Products'}
                 </h1>
                 <MobileFilters />
               </div>

@@ -13,23 +13,27 @@ import { Product } from '@/types/product.types';
 export default function Home() {
   const [newArrivals, setNewArrivals] = useState<Product[]>([]);
   const [topSelling, setTopSelling] = useState<Product[]>([]);
+  const [recentProducts, setRecentProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [newArrivalsRes, topSellingRes] = await Promise.all([
+        const [newArrivalsRes, topSellingRes, recentProductsRes] = await Promise.all([
           fetch('/api/products?category=new-arrivals'),
-          fetch('/api/products?category=best-sellers')
+          fetch('/api/products?category=best-sellers'),
+          fetch('/api/products?recent=true&limit=8')
         ]);
 
-        const [newArrivalsData, topSellingData] = await Promise.all([
+        const [newArrivalsData, topSellingData, recentProductsData] = await Promise.all([
           newArrivalsRes.json(),
-          topSellingRes.json()
+          topSellingRes.json(),
+          recentProductsRes.json()
         ]);
 
         setNewArrivals(newArrivalsData.products);
         setTopSelling(topSellingData.products);
+        setRecentProducts(recentProductsData.products);
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
@@ -73,6 +77,14 @@ export default function Home() {
         </div>
         <div className='mx-auto max-w-frame px-4 py-10 xl:px-0'>
           <SaleBanner />
+        </div>
+        <div className='mb-[50px] sm:mb-20'>
+          <ProductListSec
+            title='Recently Added'
+            category='Recent Products'
+            viewAllLink='/shop?recent=true'
+            products={recentProducts}
+          />
         </div>
         <div className='mb-[50px] sm:mb-20'>
           <DressStyle />

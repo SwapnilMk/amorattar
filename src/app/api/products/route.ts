@@ -13,30 +13,47 @@ export async function GET(request: Request) {
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '10');
     const category = searchParams.get('category');
+    const search = searchParams.get('search');
+    const recent = searchParams.get('recent');
     const sort = searchParams.get('sort') || 'most-popular';
     const skip = (page - 1) * limit;
 
-    let whereClause = {};
+    let whereClause: any = {};
+    
+    // Add category filter
     if (category) {
-      whereClause = {
-        categories: {
-          has: category
-        }
+      whereClause.categories = {
+        has: category
       };
     }
 
+    // Add search filter
+    if (search && search.trim()) {
+      whereClause.OR = [
+        { title: { contains: search.trim(), mode: 'insensitive' } },
+        { brand: { contains: search.trim(), mode: 'insensitive' } },
+        { description: { contains: search.trim(), mode: 'insensitive' } }
+      ];
+    }
+
     let orderBy = {};
-    switch (sort) {
-      case 'low-price':
-        orderBy = { price: 'asc' };
-        break;
-      case 'high-price':
-        orderBy = { price: 'desc' };
-        break;
-      case 'most-popular':
-      default:
-        orderBy = { rating: 'desc' };
-        break;
+    
+    // Handle recent products (sort by createdAt desc)
+    if (recent === 'true') {
+      orderBy = { createdAt: 'desc' };
+    } else {
+      switch (sort) {
+        case 'low-price':
+          orderBy = { price: 'asc' };
+          break;
+        case 'high-price':
+          orderBy = { price: 'desc' };
+          break;
+        case 'most-popular':
+        default:
+          orderBy = { rating: 'desc' };
+          break;
+      }
     }
 
     // In GET handler, fetch products with categories as a string array (no include for categories relation)

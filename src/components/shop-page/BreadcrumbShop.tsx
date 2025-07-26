@@ -9,7 +9,11 @@ import {
 } from '@/components/ui/breadcrumb';
 import Link from 'next/link';
 
-const BreadcrumbShop = () => {
+interface BreadcrumbShopProps {
+  title?: string;
+}
+
+const BreadcrumbShop = ({ title = 'Shop' }: BreadcrumbShopProps) => {
   return (
     <Breadcrumb className='mb-5 sm:mb-9'>
       <BreadcrumbList>
@@ -20,7 +24,7 @@ const BreadcrumbShop = () => {
         </BreadcrumbItem>
         <BreadcrumbSeparator />
         <BreadcrumbItem>
-          <BreadcrumbPage>Shop</BreadcrumbPage>
+          <BreadcrumbPage>{title}</BreadcrumbPage>
         </BreadcrumbItem>
       </BreadcrumbList>
     </Breadcrumb>
