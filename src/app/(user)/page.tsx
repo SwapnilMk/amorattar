@@ -20,9 +20,9 @@ export default function Home() {
     const fetchData = async () => {
       try {
         const [newArrivalsRes, topSellingRes, recentProductsRes] = await Promise.all([
-          fetch('/api/products?category=new-arrivals'),
-          fetch('/api/products?category=best-sellers'),
-          fetch('/api/products?recent=true&limit=8')
+          fetch('/api/products?limit=10'), // Remove category filter for new arrivals
+          fetch('/api/products?limit=10'), // Remove category filter for best sellers
+          fetch('/api/products?recent=true&limit=10')
         ]);
 
         const [newArrivalsData, topSellingData, recentProductsData] = await Promise.all([

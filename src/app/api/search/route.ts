@@ -10,7 +10,7 @@ export async function GET(request: Request) {
     const query = searchParams.get('q');
     const page = parseInt(searchParams.get('page') || '1');
     const sortBy = searchParams.get('sort') || 'most-popular';
-    const perPage = 12;
+    const perPage = 12; // Set to 12 products per page
 
     if (!query) {
       return NextResponse.json({ products: [], total: 0, perPage });
@@ -27,6 +27,9 @@ export async function GET(request: Request) {
         break;
       case 'high-price':
         orderBy = { price: 'desc' };
+        break;
+      case 'recent':
+        orderBy = { createdAt: 'desc' };
         break;
       case 'most-popular':
       default:
@@ -55,16 +58,7 @@ export async function GET(request: Request) {
       },
       orderBy,
       skip,
-      take: perPage,
-      select: {
-        id: true,
-        title: true,
-        brand: true,
-        srcUrl: true,
-        price: true,
-        discount: true,
-        rating: true
-      }
+      take: perPage
     });
 
     return NextResponse.json({ products, total, perPage });

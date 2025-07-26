@@ -74,6 +74,11 @@ export default function SearchPage() {
     fetchSearchResults();
   }, [query, currentPage, sortBy]);
 
+  // Reset to page 1 when sorting changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [sortBy]);
+
   if (loading) {
     return (
       <div className='flex min-h-screen items-center justify-center'>
@@ -108,7 +113,7 @@ export default function SearchPage() {
               <div className='flex items-center'>
                 Sort by:{' '}
                 <Select
-                  defaultValue='most-popular'
+                  value={sortBy}
                   onValueChange={(value) => setSortBy(value)}
                 >
                   <SelectTrigger className='w-fit border-none bg-transparent px-1.5 text-sm font-medium text-black shadow-none sm:text-base'>
@@ -118,6 +123,7 @@ export default function SearchPage() {
                     <SelectItem value='most-popular'>Most Popular</SelectItem>
                     <SelectItem value='low-price'>Low Price</SelectItem>
                     <SelectItem value='high-price'>High Price</SelectItem>
+                    <SelectItem value='recent'>Recently Added</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

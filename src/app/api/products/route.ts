@@ -11,7 +11,7 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '10');
+    const limit = parseInt(searchParams.get('limit') || '12'); // Changed to 12 products per page
     const category = searchParams.get('category');
     const search = searchParams.get('search');
     const recent = searchParams.get('recent');
@@ -20,11 +20,18 @@ export async function GET(request: Request) {
 
     let whereClause: any = {};
     
-    // Add category filter
+    // Handle special category cases
     if (category) {
-      whereClause.categories = {
-        has: category
-      };
+      // For special categories that don't exist in the database, return all products
+      if (category === 'new-arrivals' || category === 'best-sellers') {
+        // Don't add category filter - return all products
+        // These will be handled by sorting and limiting
+      } else {
+        // For actual categories, filter by category
+        whereClause.categories = {
+          has: category
+        };
+      }
     }
 
     // Add search filter
@@ -39,19 +46,23 @@ export async function GET(request: Request) {
     let orderBy = {};
     
     // Handle recent products (sort by createdAt desc)
-    if (recent === 'true') {
+    if (recent === 'true' || sort === 'recent') {
       orderBy = { createdAt: 'desc' };
+      console.log('Sorting by: Recent (createdAt desc)');
     } else {
       switch (sort) {
         case 'low-price':
           orderBy = { price: 'asc' };
+          console.log('Sorting by: Low Price (price asc)');
           break;
         case 'high-price':
           orderBy = { price: 'desc' };
+          console.log('Sorting by: High Price (price desc)');
           break;
         case 'most-popular':
         default:
           orderBy = { rating: 'desc' };
+          console.log('Sorting by: Most Popular (rating desc)');
           break;
       }
     }

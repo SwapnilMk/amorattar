@@ -40,10 +40,12 @@ export default function ShopPage() {
     const fetchProducts = async () => {
       try {
         setLoading(true);
+        console.log('Fetching products with sortBy:', sortBy); // Debug log
         
         // Build query parameters
         const params = new URLSearchParams({
           page: currentPage.toString(),
+          limit: '12', // Set to 12 products per page
           sort: sortBy
         });
         
@@ -51,6 +53,8 @@ export default function ShopPage() {
         if (recentParam === 'true') {
           params.append('recent', 'true');
         }
+
+        console.log('API URL params:', params.toString()); // Debug log
 
         const response = await fetch(
           `/api/products?${params.toString()}`,
@@ -73,6 +77,7 @@ export default function ShopPage() {
         }
 
         const data = await response.json();
+        console.log('Received products:', data.products.length, 'with sort:', sortBy); // Debug log
         setProducts(data.products);
         setTotalPages(Math.ceil(data.total / data.perPage));
       } catch (error) {
@@ -87,6 +92,11 @@ export default function ShopPage() {
 
     fetchProducts();
   }, [currentPage, sortBy, recentParam]);
+
+  // Reset to page 1 when sorting changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [sortBy]);
 
   if (loading) {
     return (
@@ -132,16 +142,17 @@ export default function ShopPage() {
                 <div className='flex items-center'>
                   Sort by:{' '}
                   <Select
-                    defaultValue='most-popular'
+                    value={sortBy}
                     onValueChange={(value) => setSortBy(value)}
                   >
                     <SelectTrigger className='w-fit border-none bg-transparent px-1.5 text-sm font-medium text-black shadow-none sm:text-base'>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value='most-popular'>Most Popular</SelectItem>
+                      <SelectItem value='most-popular'>Most Popular</SelectItem>                      
                       <SelectItem value='low-price'>Low Price</SelectItem>
                       <SelectItem value='high-price'>High Price</SelectItem>
+                      <SelectItem value='recent'>Recently Added</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
