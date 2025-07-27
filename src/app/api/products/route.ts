@@ -11,12 +11,22 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '12'); // Changed to 12 products per page
+    const limit = parseInt(searchParams.get('limit') || '12'); // Changed back to 12 products per page
     const category = searchParams.get('category');
     const search = searchParams.get('search');
     const recent = searchParams.get('recent');
-    const sort = searchParams.get('sort') || 'most-popular';
+    const sort = searchParams.get('sort') || 'createdAt'; // Default to createdAt for consistent ordering
     const skip = (page - 1) * limit;
+
+    console.log('API: Received request with params:', {
+      page,
+      limit,
+      category,
+      search,
+      recent,
+      sort,
+      skip
+    });
 
     let whereClause: any = {};
     
@@ -45,38 +55,58 @@ export async function GET(request: Request) {
 
     let orderBy = {};
     
-    // Handle recent products (sort by createdAt desc)
+    // Ensure consistent ordering for pagination
     if (recent === 'true' || sort === 'recent') {
       orderBy = { createdAt: 'desc' };
-      console.log('Sorting by: Recent (createdAt desc)');
     } else {
       switch (sort) {
         case 'low-price':
           orderBy = { price: 'asc' };
-          console.log('Sorting by: Low Price (price asc)');
           break;
         case 'high-price':
           orderBy = { price: 'desc' };
-          console.log('Sorting by: High Price (price desc)');
           break;
         case 'most-popular':
-        default:
           orderBy = { rating: 'desc' };
-          console.log('Sorting by: Most Popular (rating desc)');
+          break;
+        case 'createdAt':
+        default:
+          // Default to createdAt for consistent pagination
+          orderBy = { createdAt: 'desc' };
           break;
       }
     }
+
+    // Add secondary sort by id to ensure consistent ordering
+    const orderByArray = [orderBy, { id: 'asc' }];
+
+    console.log('API: Query params:', {
+      whereClause,
+      skip,
+      take: limit,
+      orderBy: orderByArray
+    });
 
     // In GET handler, fetch products with categories as a string array (no include for categories relation)
     const products = await prisma.product.findMany({
       where: whereClause,
       skip,
       take: limit,
-      orderBy
+      orderBy: orderByArray
     });
 
     const total = await prisma.product.count({
       where: whereClause
+    });
+
+    console.log('API: Query results:', {
+      productsCount: products.length,
+      total,
+      page,
+      limit,
+      pages: Math.ceil(total / limit),
+      firstProductId: products[0]?.id,
+      lastProductId: products[products.length - 1]?.id
     });
 
     return new NextResponse(

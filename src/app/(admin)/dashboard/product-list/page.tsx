@@ -66,9 +66,18 @@ export default function ProductList() {
     try {
       const res = await fetch(`/api/products/${id}`, { method: 'DELETE' });
       if (!res.ok) throw new Error('Failed to delete product');
+      
+      // Remove the product from the current state
       setProducts(products.filter((p) => p.id !== id));
-      // Refresh the current page data
-      fetchProducts(currentPage, debouncedSearchQuery);
+      
+      // If this was the last product on the current page and we're not on page 1,
+      // go to the previous page
+      if (products.length === 1 && currentPage > 1) {
+        setCurrentPage(currentPage - 1);
+      } else {
+        // Otherwise, refresh the current page data
+        fetchProducts(currentPage, debouncedSearchQuery);
+      }
     } catch (error) {
       console.error('Error deleting product:', error);
     }
@@ -79,15 +88,24 @@ export default function ProductList() {
     try {
       const params = new URLSearchParams({
         page: page.toString(),
-        limit: '10'
+        limit: '12',
+        sort: 'createdAt' // Ensure consistent ordering for pagination
       });
       
       if (search.trim()) {
         params.append('search', search.trim());
       }
 
+      console.log('Fetching products with params:', params.toString());
       const res = await fetch(`/api/products?${params.toString()}`);
       const data: PaginatedResponse = await res.json();
+      console.log('Received data:', {
+        productsCount: data.products.length,
+        pagination: data.pagination,
+        firstProductId: data.products[0]?.id,
+        lastProductId: data.products[data.products.length - 1]?.id
+      });
+      
       setProducts(data.products);
       setPagination(data.pagination);
     } catch (error) {
@@ -120,6 +138,12 @@ export default function ProductList() {
             Add Product
           </Link>
         </Button>
+      </div>
+
+      {/* Debug info - remove this after fixing */}
+      <div className='text-sm text-muted-foreground'>
+        Total Products: {pagination.total} | Page {currentPage} of {pagination.pages} | 
+        Showing {products.length} products | Limit: {pagination.limit}
       </div>
 
       <div className='flex items-center gap-4'>
