@@ -23,7 +23,7 @@ export const productSchema = z.object({
   title: z.string().min(1, 'Title is required'),
   slug: z.string().min(1, 'Slug is required'),
   srcUrl: z.string().min(1, 'Main image is required'),
-  gallery: z.array(z.string()).min(1, 'At least one gallery image is required'),
+  gallery: z.array(z.string()).default([]), 
   brand: z.string().min(1, 'Brand is required'),
   price: z.number().min(0, 'Price must be positive'),
   discountedPrice: z.number().min(0, 'Discounted price must be positive'),

@@ -160,12 +160,17 @@ export async function POST(request: Request) {
     try {
       const validatedData = productSchema.parse(body);
 
+      // Ensure gallery includes the main image if it's not already there
+      const gallery = validatedData.gallery.length > 0 
+        ? validatedData.gallery 
+        : [validatedData.srcUrl];
+
       // In POST handler, create product with categories as a string array
       const product = await prisma.product.create({
         data: {
           title: validatedData.title,
           srcUrl: validatedData.srcUrl,
-          gallery: validatedData.gallery,
+          gallery: gallery,
           brand: validatedData.brand,
           price: validatedData.price,
           discountedPrice: validatedData.discountedPrice,
