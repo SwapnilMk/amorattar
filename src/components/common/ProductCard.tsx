@@ -104,20 +104,27 @@ const ProductCard = ({ data }: ProductCardProps) => {
           <span className='text-xl font-bold text-black'>
             ₹{discountedPrice}
           </span>
-          {(data.selectedVolume && data.selectedVolume.discount > 0) || 
-           (data.volumeOptions && data.volumeOptions.length > 0 && data.volumeOptions[0].discount > 0) ? (
+          {(data.selectedVolume && data.selectedVolume.discount > 0) ||
+          (data.volumeOptions &&
+            data.volumeOptions.length > 0 &&
+            data.volumeOptions[0].discount > 0) ? (
             <span className='text-xl font-bold text-black/40 line-through'>
-              ₹{data.selectedVolume 
-                ? data.selectedVolume.price 
+              ₹
+              {data.selectedVolume
+                ? data.selectedVolume.price
                 : data.volumeOptions[0].price}
             </span>
           ) : null}
-          {(data.selectedVolume && data.selectedVolume.discount > 0) || 
-           (data.volumeOptions && data.volumeOptions.length > 0 && data.volumeOptions[0].discount > 0) ? (
+          {(data.selectedVolume && data.selectedVolume.discount > 0) ||
+          (data.volumeOptions &&
+            data.volumeOptions.length > 0 &&
+            data.volumeOptions[0].discount > 0) ? (
             <span className='rounded-full bg-[#FF3333]/10 px-2 py-1 text-xs font-medium text-[#FF3333]'>
-              {`-${data.selectedVolume 
-                ? data.selectedVolume.discount 
-                : data.volumeOptions[0].discount}%`}
+              {`-${
+                data.selectedVolume
+                  ? data.selectedVolume.discount
+                  : data.volumeOptions[0].discount
+              }%`}
             </span>
           ) : null}
         </div>

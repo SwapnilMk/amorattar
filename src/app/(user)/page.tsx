@@ -19,17 +19,19 @@ export default function Home() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [newArrivalsRes, topSellingRes, recentProductsRes] = await Promise.all([
-          fetch('/api/products?limit=10'), // Remove category filter for new arrivals
-          fetch('/api/products?limit=10'), // Remove category filter for best sellers
-          fetch('/api/products?recent=true&limit=10')
-        ]);
+        const [newArrivalsRes, topSellingRes, recentProductsRes] =
+          await Promise.all([
+            fetch('/api/products?limit=10'), // Remove category filter for new arrivals
+            fetch('/api/products?limit=10'), // Remove category filter for best sellers
+            fetch('/api/products?recent=true&limit=10')
+          ]);
 
-        const [newArrivalsData, topSellingData, recentProductsData] = await Promise.all([
-          newArrivalsRes.json(),
-          topSellingRes.json(),
-          recentProductsRes.json()
-        ]);
+        const [newArrivalsData, topSellingData, recentProductsData] =
+          await Promise.all([
+            newArrivalsRes.json(),
+            topSellingRes.json(),
+            recentProductsRes.json()
+          ]);
 
         setNewArrivals(newArrivalsData.products);
         setTopSelling(topSellingData.products);

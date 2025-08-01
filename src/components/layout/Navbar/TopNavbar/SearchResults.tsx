@@ -81,7 +81,7 @@ const SearchResults = ({ results, isLoading, onClose }: SearchResultsProps) => {
           const displayPrice = getDisplayPrice(product);
           const originalPrice = getOriginalPrice(product);
           const discount = getDiscount(product);
-          
+
           return (
             <Link
               key={product.id}

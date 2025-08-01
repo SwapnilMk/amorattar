@@ -29,7 +29,7 @@ export async function GET(request: Request) {
     });
 
     let whereClause: any = {};
-    
+
     // Handle special category cases
     if (category) {
       // For special categories that don't exist in the database, return all products
@@ -54,7 +54,7 @@ export async function GET(request: Request) {
     }
 
     let orderBy = {};
-    
+
     // Ensure consistent ordering for pagination
     if (recent === 'true' || sort === 'recent') {
       orderBy = { createdAt: 'desc' };
@@ -161,9 +161,10 @@ export async function POST(request: Request) {
       const validatedData = productSchema.parse(body);
 
       // Ensure gallery includes the main image if it's not already there
-      const gallery = validatedData.gallery.length > 0 
-        ? validatedData.gallery 
-        : [validatedData.srcUrl];
+      const gallery =
+        validatedData.gallery.length > 0
+          ? validatedData.gallery
+          : [validatedData.srcUrl];
 
       // In POST handler, create product with categories as a string array
       const product = await prisma.product.create({
@@ -231,9 +232,15 @@ export async function POST(request: Request) {
       return NextResponse.json(updatedProduct, { status: 201 });
     } catch (error) {
       if (error instanceof ZodError) {
-        console.error('Zod validation errors:', error.errors); // Debug log
+        console.error('Zod validation errors:', error.errors);
         return NextResponse.json(
-          { error: error.errors[0].message },
+          {
+            error: 'Validation failed',
+            errors: error.errors.map((err) => ({
+              path: err.path,
+              message: err.message
+            }))
+          },
           { status: 400 }
         );
       }

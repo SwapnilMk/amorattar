@@ -4,12 +4,6 @@ import { prisma } from '@/lib/prisma';
 import { productSchema } from '@/lib/validations/product';
 import { ZodError } from 'zod';
 import { getSession } from '@/lib/auth';
-import {
-  Category,
-  Gender,
-  Fragrance,
-  AvailabilityStatus
-} from '@/types/product.types';
 
 export async function GET(
   request: Request,
@@ -126,7 +120,13 @@ export async function PUT(
       if (error instanceof ZodError) {
         console.error('Zod validation errors:', error.errors);
         return NextResponse.json(
-          { error: error.errors[0].message },
+          {
+            error: 'Validation failed',
+            errors: error.errors.map((err) => ({
+              path: err.path,
+              message: err.message
+            }))
+          },
           { status: 400 }
         );
       }

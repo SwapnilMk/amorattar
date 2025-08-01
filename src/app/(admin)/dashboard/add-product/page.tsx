@@ -20,7 +20,11 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useSession } from '@/components/providers/SessionProvider';
 import { toast } from 'sonner';
-import { CreateProductInput } from '@/lib/validations/product';
+import {
+  CreateProductInput,
+  validateProductForm,
+  ValidationErrors
+} from '@/lib/validations/product';
 import type {
   VolumeOption,
   Color,
@@ -42,6 +46,7 @@ import { ChevronsUpDown } from 'lucide-react';
 import { Star } from 'lucide-react';
 import MultipleSelector, { Option } from '@/components/ui/multiselect';
 import { fragranceTypes } from '@/constants/data';
+import { ErrorMessage, FieldError } from '@/components/ui/error-message';
 
 const initialFormData: CreateProductInput = {
   title: '',
@@ -82,9 +87,11 @@ const fragranceOptions: Option[] = fragranceTypes.map((type) => ({
 }));
 
 const DEFAULT_SPECIFICATIONS = {
-  'Concentration': 'Long-lasting fragrance (Attar – Pure oil-based, no mixture / Perfume – Eau De Parfum or higher)',
-  'Occasion': 'Office, Daily Wear, Casual Outings, Special Events',
-  'Volume (in ml)': 'Perfume: 8ml / 10ml / 20ml / 30ml / 50ml / 100ml; Attar: 6ml / 12ml / 24ml / 48ml',
+  Concentration:
+    'Long-lasting fragrance (Attar – Pure oil-based, no mixture / Perfume – Eau De Parfum or higher)',
+  Occasion: 'Office, Daily Wear, Casual Outings, Special Events',
+  'Volume (in ml)':
+    'Perfume: 8ml / 10ml / 20ml / 30ml / 50ml / 100ml; Attar: 6ml / 12ml / 24ml / 48ml',
   'Bottle Material': 'Premium Glass Bottle'
 };
 
@@ -92,7 +99,9 @@ export default function AddProduct() {
   const router = useRouter();
   const { user } = useSession();
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string>('');
+  const [validationErrors, setValidationErrors] = useState<ValidationErrors>(
+    {}
+  );
   const [formData, setFormData] = useState<
     Omit<
       CreateProductInput,
@@ -137,6 +146,16 @@ export default function AddProduct() {
       .catch(() => setCategories([]));
   }, []);
 
+  const clearValidationError = (fieldName: string) => {
+    if (validationErrors[fieldName]) {
+      setValidationErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors[fieldName];
+        return newErrors;
+      });
+    }
+  };
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -151,6 +170,8 @@ export default function AddProduct() {
           ? parseFloat(value) || 0
           : value
     }));
+
+    clearValidationError(name);
   };
 
   const handleGenderChange = (value: Gender) => {
@@ -160,6 +181,8 @@ export default function AddProduct() {
         ? prev.gender.filter((g) => g !== value)
         : [...prev.gender, value]
     }));
+
+    clearValidationError('gender');
   };
 
   const handleCategoryChange = (value: string) => {
@@ -169,15 +192,8 @@ export default function AddProduct() {
         ? prev.categories.filter((c) => c !== value)
         : [...prev.categories, value]
     }));
-  };
 
-  const handleFragranceChange = (value: Fragrance) => {
-    setFormData((prev) => ({
-      ...prev,
-      fragrance: prev.fragrance.includes(value)
-        ? prev.fragrance.filter((f) => f !== value)
-        : [...prev.fragrance, value]
-    }));
+    clearValidationError('categories');
   };
 
   const onMainImageDrop = useCallback(async (acceptedFiles: File[]) => {
@@ -213,6 +229,9 @@ export default function AddProduct() {
           srcUrl: result.secure_url,
           gallery: [result.secure_url, ...prev.gallery]
         }));
+
+        // Clear srcUrl validation error when image is uploaded
+        clearValidationError('srcUrl');
       } catch (error) {
         console.error('Error uploading main image:', error);
         toast.error('Failed to upload main image');
@@ -280,25 +299,31 @@ export default function AddProduct() {
   });
 
   const handleAddColor = () => {
-    if (newColor.value && newColor.color && newColor.label) {
-      const color: Color = {
-        id: `${formData.title.toLowerCase()}-${newColor.value}`,
-        value: newColor.value,
-        color: newColor.color,
-        label: newColor.label
-      };
-      setFormData((prev) => ({
-        ...prev,
-        colors: [...prev.colors, color],
-        selectedColor: prev.selectedColor.id ? prev.selectedColor : color
-      }));
-      setNewColor({
-        id: '',
-        value: '',
-        color: '',
-        label: ''
-      });
+    if (!newColor.value || !newColor.color || !newColor.label) {
+      return;
     }
+
+    const color: Color = {
+      id: `${formData.title.toLowerCase()}-${newColor.value}`,
+      value: newColor.value,
+      color: newColor.color,
+      label: newColor.label
+    };
+
+    setFormData((prev) => ({
+      ...prev,
+      colors: [...prev.colors, color],
+      selectedColor: prev.selectedColor.id ? prev.selectedColor : color
+    }));
+
+    setNewColor({
+      id: '',
+      value: '',
+      color: '',
+      label: ''
+    });
+
+    clearValidationError('colors');
   };
 
   const handleColorSelect = (color: Color) => {
@@ -327,12 +352,12 @@ export default function AddProduct() {
     }));
   };
 
-  // Update handleAddVolumeOption to use new structure
   const handleAddVolumeOption = () => {
     if (!newVolumeOption.ml || !newVolumeOption.price) {
       toast.error('Please fill in all volume option fields');
       return;
     }
+
     const discount = newVolumeOption.discount || 0;
     const discountedPrice = newVolumeOption.price * (1 - discount / 100);
     const newVolume = {
@@ -341,18 +366,22 @@ export default function AddProduct() {
       discount,
       discountedPrice
     };
+
     setFormData((prev) => ({
       ...prev,
       volumeOptions: [...prev.volumeOptions, newVolume],
       selectedVolume:
         prev.volumeOptions.length === 0 ? newVolume : prev.selectedVolume
     }));
+
     setNewVolumeOption({
       ml: 0,
       price: 0,
       discount: 0,
       discountedPrice: 0
     });
+
+    clearValidationError('volumeOptions');
   };
 
   const handleAddSpecification = () => {
@@ -369,10 +398,7 @@ export default function AddProduct() {
       }
     }));
 
-    setNewSpecification({
-      key: '',
-      value: ''
-    });
+    setNewSpecification({ key: '', value: '' });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -383,30 +409,32 @@ export default function AddProduct() {
     }
 
     setLoading(true);
-    setError('');
 
     try {
-      // Generate slug from title
-      const slug = slugify(formData.title, { lower: true });
-
-      // Ensure categories are properly formatted
-      const categories = formData.categories.map((category) => ({
-        name: category,
-        slug: slugify(category, { lower: true })
-      }));
-
-      // --- Specification logic ---
-      let specifications = formData.specifications;
-      if (!specifications || Object.keys(specifications).length === 0) {
-        specifications = { ...DEFAULT_SPECIFICATIONS };
+      // Frontend validation
+      const errors = validateProductForm(formData);
+      console.log('Frontend validation errors:', errors);
+      console.log('Form data for validation:', formData);
+      if (Object.keys(errors).length > 0) {
+        setValidationErrors(errors);
+        setLoading(false);
+        toast.error(Object.values(errors)[0][0]);
+        return;
       }
+
+      const slug = slugify(formData.title, { lower: true });
+      const specifications =
+        formData.specifications &&
+        Object.keys(formData.specifications).length > 0
+          ? formData.specifications
+          : { ...DEFAULT_SPECIFICATIONS };
 
       const data = {
         ...formData,
         slug,
-        categories: formData.categories, // Send just the category names
-        fragrance: formData.fragrance as any, // Cast to any to satisfy backend
-        specifications // Use the logic above
+        categories: formData.categories,
+        fragrance: formData.fragrance as any,
+        specifications
       };
 
       const response = await fetch('/api/products', {
@@ -419,18 +447,49 @@ export default function AddProduct() {
 
       if (!response.ok) {
         const error = await response.json();
-        console.error('API Error:', error); // Log the full error response
-        throw new Error(error.error || 'Failed to create product');
+        console.error('API Error:', error);
+
+        if (error.errors && Array.isArray(error.errors)) {
+          console.log('Backend validation errors:', error.errors);
+          const backendErrors: ValidationErrors = {};
+          error.errors.forEach((err: any) => {
+            const field = err.path?.[0] || 'general';
+            console.log('Error field:', field, 'message:', err.message);
+
+            if (!backendErrors[field]) {
+              backendErrors[field] = [];
+            }
+            backendErrors[field].push(err.message);
+          });
+          console.log('Mapped errors:', backendErrors);
+          setValidationErrors(backendErrors);
+          setLoading(false);
+          toast.error('Please fix the validation errors above');
+          return;
+        }
+
+        // Handle single error message
+        if (error.error) {
+          setValidationErrors({ general: [error.error] });
+          setLoading(false);
+          toast.error(error.error);
+          return;
+        }
+
+        setValidationErrors({ general: ['Failed to create product'] });
+        setLoading(false);
+        toast.error('Failed to create product');
+        return;
       }
 
       toast.success('Product created successfully');
       setShowSuccessModal(true);
+      setValidationErrors({}); // Clear validation errors on success
       // router.push('/dashboard/product-list'); // Remove immediate redirect
     } catch (error) {
       console.error('Error creating product:', error);
-      toast.error(
-        error instanceof Error ? error.message : 'Failed to create product'
-      );
+      // Don't show toast here since we handle errors in the response block
+      setLoading(false);
     } finally {
       setLoading(false);
     }
@@ -452,7 +511,6 @@ export default function AddProduct() {
   };
 
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [isEdit] = useState(false); // Always false for add product
 
   return (
     <PageContainer>
@@ -473,12 +531,13 @@ export default function AddProduct() {
             </CardHeader>
             <CardContent>
               <div className='grid gap-6 md:grid-cols-2'>
-                {/* Main Image Upload */}
                 <div className='space-y-4'>
                   <Label>Main Product Image</Label>
                   <div
                     {...getMainImageRootProps()}
-                    className='cursor-pointer rounded-lg border-2 border-dashed p-4 text-center hover:border-primary'
+                    className={`cursor-pointer rounded-lg border-2 border-dashed p-4 text-center hover:border-primary ${
+                      validationErrors.srcUrl ? 'border-destructive' : ''
+                    }`}
                   >
                     <input {...getMainImageInputProps()} />
                     {mainImagePreview ? (
@@ -497,9 +556,9 @@ export default function AddProduct() {
                       </p>
                     )}
                   </div>
+                  <FieldError error={validationErrors.srcUrl?.[0]} />
                 </div>
 
-                {/* Gallery Images Upload */}
                 <div className='space-y-4'>
                   <Label>Gallery Images</Label>
                   <div
@@ -555,7 +614,13 @@ export default function AddProduct() {
                     onChange={handleChange}
                     placeholder='Enter product name'
                     required
+                    className={
+                      validationErrors.title
+                        ? 'border-destructive focus:border-destructive'
+                        : ''
+                    }
                   />
+                  <FieldError error={validationErrors.title?.[0]} />
                 </div>
                 <div className='space-y-2'>
                   <Label htmlFor='brand'>Brand</Label>
@@ -566,7 +631,13 @@ export default function AddProduct() {
                     onChange={handleChange}
                     placeholder='Enter brand name'
                     required
+                    className={
+                      validationErrors.brand
+                        ? 'border-destructive focus:border-destructive'
+                        : ''
+                    }
                   />
+                  <FieldError error={validationErrors.brand?.[0]} />
                 </div>
                 <div className='space-y-2'>
                   <Label>Availability Status</Label>
@@ -600,7 +671,13 @@ export default function AddProduct() {
                   onChange={handleChange}
                   placeholder='Enter product description'
                   required
+                  className={
+                    validationErrors.description
+                      ? 'border-destructive focus:border-destructive'
+                      : ''
+                  }
                 />
+                <FieldError error={validationErrors.description?.[0]} />
               </div>
             </CardContent>
           </Card>
@@ -634,6 +711,7 @@ export default function AddProduct() {
                     </span>
                   )}
                 </div>
+                <FieldError error={validationErrors.categories?.[0]} />
               </div>
               <div className='space-y-2'>
                 <Label>Gender</Label>
@@ -653,6 +731,7 @@ export default function AddProduct() {
                     </Badge>
                   ))}
                 </div>
+                <FieldError error={validationErrors.gender?.[0]} />
               </div>
             </CardContent>
           </Card>
@@ -761,6 +840,7 @@ export default function AddProduct() {
                       </div>
                     ))}
                   </div>
+                  <FieldError error={validationErrors.colors?.[0]} />
                 </div>
               </div>
             </CardContent>
@@ -889,11 +969,46 @@ export default function AddProduct() {
                       </div>
                     ))}
                   </div>
+                  <FieldError error={validationErrors.volumeOptions?.[0]} />
                 </div>
               </div>
             </CardContent>
           </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>Fragrance Types</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className='space-y-4'>
+                <div className='space-y-2'>
+                  <Label>Add Fragrance Type</Label>
+                  <MultipleSelector
+                    value={formData.fragrance.map((f) => ({
+                      value: f,
+                      label: f
+                    }))}
+                    defaultOptions={fragranceOptions}
+                    options={fragranceOptions}
+                    placeholder='Select fragrance types'
+                    onChange={(selected) => {
+                      setFormData((prev) => ({
+                        ...prev,
+                        fragrance: selected.map((opt) => opt.value)
+                      }));
 
+                      clearValidationError('fragrance');
+                    }}
+                    hideClearAllButton
+                    hidePlaceholderWhenSelected
+                    emptyIndicator={
+                      <p className='text-center text-sm'>No results found</p>
+                    }
+                  />
+                  <FieldError error={validationErrors.fragrance?.[0]} />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
           <Card>
             <CardHeader>
               <CardTitle>Rating & Sale Status</CardTitle>
@@ -912,6 +1027,8 @@ export default function AddProduct() {
                             ...prev,
                             rating: star
                           }));
+
+                          clearValidationError('rating');
                         }}
                         className='focus:outline-none'
                       >
@@ -928,6 +1045,7 @@ export default function AddProduct() {
                       {formData.rating.toFixed(1)}/5
                     </span>
                   </div>
+                  <FieldError error={validationErrors.rating?.[0]} />
                 </div>
                 <div className='space-y-2'>
                   <Label>Sale Status</Label>
@@ -1016,40 +1134,6 @@ export default function AddProduct() {
               </div>
             </CardContent>
           </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Fragrance Types</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className='space-y-4'>
-                <div className='space-y-2'>
-                  <Label>Add Fragrance Type</Label>
-                  <MultipleSelector
-                    value={formData.fragrance.map((f) => ({
-                      value: f,
-                      label: f
-                    }))}
-                    defaultOptions={fragranceOptions}
-                    options={fragranceOptions}
-                    placeholder='Select fragrance types'
-                    onChange={(selected) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        fragrance: selected.map((opt) => opt.value)
-                      }))
-                    }
-                    hideClearAllButton
-                    hidePlaceholderWhenSelected
-                    emptyIndicator={
-                      <p className='text-center text-sm'>No results found</p>
-                    }
-                  />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
           <div className='flex justify-end'>
             <Button type='submit' disabled={loading}>
               {loading ? 'Adding...' : 'Add Product'}
@@ -1057,16 +1141,13 @@ export default function AddProduct() {
           </div>
         </form>
       </div>
-      {/* Success Modal */}
       {showSuccessModal && (
         <div className='fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50'>
           <div className='flex flex-col items-center rounded-lg bg-white p-8 shadow-lg'>
-            <h2 className='mb-4 text-xl font-bold'>
-              Product {isEdit ? 'Updated' : 'Created'}!
-            </h2>
+            <h2 className='mb-4 text-xl font-bold'>Product Created!</h2>
             <p className='mb-2'>
-              Your product <strong>{formData.title}</strong> was{' '}
-              {isEdit ? 'updated' : 'added'} successfully.
+              Your product <strong>{formData.title}</strong> was added
+              successfully.
             </p>
             <div className='mt-4 flex gap-2'>
               <Button onClick={() => router.push('/dashboard/product-list')}>
@@ -1076,7 +1157,7 @@ export default function AddProduct() {
                 variant='outline'
                 onClick={() => setShowSuccessModal(false)}
               >
-                {isEdit ? 'Continue Editing' : 'Add Another Product'}
+                Add Another Product
               </Button>
             </div>
           </div>

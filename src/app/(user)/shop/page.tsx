@@ -41,14 +41,14 @@ export default function ShopPage() {
       try {
         setLoading(true);
         console.log('Fetching products with sortBy:', sortBy); // Debug log
-        
+
         // Build query parameters
         const params = new URLSearchParams({
           page: currentPage.toString(),
           limit: '12', // Set to 12 products per page
           sort: sortBy
         });
-        
+
         // Add recent parameter if it exists
         if (recentParam === 'true') {
           params.append('recent', 'true');
@@ -56,16 +56,13 @@ export default function ShopPage() {
 
         console.log('API URL params:', params.toString()); // Debug log
 
-        const response = await fetch(
-          `/api/products?${params.toString()}`,
-          {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            cache: 'no-store'
-          }
-        );
+        const response = await fetch(`/api/products?${params.toString()}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          cache: 'no-store'
+        });
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -77,7 +74,12 @@ export default function ShopPage() {
         }
 
         const data = await response.json();
-        console.log('Received products:', data.products.length, 'with sort:', sortBy); // Debug log
+        console.log(
+          'Received products:',
+          data.products.length,
+          'with sort:',
+          sortBy
+        ); // Debug log
         setProducts(data.products);
         setTotalPages(Math.ceil(data.total / data.perPage));
       } catch (error) {
@@ -118,7 +120,9 @@ export default function ShopPage() {
     <main className='pb-20'>
       <div className='mx-auto max-w-frame px-4 xl:px-0'>
         <hr className='mb-5 h-[1px] border-t-black/10 sm:mb-6' />
-        <BreadcrumbShop title={recentParam === 'true' ? 'Recent Products' : 'Shop'} />
+        <BreadcrumbShop
+          title={recentParam === 'true' ? 'Recent Products' : 'Shop'}
+        />
         <div className='flex items-start md:space-x-5'>
           <div className='hidden min-w-[295px] max-w-[295px] space-y-5 rounded-[20px] border border-black/10 px-5 py-5 md:block md:space-y-6 md:px-6'>
             <div className='flex items-center justify-between'>
@@ -149,7 +153,7 @@ export default function ShopPage() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value='most-popular'>Most Popular</SelectItem>                      
+                      <SelectItem value='most-popular'>Most Popular</SelectItem>
                       <SelectItem value='low-price'>Low Price</SelectItem>
                       <SelectItem value='high-price'>High Price</SelectItem>
                       <SelectItem value='recent'>Recently Added</SelectItem>

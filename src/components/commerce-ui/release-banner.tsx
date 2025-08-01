@@ -92,7 +92,7 @@ function ReleaseBanner() {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6, delay: 1 }}
         >
-          <Link href='/shop'>
+          <Link href='/shop?category=attars'>
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -104,7 +104,7 @@ function ReleaseBanner() {
                 transition={{ duration: 0.3 }}
                 className='absolute inset-0 h-full w-1/2 bg-gradient-to-r from-white/20 via-transparent to-transparent'
               />
-              Explore Collection
+              Explore Attars
               <motion.span
                 initial={{ x: 0 }}
                 whileHover={{ x: 5 }}

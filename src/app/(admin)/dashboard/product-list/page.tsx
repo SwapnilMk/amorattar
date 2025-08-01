@@ -29,7 +29,7 @@ import {
   PaginationPrevious
 } from '@/components/ui/pagination';
 import { useDebounce } from '@/hooks/useDebounce';
-                
+
 interface PaginatedResponse {
   products: Product[];
   pagination: {
@@ -66,10 +66,10 @@ export default function ProductList() {
     try {
       const res = await fetch(`/api/products/${id}`, { method: 'DELETE' });
       if (!res.ok) throw new Error('Failed to delete product');
-      
+
       // Remove the product from the current state
       setProducts(products.filter((p) => p.id !== id));
-      
+
       // If this was the last product on the current page and we're not on page 1,
       // go to the previous page
       if (products.length === 1 && currentPage > 1) {
@@ -91,7 +91,7 @@ export default function ProductList() {
         limit: '12',
         sort: 'createdAt' // Ensure consistent ordering for pagination
       });
-      
+
       if (search.trim()) {
         params.append('search', search.trim());
       }
@@ -105,7 +105,7 @@ export default function ProductList() {
         firstProductId: data.products[0]?.id,
         lastProductId: data.products[data.products.length - 1]?.id
       });
-      
+
       setProducts(data.products);
       setPagination(data.pagination);
     } catch (error) {
@@ -129,7 +129,7 @@ export default function ProductList() {
   };
 
   return (
-    <div className='flex h-[70vh] sm:h-screen flex-col gap-4 p-4 sm:p-6'>
+    <div className='flex h-[70vh] flex-col gap-4 p-4 sm:h-screen sm:p-6'>
       <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
         <h1 className='text-xl font-bold sm:text-2xl'>Product List</h1>
         <Button asChild className='w-full sm:w-auto'>
@@ -142,24 +142,25 @@ export default function ProductList() {
 
       {/* Debug info - remove this after fixing */}
       <div className='text-sm text-muted-foreground'>
-        Total Products: {pagination.total} | Page {currentPage} of {pagination.pages} | 
-        Showing {products.length} products | Limit: {pagination.limit}
+        Total Products: {pagination.total} | Page {currentPage} of{' '}
+        {pagination.pages} | Showing {products.length} products | Limit:{' '}
+        {pagination.limit}
       </div>
 
       <div className='flex items-center gap-4'>
         <div className='relative flex-1'>
           <IconSearch className='absolute left-2 top-2.5 h-4 w-4 text-muted-foreground' />
-          <Input 
-            placeholder='Search products by title, brand, or description...' 
-            className='pl-8' 
+          <Input
+            placeholder='Search products by title, brand, or description...'
+            className='pl-8'
             value={searchQuery}
             onChange={handleSearchChange}
           />
         </div>
       </div>
 
-      <Card className='flex-1 flex flex-col'>
-        <CardContent className='flex-1 flex flex-col p-0'>
+      <Card className='flex flex-1 flex-col'>
+        <CardContent className='flex flex-1 flex-col p-0'>
           <div className='flex-1 overflow-hidden'>
             {/* Mobile Card View */}
             <div className='block sm:hidden'>
@@ -169,18 +170,20 @@ export default function ProductList() {
                   <span className='ml-2'>Loading products...</span>
                 </div>
               ) : products.length === 0 ? (
-                <div className='text-center py-8'>
-                  {searchQuery ? `No products found for "${searchQuery}"` : 'No products found'}
+                <div className='py-8 text-center'>
+                  {searchQuery
+                    ? `No products found for "${searchQuery}"`
+                    : 'No products found'}
                 </div>
               ) : (
-                <div className='space-y-4 p-4 overflow-y-auto h-full'>
+                <div className='h-full space-y-4 overflow-y-auto p-4'>
                   {products.map((product) => (
                     <div
                       key={product.id}
-                      className='rounded-lg border p-4 space-y-3'
+                      className='space-y-3 rounded-lg border p-4'
                     >
                       <div className='flex items-start gap-3'>
-                        <div className='relative h-16 w-16 overflow-hidden rounded-md flex-shrink-0'>
+                        <div className='relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-md'>
                           <Image
                             src={product.srcUrl}
                             alt={product.title}
@@ -188,16 +191,22 @@ export default function ProductList() {
                             className='object-cover'
                           />
                         </div>
-                        <div className='flex-1 min-w-0'>
-                          <h3 className='font-medium text-sm truncate'>{product.title}</h3>
-                          <p className='text-xs text-muted-foreground'>{product.brand}</p>
-                          <div className='flex items-center gap-1 mt-1'>
+                        <div className='min-w-0 flex-1'>
+                          <h3 className='truncate text-sm font-medium'>
+                            {product.title}
+                          </h3>
+                          <p className='text-xs text-muted-foreground'>
+                            {product.brand}
+                          </p>
+                          <div className='mt-1 flex items-center gap-1'>
                             <Star className='h-3 w-3 fill-yellow-400 text-yellow-400' />
-                            <span className='text-xs'>{product.rating.toFixed(1)}</span>
+                            <span className='text-xs'>
+                              {product.rating.toFixed(1)}
+                            </span>
                           </div>
                         </div>
                       </div>
-                      
+
                       <div className='flex flex-wrap gap-1'>
                         {product.categories?.slice(0, 2).map((cat) => (
                           <Badge
@@ -208,29 +217,41 @@ export default function ProductList() {
                             {cat}
                           </Badge>
                         ))}
-                        {product.categories && product.categories.length > 2 && (
-                          <Badge variant='secondary' className='text-xs'>
-                            +{product.categories.length - 2} more
-                          </Badge>
-                        )}
+                        {product.categories &&
+                          product.categories.length > 2 && (
+                            <Badge variant='secondary' className='text-xs'>
+                              +{product.categories.length - 2} more
+                            </Badge>
+                          )}
                       </div>
 
                       <div className='text-xs text-muted-foreground'>
-                        {product.volumeOptions && product.volumeOptions.length > 0 ? (
+                        {product.volumeOptions &&
+                        product.volumeOptions.length > 0 ? (
                           <div className='space-y-1'>
-                            {product.volumeOptions.slice(0, 2).map((opt, idx) => (
-                              <div key={idx} className='flex items-center gap-2'>
-                                <span>{opt.ml}ml</span>
-                                <span>₹{opt.price}</span>
-                                {opt.discount > 0 && (
-                                  <Badge variant='destructive' className='text-xs'>
-                                    {opt.discount}% OFF
-                                  </Badge>
-                                )}
-                              </div>
-                            ))}
+                            {product.volumeOptions
+                              .slice(0, 2)
+                              .map((opt, idx) => (
+                                <div
+                                  key={idx}
+                                  className='flex items-center gap-2'
+                                >
+                                  <span>{opt.ml}ml</span>
+                                  <span>₹{opt.price}</span>
+                                  {opt.discount > 0 && (
+                                    <Badge
+                                      variant='destructive'
+                                      className='text-xs'
+                                    >
+                                      {opt.discount}% OFF
+                                    </Badge>
+                                  )}
+                                </div>
+                              ))}
                             {product.volumeOptions.length > 2 && (
-                              <span>+{product.volumeOptions.length - 2} more options</span>
+                              <span>
+                                +{product.volumeOptions.length - 2} more options
+                              </span>
                             )}
                           </div>
                         ) : (
@@ -238,9 +259,11 @@ export default function ProductList() {
                         )}
                       </div>
 
-                      <div className='flex justify-end gap-2 pt-2 border-t'>
+                      <div className='flex justify-end gap-2 border-t pt-2'>
                         <Button asChild variant='ghost' size='sm'>
-                          <Link href={`/dashboard/product-list/${product.id}/edit`}>
+                          <Link
+                            href={`/dashboard/product-list/${product.id}/edit`}
+                          >
                             <IconEdit className='h-4 w-4' />
                           </Link>
                         </Button>
@@ -274,7 +297,7 @@ export default function ProductList() {
                   <TableBody className='overflow-auto'>
                     {loading ? (
                       <TableRow>
-                        <TableCell colSpan={5} className='text-center py-8'>
+                        <TableCell colSpan={5} className='py-8 text-center'>
                           <div className='flex items-center justify-center'>
                             <div className='h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent'></div>
                             <span className='ml-2'>Loading products...</span>
@@ -283,8 +306,10 @@ export default function ProductList() {
                       </TableRow>
                     ) : products.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={5} className='text-center py-8'>
-                          {searchQuery ? `No products found for "${searchQuery}"` : 'No products found'}
+                        <TableCell colSpan={5} className='py-8 text-center'>
+                          {searchQuery
+                            ? `No products found for "${searchQuery}"`
+                            : 'No products found'}
                         </TableCell>
                       </TableRow>
                     ) : (
@@ -380,10 +405,10 @@ export default function ProductList() {
               </div>
             </div>
           </div>
-          
+
           {/* Pagination - Always visible on both mobile and desktop */}
           {pagination.pages > 1 && (
-            <div className='border-t p-4 bg-background'>
+            <div className='border-t bg-background p-4'>
               <Pagination className='justify-between'>
                 <PaginationPrevious
                   href='#'
@@ -397,43 +422,44 @@ export default function ProductList() {
                   aria-disabled={currentPage === 1}
                 />
                 <PaginationContent>
-                  {Array.from({ length: pagination.pages }, (_, i) => i + 1).map(
-                    (page, index) => {
-                      if (
-                        page === 1 ||
-                        page === pagination.pages ||
-                        (page >= currentPage - 1 && page <= currentPage + 1)
-                      ) {
-                        return (
-                          <PaginationItem key={page}>
-                            <PaginationLink
-                              href='#'
-                              className='text-sm font-medium text-black/50'
-                              isActive={currentPage === page}
-                              onClick={(e) => {
-                                e.preventDefault();
-                                handlePageChange(page);
-                              }}
-                            >
-                              {page}
-                            </PaginationLink>
-                          </PaginationItem>
-                        );
-                      }
-                      if (
-                        (page === 2 && currentPage > 3) ||
-                        (page === pagination.pages - 1 &&
-                          currentPage < pagination.pages - 2)
-                      ) {
-                        return (
-                          <PaginationItem key={`ellipsis-${page}`}>
-                            <PaginationEllipsis />
-                          </PaginationItem>
-                        );
-                      }
-                      return null;
+                  {Array.from(
+                    { length: pagination.pages },
+                    (_, i) => i + 1
+                  ).map((page, index) => {
+                    if (
+                      page === 1 ||
+                      page === pagination.pages ||
+                      (page >= currentPage - 1 && page <= currentPage + 1)
+                    ) {
+                      return (
+                        <PaginationItem key={page}>
+                          <PaginationLink
+                            href='#'
+                            className='text-sm font-medium text-black/50'
+                            isActive={currentPage === page}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              handlePageChange(page);
+                            }}
+                          >
+                            {page}
+                          </PaginationLink>
+                        </PaginationItem>
+                      );
                     }
-                  )}
+                    if (
+                      (page === 2 && currentPage > 3) ||
+                      (page === pagination.pages - 1 &&
+                        currentPage < pagination.pages - 2)
+                    ) {
+                      return (
+                        <PaginationItem key={`ellipsis-${page}`}>
+                          <PaginationEllipsis />
+                        </PaginationItem>
+                      );
+                    }
+                    return null;
+                  })}
                 </PaginationContent>
                 <PaginationNext
                   href='#'
