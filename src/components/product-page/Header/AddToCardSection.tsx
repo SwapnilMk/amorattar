@@ -52,12 +52,12 @@ const AddToCardSection = ({ data }: AddToCardSectionProps) => {
         </span>
         <div className='absolute inset-0 -translate-x-full bg-white/20 transition-transform duration-300 group-hover:translate-x-0'></div>
       </Button>
-      <Button
+      {/* <Button
         onClick={handleWhatsAppClick}
         className='flex items-center justify-center rounded-full bg-[#25D366] px-6 py-3 text-white transition-all duration-300 hover:bg-[#128C7E]'
       >
         <FaWhatsapp className='text-sm' /> Enquire Now
-      </Button>
+      </Button> */}
     </div>
   );
 };

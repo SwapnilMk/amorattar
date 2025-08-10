@@ -141,14 +141,14 @@ export default function CartPage() {
                 </span>
               </div>
             </div>
-            <Button
+            {/* <Button
               onClick={handleWhatsAppClick}
               className='group h-[54px] w-full rounded-full bg-[#25D366] py-4 text-sm font-medium text-white transition-colors hover:bg-[#128C7E] md:h-[60px] md:text-base'
               disabled={!items.length}
             >
               <FaWhatsapp className='mr-2 text-lg transition-all group-hover:translate-x-1' />
               <span>DM Order on WhatsApp</span>
-            </Button>
+            </Button> */}
             <Button
               variant='outline'
               className='group h-[54px] w-full rounded-full py-4 text-sm font-medium transition-colors hover:bg-black hover:text-white md:h-[60px] md:text-base'
