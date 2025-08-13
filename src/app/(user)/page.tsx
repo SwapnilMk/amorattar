@@ -81,7 +81,7 @@ export default function Home() {
         <div className='mx-auto max-w-frame px-4 py-10 xl:px-0'>
           <SaleBanner />
         </div>
-        <div >
+        <div>
           <ProductListSec
             title='Recently Added'
             category='Recent Products'
