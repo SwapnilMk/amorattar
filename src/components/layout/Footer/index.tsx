@@ -12,11 +12,11 @@ import LayoutSpacing from './LayoutSpacing';
 import Banner from '@/components/commerce-ui/banner';
 
 const socialsData: SocialNetworks[] = [
-  {
-    id: 1,
-    icon: <FaWhatsapp />,
-    url: 'https://wa.me/918268435091'
-  },
+  // {
+  //   id: 1,
+  //   icon: <FaWhatsapp />,
+  //   url: 'https://wa.me/918268435091'
+  // },
   {
     id: 2,
     icon: <FaSnapchat />,
@@ -100,7 +100,7 @@ const Footer = () => {
           <hr className='mb-6 h-[1px] border-t-black/10' />
           <div className='mb-2 flex flex-col items-center justify-center sm:flex-row sm:justify-between'>
             <p className='mb-4 text-center text-sm text-black/60 sm:mb-0 sm:mr-1 sm:text-left'>
-              © 2025 AMORATTAR. Designed by{' '}
+              © {new Date().getFullYear()} AMORATTAR. Designed and Developed by{' '}
               <Link
                 href='https://github.com/swapnilMk/'
                 target='_blank'

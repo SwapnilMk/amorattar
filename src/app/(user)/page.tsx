@@ -9,6 +9,7 @@ import DressStyle from '@/components/homepage/DressStyle';
 import Header from '@/components/homepage/Header';
 import Reviews from '@/components/homepage/Reviews';
 import { Product } from '@/types/product.types';
+import OfferBanner from '@/components/commerce-ui/offer-banner';
 
 export default function Home() {
   const [newArrivals, setNewArrivals] = useState<Product[]>([]);
@@ -60,7 +61,7 @@ export default function Home() {
       {/* <Brands /> */}
       <main className='my-[20px] sm:my-[72px]'>
         <div className='mx-auto mb-8 max-w-frame px-4 xl:px-0'>
-          <ReleaseBanner />
+          <OfferBanner />
         </div>
         <ProductListSec
           title='NEW ARRIVALS'
@@ -68,9 +69,9 @@ export default function Home() {
           viewAllLink='/shop#new-arrivals'
         />
         <div className='mx-auto max-w-frame px-4 py-10 xl:px-0'>
-          <ProductBanner />
+          <ReleaseBanner />
         </div>
-        <div className='mb-[50px] sm:mb-20'>
+        <div>
           <ProductListSec
             title='Best Sellers'
             category='Best Sellers'
@@ -80,13 +81,16 @@ export default function Home() {
         <div className='mx-auto max-w-frame px-4 py-10 xl:px-0'>
           <SaleBanner />
         </div>
-        <div className='mb-[50px] sm:mb-20'>
+        <div >
           <ProductListSec
             title='Recently Added'
             category='Recent Products'
             viewAllLink='/shop?recent=true'
             products={recentProducts}
           />
+        </div>
+        <div className='mx-auto max-w-frame px-4 py-6 xl:px-0'>
+          <ProductBanner />
         </div>
         <div className='mb-[50px] sm:mb-20'>
           <DressStyle />
