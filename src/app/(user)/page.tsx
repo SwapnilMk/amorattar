@@ -15,7 +15,6 @@ export default function Home() {
   const [newArrivals, setNewArrivals] = useState<Product[]>([]);
   const [topSelling, setTopSelling] = useState<Product[]>([]);
   const [recentProducts, setRecentProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -39,21 +38,11 @@ export default function Home() {
         setRecentProducts(recentProductsData.products);
       } catch (error) {
         console.error('Error fetching data:', error);
-      } finally {
-        setLoading(false);
       }
     };
 
     fetchData();
   }, []);
-
-  if (loading) {
-    return (
-      <div className='flex min-h-screen items-center justify-center'>
-        <div className='h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent'></div>
-      </div>
-    );
-  }
 
   return (
     <>
@@ -67,6 +56,7 @@ export default function Home() {
           title='NEW ARRIVALS'
           category='New Arrivals'
           viewAllLink='/shop#new-arrivals'
+          products={newArrivals}
         />
         <div className='mx-auto max-w-frame px-4 py-10 xl:px-0'>
           <ReleaseBanner />
@@ -76,6 +66,7 @@ export default function Home() {
             title='Best Sellers'
             category='Best Sellers'
             viewAllLink='/shop#best-sellers'
+            products={topSelling}
           />
         </div>
         <div className='mx-auto max-w-frame px-4 py-10 xl:px-0'>

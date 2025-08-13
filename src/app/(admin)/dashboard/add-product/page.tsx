@@ -413,8 +413,7 @@ export default function AddProduct() {
     try {
       // Frontend validation
       const errors = validateProductForm(formData);
-      console.log('Frontend validation errors:', errors);
-      console.log('Form data for validation:', formData);
+
       if (Object.keys(errors).length > 0) {
         setValidationErrors(errors);
         setLoading(false);
@@ -450,18 +449,15 @@ export default function AddProduct() {
         console.error('API Error:', error);
 
         if (error.errors && Array.isArray(error.errors)) {
-          console.log('Backend validation errors:', error.errors);
           const backendErrors: ValidationErrors = {};
           error.errors.forEach((err: any) => {
             const field = err.path?.[0] || 'general';
-            console.log('Error field:', field, 'message:', err.message);
 
             if (!backendErrors[field]) {
               backendErrors[field] = [];
             }
             backendErrors[field].push(err.message);
           });
-          console.log('Mapped errors:', backendErrors);
           setValidationErrors(backendErrors);
           setLoading(false);
           toast.error('Please fix the validation errors above');

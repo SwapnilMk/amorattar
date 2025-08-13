@@ -58,7 +58,6 @@ export default function ProductList() {
 
   const handleEditProduct = (product: Product) => {
     // TODO: Implement edit functionality
-    console.log('Edit product:', product);
   };
 
   const handleDeleteProduct = async (id: string) => {
@@ -96,15 +95,8 @@ export default function ProductList() {
         params.append('search', search.trim());
       }
 
-      console.log('Fetching products with params:', params.toString());
       const res = await fetch(`/api/products?${params.toString()}`);
       const data: PaginatedResponse = await res.json();
-      console.log('Received data:', {
-        productsCount: data.products.length,
-        pagination: data.pagination,
-        firstProductId: data.products[0]?.id,
-        lastProductId: data.products[data.products.length - 1]?.id
-      });
 
       setProducts(data.products);
       setPagination(data.pagination);

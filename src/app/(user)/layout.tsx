@@ -2,7 +2,6 @@ import TopBanner from '@/components/layout/Banner/TopBanner';
 import TopNavbar from '@/components/layout/Navbar/TopNavbar';
 import Footer from '@/components/layout/Footer';
 import Providers from './providers';
-import HolyLoader from 'holy-loader';
 
 export default function UserLayout({
   children
@@ -11,7 +10,6 @@ export default function UserLayout({
 }) {
   return (
     <>
-      <HolyLoader color='#868686' />
       <TopBanner />
       <Providers>
         <TopNavbar />

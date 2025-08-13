@@ -4,6 +4,7 @@ import { satoshi } from '@/styles/fonts';
 import Providers from './(user)/providers';
 import SessionProvider from '@/components/providers/SessionProvider';
 import { getSession } from '@/lib/auth';
+import SplashScreenWrapper from '@/components/SplashScreenWrapper';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://amorattar.vercel.app/'),
@@ -84,7 +85,9 @@ export default async function RootLayout({
     <html lang='en'>
       <body className={satoshi.className}>
         <SessionProvider user={session}>
-          <Providers>{children}</Providers>
+          <SplashScreenWrapper>
+            <Providers>{children}</Providers>
+          </SplashScreenWrapper>
         </SessionProvider>
       </body>
     </html>

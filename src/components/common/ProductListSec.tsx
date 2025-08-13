@@ -44,7 +44,7 @@ const ProductListSec = ({
   products: customProducts
 }: ProductListSecProps) => {
   const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!customProducts);
 
   useEffect(() => {
     // If custom products are provided, use them instead of fetching

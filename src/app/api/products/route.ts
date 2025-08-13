@@ -11,40 +11,25 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '12'); // Changed back to 12 products per page
+    const limit = parseInt(searchParams.get('limit') || '12');
+    const cursor = searchParams.get('cursor');
     const category = searchParams.get('category');
     const search = searchParams.get('search');
     const recent = searchParams.get('recent');
-    const sort = searchParams.get('sort') || 'createdAt'; // Default to createdAt for consistent ordering
-    const skip = (page - 1) * limit;
-
-    console.log('API: Received request with params:', {
-      page,
-      limit,
-      category,
-      search,
-      recent,
-      sort,
-      skip
-    });
+    const sort = searchParams.get('sort') || 'createdAt';
+    const skip = cursor ? 0 : (page - 1) * limit;
 
     let whereClause: any = {};
 
-    // Handle special category cases
     if (category) {
-      // For special categories that don't exist in the database, return all products
       if (category === 'new-arrivals' || category === 'best-sellers') {
-        // Don't add category filter - return all products
-        // These will be handled by sorting and limiting
       } else {
-        // For actual categories, filter by category
         whereClause.categories = {
           has: category
         };
       }
     }
 
-    // Add search filter
     if (search && search.trim()) {
       whereClause.OR = [
         { title: { contains: search.trim(), mode: 'insensitive' } },
@@ -55,7 +40,6 @@ export async function GET(request: Request) {
 
     let orderBy = {};
 
-    // Ensure consistent ordering for pagination
     if (recent === 'true' || sort === 'recent') {
       orderBy = { createdAt: 'desc' };
     } else {
@@ -71,49 +55,50 @@ export async function GET(request: Request) {
           break;
         case 'createdAt':
         default:
-          // Default to createdAt for consistent pagination
           orderBy = { createdAt: 'desc' };
           break;
       }
     }
 
-    // Add secondary sort by id to ensure consistent ordering
     const orderByArray = [orderBy, { id: 'asc' }];
 
-    console.log('API: Query params:', {
-      whereClause,
-      skip,
-      take: limit,
-      orderBy: orderByArray
-    });
-
-    // In GET handler, fetch products with categories as a string array (no include for categories relation)
-    const products = await prisma.product.findMany({
+    const queryOptions: any = {
       where: whereClause,
-      skip,
       take: limit,
       orderBy: orderByArray
-    });
+    };
+
+    if (cursor) {
+      const cursorProduct = await prisma.product.findUnique({
+        where: { id: cursor },
+        select: { id: true }
+      });
+
+      if (cursorProduct) {
+        queryOptions.cursor = { id: cursor };
+        queryOptions.skip = 1;
+      }
+    } else {
+      queryOptions.skip = skip;
+    }
+
+    const products = await prisma.product.findMany(queryOptions);
 
     const total = await prisma.product.count({
       where: whereClause
     });
 
-    console.log('API: Query results:', {
-      productsCount: products.length,
-      total,
-      page,
-      limit,
-      pages: Math.ceil(total / limit),
-      firstProductId: products[0]?.id,
-      lastProductId: products[products.length - 1]?.id
-    });
+    const nextCursor =
+      products.length > 0 ? products[products.length - 1].id : null;
+    const hasMore = products.length === limit;
 
     return new NextResponse(
       JSON.stringify({
         products,
         total,
         perPage: limit,
+        nextCursor,
+        hasMore,
         pagination: {
           total,
           page,
@@ -156,17 +141,14 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    console.log('POST /api/products received body:', body); // Debug log
     try {
       const validatedData = productSchema.parse(body);
 
-      // Ensure gallery includes the main image if it's not already there
       const gallery =
         validatedData.gallery.length > 0
           ? validatedData.gallery
           : [validatedData.srcUrl];
 
-      // In POST handler, create product with categories as a string array
       const product = await prisma.product.create({
         data: {
           title: validatedData.title,
@@ -222,9 +204,6 @@ export async function POST(request: Request) {
         }
       });
 
-      // Remove any logic that creates or connects categories via a join table
-
-      // Fetch the updated product with categories
       const updatedProduct = await prisma.product.findUnique({
         where: { id: product.id }
       });
