@@ -9,9 +9,11 @@ import {
 } from '@/components/ui/accordion';
 import { IoMdCheckmark } from 'react-icons/io';
 import { cn } from '@/lib/utils';
+import { useFilters } from './FiltersContext';
 
 const ColorsSection = () => {
   const [selected, setSelected] = useState<string>('bg-green-600');
+  const { setColorLabel } = useFilters();
 
   return (
     <Accordion type='single' collapsible defaultValue='filter-colors'>
@@ -40,7 +42,15 @@ const ColorsSection = () => {
                   color,
                   'flex h-9 w-9 items-center justify-center rounded-full border border-black/20 sm:h-10 sm:w-10'
                 ])}
-                onClick={() => setSelected(color)}
+                onClick={() => {
+                  setSelected(color);
+                  // map tailwind bg class to a generic color label for filtering
+                  const label = color
+                    .replace('bg-', '')
+                    .replace('-600', '')
+                    .replace('-300', '');
+                  setColorLabel(label);
+                }}
               >
                 {selected === color && (
                   <IoMdCheckmark className='text-base text-white' />

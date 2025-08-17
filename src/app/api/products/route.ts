@@ -14,6 +14,11 @@ export async function GET(request: Request) {
     const limit = parseInt(searchParams.get('limit') || '12');
     const cursor = searchParams.get('cursor');
     const category = searchParams.get('category');
+    const style = searchParams.get('style');
+    const minPrice = searchParams.get('minPrice');
+    const maxPrice = searchParams.get('maxPrice');
+    const sizeMl = searchParams.get('sizeMl');
+    const colorLabel = searchParams.get('color');
     const search = searchParams.get('search');
     const recent = searchParams.get('recent');
     const sort = searchParams.get('sort') || 'createdAt';
@@ -30,8 +35,41 @@ export async function GET(request: Request) {
       }
     }
 
+    if (style) {
+      whereClause.fragrance = {
+        has: style
+      };
+    }
+
+    if (minPrice || maxPrice) {
+      whereClause.price = {} as any;
+      if (minPrice) (whereClause.price as any).gte = parseFloat(minPrice);
+      if (maxPrice) (whereClause.price as any).lte = parseFloat(maxPrice);
+    }
+
+    if (sizeMl) {
+      whereClause.OR = [
+        ...(whereClause.OR || []),
+        { volumeOptions: { some: { ml: parseInt(sizeMl) } } },
+        { 'selectedVolume.ml': parseInt(sizeMl) }
+      ];
+    }
+
+    if (colorLabel) {
+      whereClause.OR = [
+        ...(whereClause.OR || []),
+        {
+          colors: {
+            some: { label: { contains: colorLabel, mode: 'insensitive' } }
+          }
+        },
+        { 'selectedColor.label': { contains: colorLabel, mode: 'insensitive' } }
+      ];
+    }
+
     if (search && search.trim()) {
       whereClause.OR = [
+        ...(whereClause.OR || []),
         { title: { contains: search.trim(), mode: 'insensitive' } },
         { brand: { contains: search.trim(), mode: 'insensitive' } },
         { description: { contains: search.trim(), mode: 'insensitive' } }

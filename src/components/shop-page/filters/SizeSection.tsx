@@ -9,9 +9,11 @@ import {
   AccordionTrigger
 } from '@/components/ui/accordion';
 import { cn } from '@/lib/utils';
+import { useFilters } from './FiltersContext';
 
 const SizeSection = () => {
   const [selected, setSelected] = useState<string>('30ml');
+  const { setSizeMl } = useFilters();
 
   return (
     <Accordion type='single' collapsible defaultValue='filter-size'>
@@ -37,7 +39,11 @@ const SizeSection = () => {
                     ? 'bg-[#F9CB43] font-medium text-black'
                     : 'hover:bg-[#F9CB43]/30'
                 ])}
-                onClick={() => setSelected(size)}
+                onClick={() => {
+                  setSelected(size);
+                  const numeric = parseInt(size.replace('ml', ''));
+                  if (!Number.isNaN(numeric)) setSizeMl(numeric);
+                }}
               >
                 {size}
               </button>

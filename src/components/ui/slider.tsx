@@ -11,6 +11,7 @@ interface SliderProps
   step?: number;
   defaultValue?: [number, number];
   label?: string;
+  onValueCommit?: (values: [number, number]) => void;
 }
 
 const Slider = React.forwardRef<
@@ -48,6 +49,7 @@ const Slider = React.forwardRef<
           step={step}
           value={values}
           onValueChange={handleValueChange}
+          onValueCommit={(v) => props.onValueCommit?.([v[0], v[1]])}
           {...props}
         >
           <SliderPrimitive.Track className='relative h-1.5 w-full grow overflow-hidden rounded-full bg-primary/20'>

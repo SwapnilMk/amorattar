@@ -6,8 +6,10 @@ import {
   AccordionTrigger
 } from '@/components/ui/accordion';
 import { Slider } from '@/components/ui/slider';
+import { useFilters } from './FiltersContext';
 
 const PriceSection = () => {
+  const { setMinPrice, setMaxPrice } = useFilters();
   return (
     <Accordion type='single' collapsible defaultValue='filter-price'>
       <AccordionItem value='filter-price' className='border-none'>
@@ -21,6 +23,10 @@ const PriceSection = () => {
             max={250}
             step={1}
             label='₹'
+            onValueCommit={([min, max]) => {
+              setMinPrice(min);
+              setMaxPrice(max);
+            }}
           />
           <div className='mb-3' />
         </AccordionContent>

@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import React from 'react';
+import { useFilters } from './FiltersContext';
 import { MdKeyboardArrowRight } from 'react-icons/md';
 
 type Category = {
@@ -31,6 +32,7 @@ const categoriesData: Category[] = [
 ];
 
 const CategoriesSection = () => {
+  const { setCategory } = useFilters();
   return (
     <div className='flex flex-col space-y-0.5 text-black/60'>
       {categoriesData.map((category, idx) => (
@@ -38,6 +40,13 @@ const CategoriesSection = () => {
           key={idx}
           href={category.slug}
           className='flex items-center justify-between py-2 transition-colors hover:text-black'
+          onClick={() =>
+            setCategory(
+              new URL(category.slug, 'http://dummy').searchParams.get(
+                'category'
+              )
+            )
+          }
         >
           {category.title} <MdKeyboardArrowRight />
         </Link>

@@ -7,6 +7,7 @@ import {
 } from '@/components/ui/accordion';
 import Link from 'next/link';
 import { MdKeyboardArrowRight } from 'react-icons/md';
+import { useFilters } from './FiltersContext';
 
 type FragranceStyle = {
   title: string;
@@ -33,6 +34,7 @@ const fragranceStylesData: FragranceStyle[] = [
 ];
 
 const FragranceStyleSection = () => {
+  const { setStyle } = useFilters();
   return (
     <Accordion type='single' collapsible defaultValue='filter-style'>
       <AccordionItem value='filter-style' className='border-none'>
@@ -46,6 +48,13 @@ const FragranceStyleSection = () => {
                 key={idx}
                 href={fStyle.slug}
                 className='flex items-center justify-between py-2 transition-colors hover:text-black'
+                onClick={() =>
+                  setStyle(
+                    new URL(fStyle.slug, 'http://dummy').searchParams.get(
+                      'style'
+                    )
+                  )
+                }
               >
                 {fStyle.title} <MdKeyboardArrowRight />
               </Link>

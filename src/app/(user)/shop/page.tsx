@@ -13,12 +13,16 @@ import {
 } from '@/components/ui/select';
 import MobileFilters from '@/components/shop-page/filters/MobileFilters';
 import Filters from '@/components/shop-page/filters';
+import {
+  useFilters,
+  FiltersProvider
+} from '@/components/shop-page/filters/FiltersContext';
 import { FiSliders } from 'react-icons/fi';
 import ProductCard from '@/components/common/ProductCard';
 import { useSearchParams } from 'next/navigation';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 
-export default function ShopPage() {
+function ShopContent() {
   const searchParams = useSearchParams();
   const recentParam = searchParams.get('recent');
   const [products, setProducts] = useState<Product[]>([]);
@@ -28,6 +32,8 @@ export default function ShopPage() {
   const [hasMore, setHasMore] = useState(true);
   const [nextCursor, setNextCursor] = useState<string | null>(null);
   const [initialLoading, setInitialLoading] = useState(true);
+  const { category, style, minPrice, maxPrice, sizeMl, colorLabel } =
+    useFilters();
 
   const fetchProducts = useCallback(
     async (isInitial = false) => {
@@ -41,7 +47,7 @@ export default function ShopPage() {
 
         // Build query parameters
         const params = new URLSearchParams({
-          limit: '12', // Set to 12 products per page
+          limit: '12',
           sort: sortBy
         });
 
@@ -54,6 +60,13 @@ export default function ShopPage() {
         if (recentParam === 'true') {
           params.append('recent', 'true');
         }
+
+        if (category) params.append('category', category);
+        if (style) params.append('style', style);
+        if (minPrice !== null) params.append('minPrice', String(minPrice));
+        if (maxPrice !== null) params.append('maxPrice', String(maxPrice));
+        if (sizeMl !== null) params.append('sizeMl', String(sizeMl));
+        if (colorLabel) params.append('color', colorLabel);
 
         const response = await fetch(`/api/products?${params.toString()}`, {
           method: 'GET',
@@ -92,7 +105,17 @@ export default function ShopPage() {
         setInitialLoading(false);
       }
     },
-    [sortBy, recentParam, nextCursor]
+    [
+      sortBy,
+      recentParam,
+      nextCursor,
+      category,
+      style,
+      minPrice,
+      maxPrice,
+      sizeMl,
+      colorLabel
+    ]
   );
 
   // Initial load
@@ -101,7 +124,16 @@ export default function ShopPage() {
     setNextCursor(null);
     setHasMore(true);
     fetchProducts(true);
-  }, [sortBy, recentParam]);
+  }, [
+    sortBy,
+    recentParam,
+    category,
+    style,
+    minPrice,
+    maxPrice,
+    sizeMl,
+    colorLabel
+  ]);
 
   // Load more products for infinite scroll
   const loadMore = useCallback(() => {
@@ -142,16 +174,24 @@ export default function ShopPage() {
         />
         <div className='flex items-start md:space-x-5'>
           <div className='hidden min-w-[295px] max-w-[295px] md:block'>
-            <div className='sticky top-4 space-y-5 rounded-[20px] border border-black/10 bg-white px-5 py-5 shadow-sm md:space-y-6 md:px-6'>
+            <div className='top-4 space-y-5 rounded-[20px] border border-black/10 bg-white px-5 py-5 shadow-sm md:space-y-6 md:px-6'>
               <div className='flex items-center justify-between'>
                 <span className='text-xl font-bold text-black'>Filters</span>
                 <FiSliders className='text-2xl text-black/40' />
               </div>
-              <Filters />
+              <Filters
+                onApply={() => {
+                  // Reset list for new filters
+                  setProducts([]);
+                  setNextCursor(null);
+                  setHasMore(true);
+                  fetchProducts(true);
+                }}
+              />
             </div>
           </div>
           <div className='flex w-full flex-col space-y-5'>
-            <div className='sticky top-0 z-10 border-b border-gray-100 bg-white/95 pb-4 pt-2 backdrop-blur-sm'>
+            <div className='top-0 border-b border-gray-100 bg-white/95 pb-4 pt-2 backdrop-blur-sm'>
               <div className='flex flex-col lg:flex-row lg:justify-between'>
                 <div className='flex items-center justify-between'>
                   <h1 className='text-2xl font-bold md:text-[32px]'>
@@ -218,5 +258,13 @@ export default function ShopPage() {
         </div>
       </div>
     </main>
+  );
+}
+
+export default function ShopPage() {
+  return (
+    <FiltersProvider>
+      <ShopContent />
+    </FiltersProvider>
   );
 }
