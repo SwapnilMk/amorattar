@@ -16,3 +16,4 @@ services:
           memory: 256M
     env_file:
       - .env
+      
