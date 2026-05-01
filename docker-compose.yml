@@ -8,12 +8,6 @@ services:
     restart: unless-stopped
     ports:
       - "3002:3002"
-    deploy:
-      resources:
-        limits:
-          memory: 512M
-        reservations:
-          memory: 256M
     env_file:
       - .env
       
