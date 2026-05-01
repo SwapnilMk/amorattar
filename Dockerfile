@@ -29,6 +29,7 @@ WORKDIR /app
 ENV NODE_ENV production
 ENV NEXT_TELEMETRY_DISABLED 1
 ENV PORT 3002
+ENV HOSTNAME "0.0.0.0"
 # Limit Node.js memory usage to fit within 512MB RAM
 ENV NODE_OPTIONS="--max-old-space-size=400"
 
