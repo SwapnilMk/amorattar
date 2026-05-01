@@ -14,9 +14,11 @@ import Filters from '.';
 import { useFilters } from './FiltersContext';
 
 const MobileFilters = ({ onApply }: { onApply?: () => void }) => {
+  const [open, setOpen] = React.useState(false);
+
   return (
     <>
-      <Drawer>
+      <Drawer open={open} onOpenChange={setOpen}>
         <DrawerTrigger asChild>
           <button
             type='button'
@@ -35,15 +37,12 @@ const MobileFilters = ({ onApply }: { onApply?: () => void }) => {
             <DrawerDescription className='hidden'>filters</DrawerDescription>
           </DrawerHeader>
           <div className='max-h-[90%] w-full space-y-5 overflow-y-auto px-5 py-5 md:space-y-6 md:px-6'>
-            <DrawerClose asChild>
-              <div>
-                <Filters
-                  onApply={() => {
-                    if (onApply) onApply();
-                  }}
-                />
-              </div>
-            </DrawerClose>
+            <Filters
+              onApply={() => {
+                if (onApply) onApply();
+                setOpen(false);
+              }}
+            />
           </div>
         </DrawerContent>
       </Drawer>

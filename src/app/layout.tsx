@@ -5,6 +5,7 @@ import Providers from './(user)/providers';
 import SessionProvider from '@/components/providers/SessionProvider';
 import { getSession } from '@/lib/auth';
 import SplashScreenWrapper from '@/components/SplashScreenWrapper';
+import { Toaster } from 'sonner';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://amorattar.vercel.app/'),
@@ -74,6 +75,8 @@ export const viewport: Viewport = {
   userScalable: false
 };
 
+import WhatsAppWidget from '@/components/common/WhatsAppWidget';
+
 export default async function RootLayout({
   children
 }: {
@@ -88,6 +91,8 @@ export default async function RootLayout({
           <SplashScreenWrapper>
             <Providers>{children}</Providers>
           </SplashScreenWrapper>
+          <Toaster richColors closeButton />
+          <WhatsAppWidget />
         </SessionProvider>
       </body>
     </html>

@@ -233,7 +233,7 @@ function ShopContent() {
                     }}
                   />
                 </div>
-                <div className='flex flex-col sm:flex-row sm:items-center w-full lg:w-auto justify-between lg:justify-end mt-4 lg:mt-0'>
+                <div className='flex flex-row items-center w-full lg:w-auto justify-between lg:justify-end mt-4 lg:mt-0'>
                   <span className='mr-3 text-sm text-black/60 md:text-base'>
                     Showing {initialLoading ? '...' : products.length} Products
                   </span>

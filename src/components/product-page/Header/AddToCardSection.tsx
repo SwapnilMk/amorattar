@@ -6,6 +6,7 @@ import { useAppDispatch } from '@/lib/hooks/redux';
 import { addToCart } from '@/lib/features/carts/cartsSlice';
 import { Button } from '@/components/ui/button';
 import { FaShoppingCart, FaWhatsapp } from 'react-icons/fa';
+import { toast } from 'sonner';
 
 type AddToCardSectionProps = {
   data: Product;
@@ -31,10 +32,20 @@ const AddToCardSection = ({ data }: AddToCardSectionProps) => {
         selectedVolume: data.selectedVolume
       })
     );
+    toast.success(`${data.title} added to cart!`, {
+      description: 'Check your cart to complete the purchase.',
+      duration: 2000,
+      position: 'bottom-right'
+    });
   };
 
   const handleWhatsAppClick = () => {
-    const message = `Hi, I'm interested in this product: ${data.title} (${window.location.origin}/shop/product/${data.id}/${data.title.split(' ').join('-')})`;
+    const productUrl = `${window.location.origin}/shop/product/${data.id}/${data.title.split(' ').join('-')}`;
+    const price = data.discount > 0
+      ? Math.round(data.selectedVolume.price * (1 - data.discount / 100))
+      : data.selectedVolume.price;
+    
+    const message = `Check this out: ${productUrl}\n\nHi, I'm interested in *${data.title}* (${data.selectedVolume.ml}ml).\nPrice: ₹${price}\n\nPlease provide more details.`;
     const whatsappUrl = `https://wa.me/918268435091?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
   };
@@ -52,12 +63,16 @@ const AddToCardSection = ({ data }: AddToCardSectionProps) => {
         </span>
         <div className='absolute inset-0 -translate-x-full bg-white/20 transition-transform duration-300 group-hover:translate-x-0'></div>
       </Button>
-      {/* <Button
+      <Button
         onClick={handleWhatsAppClick}
-        className='flex items-center justify-center rounded-full bg-[#25D366] px-6 py-3 text-white transition-all duration-300 hover:bg-[#128C7E]'
+        className='group relative flex flex-1 items-center justify-center space-x-2 overflow-hidden rounded-full bg-[#25D366] px-6 py-3 text-white transition-all duration-300 hover:bg-[#128C7E]'
       >
-        <FaWhatsapp className='text-sm' /> Enquire Now
-      </Button> */}
+        <span className='relative z-10 flex items-center space-x-2'>
+          <FaWhatsapp className='text-lg' />
+          <span>Enquire on WhatsApp</span>
+        </span>
+        <div className='absolute inset-0 -translate-x-full bg-white/10 transition-transform duration-300 group-hover:translate-x-0'></div>
+      </Button>
     </div>
   );
 };

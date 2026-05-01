@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect, memo } from 'react';
 import Rating from '../ui/Rating';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -9,12 +9,76 @@ import { Button } from '@/components/ui/button';
 import { useAppDispatch } from '@/lib/hooks/redux';
 import { addToCart } from '@/lib/features/carts/cartsSlice';
 import { FaShoppingCart, FaWhatsapp } from 'react-icons/fa';
+import { toast } from 'sonner';
+import { cn } from '@/lib/utils';
+import { motion, AnimatePresence } from 'framer-motion';
+
+const ProductImageSlider = memo(({ images, title }: { images: string[], title: string }) => {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  useEffect(() => {
+    if (images.length > 1) {
+      const interval = setInterval(() => {
+        setCurrentImageIndex((prev) => (prev + 1) % images.length);
+      }, 3000);
+      return () => clearInterval(interval);
+    }
+  }, [images.length]);
+
+  return (
+    <div className='relative h-full w-full overflow-hidden'>
+      <AnimatePresence mode='popLayout'>
+        <motion.div
+          key={currentImageIndex}
+          initial={{ x: '100%' }}
+          animate={{ x: 0 }}
+          exit={{ x: '-100%' }}
+          transition={{ 
+            duration: 0.6, 
+            ease: [0.32, 0.72, 0, 1] // Custom cubic-bezier for smoother motion
+          }}
+          className='absolute inset-0 h-full w-full'
+        >
+          <Image
+            src={images[currentImageIndex]}
+            width={295}
+            height={298}
+            className='h-full w-full object-cover transition-transform duration-500 group-hover:scale-110'
+            alt={title}
+            priority
+          />
+        </motion.div>
+      </AnimatePresence>
+
+      {/* White Dots */}
+      {images.length > 1 && (
+        <div className='absolute bottom-3 left-1/2 flex -translate-x-1/2 space-x-1.5 z-10'>
+          {images.map((_, idx) => (
+            <div
+              key={idx}
+              className={cn(
+                'h-1 w-1 rounded-full transition-all duration-300 shadow-sm',
+                idx === currentImageIndex
+                  ? 'bg-white w-2.5 scale-110'
+                  : 'bg-white/40'
+              )}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+});
+
+ProductImageSlider.displayName = 'ProductImageSlider';
 
 type ProductCardProps = {
   data: Product;
 };
 
 const ProductCard = ({ data }: ProductCardProps) => {
+  const images =
+    data.gallery && data.gallery.length > 0 ? data.gallery : [data.srcUrl];
   const dispatch = useAppDispatch();
 
   const handleAddToCart = () => {
@@ -39,10 +103,16 @@ const ProductCard = ({ data }: ProductCardProps) => {
         selectedVolume: data.selectedVolume
       })
     );
+    toast.success(`${data.title} added to cart!`, {
+      description: 'Check your cart to complete the purchase.',
+      duration: 2000,
+      position: 'bottom-right'
+    });
   };
 
   const handleWhatsAppClick = () => {
-    const message = `Hi, I'm interested in this product: ${data.title} (${window.location.origin}/shop/product/${data.id}/${data.title.split(' ').join('-')})`;
+    const productUrl = `${window.location.origin}/shop/product/${data.id}/${data.title.split(' ').join('-')}`;
+    const message = `Check this out: ${productUrl}\n\nHi, I'm interested in *${data.title}*.\nPrice: ₹${discountedPrice}\n\nPlease provide more details.`;
     const whatsappUrl = `https://wa.me/918268435091?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
   };
@@ -58,21 +128,14 @@ const ProductCard = ({ data }: ProductCardProps) => {
       : data.price;
 
   return (
-    <div className='group flex aspect-auto flex-col items-start rounded-lg border border-gray-100 p-4 transition-all hover:shadow-lg'>
+    <div className='group flex h-full aspect-auto flex-col items-start rounded-lg border border-gray-100 p-4 transition-all hover:shadow-lg'>
       <Link
         href={`/shop/product/${data.id}/${data.title.split(' ').join('-')}`}
         className='w-full'
       >
-        {/* Product Image */}
-        <div className='mb-2.5 aspect-square w-full overflow-hidden rounded-[13px] bg-[#F0EEED] lg:max-w-[295px] lg:rounded-[20px] xl:mb-4'>
-          <Image
-            src={data.srcUrl}
-            width={295}
-            height={298}
-            className='h-full w-full rounded-md object-cover transition-all duration-500 group-hover:scale-110'
-            alt={data.title}
-            priority
-          />
+        {/* Product Image Slider */}
+        <div className='relative mb-2.5 aspect-square w-full overflow-hidden rounded-[13px] bg-[#F0EEED] lg:max-w-[295px] lg:rounded-[20px] xl:mb-4'>
+          <ProductImageSlider images={images} title={data.title} />
         </div>
 
         {/* Brand */}
@@ -80,7 +143,9 @@ const ProductCard = ({ data }: ProductCardProps) => {
 
         {/* Title */}
         <div className='mb-2 w-full text-left'>
-          <strong className='text-black xl:text-xl'>{data.title}</strong>
+          <strong className='line-clamp-1 min-h-[1.5rem] text-black xl:text-xl'>
+            {data.title}
+          </strong>
         </div>
 
         {/* Rating */}
@@ -144,12 +209,16 @@ const ProductCard = ({ data }: ProductCardProps) => {
           </span>
           <div className='absolute inset-0 -translate-x-full bg-white/20 transition-transform duration-300 group-hover:translate-x-0'></div>
         </Button>
-        {/* <Button
+        <Button
           onClick={handleWhatsAppClick}
-          className='flex items-center justify-center rounded-full bg-[#25D366] px-4 py-3 text-white transition-all duration-300 hover:bg-[#128C7E]'
+          className='group relative flex items-center justify-center rounded-full bg-[#25D366] px-4 py-3 text-white transition-all duration-300 hover:bg-[#128C7E]'
+          title='Enquire on WhatsApp'
         >
-          <FaWhatsapp className='text-sm' />
-        </Button> */}
+          <span className='relative z-10'>
+            <FaWhatsapp className='text-base' />
+          </span>
+          <div className='absolute inset-0 -translate-x-full bg-white/10 transition-transform duration-300 group-hover:translate-x-0'></div>
+        </Button>
       </div>
     </div>
   );

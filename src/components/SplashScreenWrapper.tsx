@@ -27,7 +27,7 @@ export default function SplashScreenWrapper({
   };
 
   if (loading) {
-    return null; // Prevent content flash before checking localStorage
+    return null; 
   }
 
   if (showSplash) {

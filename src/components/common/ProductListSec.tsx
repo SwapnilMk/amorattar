@@ -100,13 +100,13 @@ const ProductListSec = ({
           }}
           className='mb-6 w-full md:mb-9'
         >
-          <CarouselContent className='mx-4 space-x-4 sm:space-x-5 xl:mx-0'>
+          <CarouselContent className='mx-4 items-stretch space-x-4 sm:space-x-5 xl:mx-0'>
             {loading
               ? // Show 4 skeleton items while loading
                 Array.from({ length: 4 }).map((_, index) => (
                   <CarouselItem
                     key={index}
-                    className='w-full max-w-[198px] pl-0 sm:max-w-[295px]'
+                    className='w-full max-w-[198px] pl-0 sm:max-w-[295px] h-full'
                   >
                     <ProductSkeleton />
                   </CarouselItem>
@@ -114,7 +114,7 @@ const ProductListSec = ({
               : products.map((product) => (
                   <CarouselItem
                     key={product.id}
-                    className='w-full max-w-[198px] pl-0 sm:max-w-[295px]'
+                    className='w-full max-w-[198px] pl-0 sm:max-w-[295px] h-full'
                   >
                     <ProductCard data={product} />
                   </CarouselItem>

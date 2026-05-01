@@ -72,7 +72,7 @@ export default function RegisterForm() {
         >
           <Image
             src='/logo/amorattar.jpg'
-            alt='Amorattar logo'
+            alt='Amor Perfumes logo'
             width={96}
             height={96}
             className='rounded-xl object-contain'

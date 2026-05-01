@@ -87,7 +87,7 @@ export default function PrivacyPolicyPage() {
             <p className='text-gray-600'>
               If you have any questions about our privacy policy or how we
               handle your information, please contact us at
-              privacy@amorattar.com
+              privacy@amorperfumes.com
             </p>
           </section>
         </motion.div>

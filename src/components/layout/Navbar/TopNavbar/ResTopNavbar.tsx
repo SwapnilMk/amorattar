@@ -87,26 +87,8 @@ const ResTopNavbar = ({ data }: { data: NavMenu }) => {
         />
       </SheetTrigger>
       <SheetContent side='left' className='overflow-y-auto'>
-        <SheetHeader className='mb-6'>
-          <SheetTitle asChild>
-            <SheetClose asChild>
-              <Link
-                href='/'
-                className='flex flex-col items-center'
-              >
-                <Image
-                  src='/logo/amorperfumes.png'
-                  height={100}
-                  width={100}
-                  alt='logo'
-                  className='mb-2 max-h-[60px] max-w-[60px] object-contain'
-                />
-              </Link>
-            </SheetClose>
-          </SheetTitle>
-        </SheetHeader>
 
-        <div className='relative mb-6'>
+        <div className='relative mb-6 mt-10'>
           <InputGroup className='bg-[#F0F0F0]'>
             <InputGroup.Text>
               <Image

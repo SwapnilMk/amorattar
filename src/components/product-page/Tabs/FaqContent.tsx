@@ -16,7 +16,7 @@ const faqsData: FaqItem[] = [
   {
     question: 'What are attars and how do they differ from perfumes?',
     answer:
-      'Attars are traditional, oil-based fragrances made from natural ingredients like flowers, woods, and spices, offering a concentrated and long-lasting scent. Perfumes are typically alcohol-based, lighter, and designed for broader application. At AMORATTAR, our attars are crafted for depth, while our perfumes provide a versatile, everyday option.'
+      'Attars are traditional, oil-based fragrances made from natural ingredients like flowers, woods, and spices, offering a concentrated and long-lasting scent. Perfumes are typically alcohol-based, lighter, and designed for broader application. At AMOR PERFUMES, our attars are crafted for depth, while our perfumes provide a versatile, everyday option.'
   },
   {
     question: 'How should I apply attars and perfumes?',
@@ -24,7 +24,7 @@ const faqsData: FaqItem[] = [
       'For attars, dab a small amount on pulse points like wrists, neck, or behind the ears for a lasting effect. For perfumes, spray lightly on pulse points or mist over your body from a distance. Avoid rubbing the fragrance into your skin, as it can alter the scent.'
   },
   {
-    question: 'How long do AMORATTAR fragrances last?',
+    question: 'How long do AMOR PERFUMES fragrances last?',
     answer:
       'Our attars can last 8-12 hours or more due to their high concentration of natural oils. Perfumes typically last 4-6 hours, depending on the scent profile and your skin type. Store them in a cool, dry place away from sunlight to maintain their potency.'
   },

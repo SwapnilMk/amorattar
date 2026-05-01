@@ -29,7 +29,7 @@ export default function TermsOfServicePage() {
           <section className='rounded-lg bg-white p-8 shadow-lg'>
             <h2 className='mb-4 text-2xl font-bold'>1. Acceptance of Terms</h2>
             <p className='text-gray-600'>
-              By accessing and using Amorattar's website and services, you agree
+              By accessing and using Amor Perfumes's website and services, you agree
               to be bound by these Terms of Service and all applicable laws and
               regulations. If you do not agree with any of these terms, you are
               prohibited from using or accessing this site.
@@ -40,7 +40,7 @@ export default function TermsOfServicePage() {
             <h2 className='mb-4 text-2xl font-bold'>2. Use License</h2>
             <p className='mb-4 text-gray-600'>
               Permission is granted to temporarily access the materials on
-              Amorattar's website for personal, non-commercial transitory
+              Amor Perfumes's website for personal, non-commercial transitory
               viewing only. This is the grant of a license, not a transfer of
               title, and under this license you may not:
             </p>
@@ -104,7 +104,7 @@ export default function TermsOfServicePage() {
               7. Limitation of Liability
             </h2>
             <p className='text-gray-600'>
-              In no event shall Amorattar or its suppliers be liable for any
+              In no event shall Amor Perfumes or its suppliers be liable for any
               damages (including, without limitation, damages for loss of data
               or profit, or due to business interruption) arising out of the use
               or inability to use the materials on our website.
@@ -115,7 +115,7 @@ export default function TermsOfServicePage() {
             <h2 className='mb-4 text-2xl font-bold'>8. Contact Information</h2>
             <p className='text-gray-600'>
               If you have any questions about these Terms of Service, please
-              contact us at terms@amorattar.com
+              contact us at terms@amorperfumes.com
             </p>
           </section>
         </motion.div>

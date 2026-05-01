@@ -45,16 +45,19 @@ export async function generateMetadata({
   return {
     title,
     description,
+    alternates: {
+      canonical: `/shop/product/${product.id}/${product.title.split(' ').join('-')}`
+    },
     openGraph: {
       title,
       description,
       type: 'website',
-      url: `https://amorperfumes.com/shop/product/${product.id}/${product.title.split(' ').join('-')}`,
+      url: `/shop/product/${product.id}/${product.title.split(' ').join('-')}`,
       images: [
         {
           url: product.srcUrl,
-          width: 800,
-          height: 800,
+          width: 1200,
+          height: 630,
           alt: product.title
         }
       ],

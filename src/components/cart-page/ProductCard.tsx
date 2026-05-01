@@ -13,6 +13,7 @@ import {
   removeCartItem
 } from '@/lib/features/carts/cartsSlice';
 import { useAppDispatch } from '@/lib/hooks/redux';
+import { toast } from 'sonner';
 
 type ProductCardProps = {
   data: CartItem;
@@ -54,7 +55,7 @@ const ProductCard = ({ data }: ProductCardProps) => {
             variant='ghost'
             size='icon'
             className='h-5 w-5 md:h-9 md:w-9'
-            onClick={() =>
+            onClick={() => {
               dispatch(
                 remove({
                   id: data.id,
@@ -62,8 +63,9 @@ const ProductCard = ({ data }: ProductCardProps) => {
                   selectedVolume: data.selectedVolume,
                   quantity: data.quantity
                 })
-              )
-            }
+              );
+              toast.error(`${data.title} removed from cart`);
+            }}
           >
             <PiTrashFill className='text-xl text-red-600 md:text-2xl' />
           </Button>
@@ -104,25 +106,32 @@ const ProductCard = ({ data }: ProductCardProps) => {
           </div>
           <CartCounter
             initialValue={data.quantity}
-            onAdd={() => dispatch(addToCart({ ...data, quantity: 1 }))}
-            onRemove={() =>
-              data.quantity === 1
-                ? dispatch(
-                    remove({
-                      id: data.id,
-                      selectedColor: data.selectedColor,
-                      selectedVolume: data.selectedVolume,
-                      quantity: data.quantity
-                    })
-                  )
-                : dispatch(
-                    removeCartItem({
-                      id: data.id,
-                      selectedColor: data.selectedColor,
-                      selectedVolume: data.selectedVolume
-                    })
-                  )
-            }
+            onAdd={() => {
+              dispatch(addToCart({ ...data, quantity: 1 }));
+              toast.success(`Increased quantity of ${data.title}`);
+            }}
+            onRemove={() => {
+              if (data.quantity === 1) {
+                dispatch(
+                  remove({
+                    id: data.id,
+                    selectedColor: data.selectedColor,
+                    selectedVolume: data.selectedVolume,
+                    quantity: data.quantity
+                  })
+                );
+                toast.error(`${data.title} removed from cart`);
+              } else {
+                dispatch(
+                  removeCartItem({
+                    id: data.id,
+                    selectedColor: data.selectedColor,
+                    selectedVolume: data.selectedVolume
+                  })
+                );
+                toast.info(`Decreased quantity of ${data.title}`);
+              }
+            }}
             isZeroDelete
             className='max-h-8 min-w-[105px] max-w-[105px] px-5 py-3 sm:max-w-32 md:max-h-10'
           />

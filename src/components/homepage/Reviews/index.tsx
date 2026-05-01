@@ -91,10 +91,10 @@ const Reviews = () => {
               OUR HAPPY CUSTOMERS
             </motion.h2>
             <div className='ml-2 flex items-center space-x-1'>
-              <CarouselPrevious variant='ghost' className='text-2xl'>
+              <CarouselPrevious variant='ghost' className='text-2xl' disabled={false}>
                 <FaArrowLeft />
               </CarouselPrevious>
-              <CarouselNext variant='ghost' className='text-2xl'>
+              <CarouselNext variant='ghost' className='text-2xl' disabled={false}>
                 <FaArrowRight />
               </CarouselNext>
             </div>
