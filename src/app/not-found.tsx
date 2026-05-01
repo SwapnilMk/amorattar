@@ -1,21 +1,8 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import type { Metadata, Viewport } from 'next';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-
-export const metadata: Metadata = {
-  title: 'Page Not Found',
-  description: 'The page you are looking for does not exist.'
-};
-
-export const viewport: Viewport = {
-  width: 'device-width',
-  initialScale: 1,
-  maximumScale: 1,
-  userScalable: false
-};
 
 export default function NotFound() {
   const router = useRouter();

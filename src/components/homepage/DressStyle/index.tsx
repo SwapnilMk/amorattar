@@ -1,3 +1,5 @@
+'use client';
+
 // src/components/layout/FragranceStyle.tsx
 import { cn } from '@/lib/utils';
 import { integralCF } from '@/styles/fonts';
