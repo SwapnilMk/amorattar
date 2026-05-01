@@ -30,6 +30,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           source: '.deployment/app.tar.gz'
           target: '/home/ubuntu/deploy-amorattar'
+          command_timeout: 30m
 
       - name: Extract, Build and Deploy Container
         uses: appleboy/ssh-action@v1.0.3
@@ -37,6 +38,7 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
+          command_timeout: 30m
           script: |
             # 1. Setup application directory
             mkdir -p /home/ubuntu/amorattar
