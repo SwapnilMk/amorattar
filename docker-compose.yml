@@ -1,9 +1,7 @@
 version: "3.8"
 services:
   amorattar:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: ghcr.io/swapnilmk/amorattar:latest
     container_name: amorattar
     restart: unless-stopped
     ports:

@@ -1,4 +1,4 @@
-name: Deploy Amorattar to EC2
+name: Deploy Amorattar to EC2 (Optimized)
 
 on:
   push:
@@ -6,8 +6,39 @@ on:
       - main
       - master
 
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
 jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          build-args: |
+            NEXT_TELEMETRY_DISABLED=1
+
   deploy:
+    needs: build-and-push
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -17,51 +48,32 @@ jobs:
         run: |
           echo "${{ secrets.ENV_FILE }}" > .env
 
-      - name: Create tar archive of tracked files
-        run: |
-          mkdir -p .deployment
-          tar -czf .deployment/app.tar.gz --exclude='.git' --exclude='node_modules' --exclude='.next' --exclude='.deployment' .
-
-      - name: Copy archive to EC2
+      - name: Copy docker-compose and .env to EC2
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
-          source: '.deployment/app.tar.gz'
-          target: '/home/ubuntu/deploy-amorattar'
-          command_timeout: 30m
+          source: "docker-compose.yml,.env"
+          target: "/home/ubuntu/amorattar"
+          command_timeout: 10m
 
-      - name: Extract, Build and Deploy Container
+      - name: Pull and Restart Container
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
-          command_timeout: 30m
+          command_timeout: 10m
           script: |
-            # 1. Setup application directory
-            mkdir -p /home/ubuntu/amorattar
-
-            # 2. Extract contents
-            tar -xzf /home/ubuntu/deploy-amorattar/.deployment/app.tar.gz -C /home/ubuntu/amorattar
-
-            # 3. Clean up the deploy directory
-            rm -rf /home/ubuntu/deploy-amorattar
-
-            # 4. Run Docker Compose
             cd /home/ubuntu/amorattar
-
-            # Use appropriate docker compose command depending on version installed
-            if docker compose version > /dev/null 2>&1; then
-              docker compose down || true
-              docker system prune -f || true
-              docker compose up -d --build
-            elif command -v docker-compose &> /dev/null; then
-              docker-compose down || true
-              docker system prune -f || true
-              docker-compose up -d --build
-            else
-              echo "Docker Compose is not installed on this EC2 instance. Please install Docker and Docker Engine."
-              exit 1
-            fi
+            
+            # Log in to GHCR on the EC2
+            echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+            
+            # Pull the latest image and restart
+            docker compose pull
+            docker compose up -d
+            
+            # Clean up old images to save disk space
+            docker image prune -f
