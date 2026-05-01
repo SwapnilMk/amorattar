@@ -7,11 +7,12 @@ import { getSession } from '@/lib/auth';
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const product = await prisma.product.findUnique({
-      where: { id: params.id }
+      where: { id: id }
     });
 
     if (!product) {
@@ -30,9 +31,10 @@ export async function GET(
 
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const session = await getSession();
     if (!session) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
@@ -47,7 +49,7 @@ export async function PUT(
       const validatedData = productSchema.parse(body);
 
       const product = await prisma.product.findUnique({
-        where: { id: params.id }
+        where: { id: id }
       });
 
       if (!product) {
@@ -143,9 +145,10 @@ export async function PUT(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const session = await getSession();
     if (!session) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
@@ -156,7 +159,7 @@ export async function DELETE(
     }
 
     const product = await prisma.product.findUnique({
-      where: { id: params.id }
+      where: { id: id }
     });
 
     if (!product) {

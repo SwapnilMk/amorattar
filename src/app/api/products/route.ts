@@ -18,7 +18,7 @@ export async function GET(request: Request) {
     const minPrice = searchParams.get('minPrice');
     const maxPrice = searchParams.get('maxPrice');
     const sizeMl = searchParams.get('sizeMl');
-    const colorLabel = searchParams.get('color');
+    const colorLabel = searchParams.get('color')?.trim();
     const search = searchParams.get('search');
     const recent = searchParams.get('recent');
     const sort = searchParams.get('sort') || 'createdAt';
@@ -27,75 +27,137 @@ export async function GET(request: Request) {
     let whereClause: any = {};
 
     if (category) {
-      if (category === 'new-arrivals' || category === 'best-sellers') {
+      // Normalize category from slug to DB name
+      const categoryMap: { [key: string]: string } = {
+        'perfumes': 'Perfumes',
+        'attars': 'Attars',
+        'home-fragrances': 'Home Fragrances',
+        'body-sprays': 'Body Sprays',
+        'signature-attars': 'Signature Attars',
+        'new-arrivals': 'New Arrivals',
+        'best-sellers': 'Best Sellers'
+      };
+
+      const normalizedCategory = categoryMap[category] || category;
+
+      if (normalizedCategory === 'New Arrivals') {
+        // You might want to filter by date or a specific flag for new arrivals
+        // For now, let's just use the category if it exists as a tag
+        whereClause.categories = {
+          has: normalizedCategory
+        };
+      } else if (normalizedCategory === 'Best Sellers') {
+        // You might want to filter by rating or sales
+        whereClause.categories = {
+          has: normalizedCategory
+        };
       } else {
         whereClause.categories = {
-          has: category
+          has: normalizedCategory
         };
       }
     }
 
     if (style) {
+      const styleMap: { [key: string]: string } = {
+        'floral': 'Floral',
+        'woody': 'Woody',
+        'citrus': 'Citrus',
+        'oriental': 'Oriental'
+      };
+      const normalizedStyle = styleMap[style] || style;
       whereClause.fragrance = {
-        has: style
+        has: normalizedStyle
       };
     }
 
-    if (minPrice || maxPrice) {
-      whereClause.price = {} as any;
-      if (minPrice) (whereClause.price as any).gte = parseFloat(minPrice);
-      if (maxPrice) (whereClause.price as any).lte = parseFloat(maxPrice);
+    if (minPrice !== null || maxPrice !== null) {
+      const parsedMin = minPrice ? parseFloat(minPrice as string) : 0;
+      const parsedMax = maxPrice ? parseFloat(maxPrice as string) : 1000000;
+      
+      const min = isNaN(parsedMin) ? 0 : parsedMin;
+      const max = isNaN(parsedMax) ? 1000000 : parsedMax;
+
+      whereClause.AND = [
+        ...(whereClause.AND || []),
+        {
+          OR: [
+            { discountedPrice: { gte: min, lte: max } },
+            { selectedVolume: { is: { discountedPrice: { gte: min, lte: max } } } },
+            {
+              volumeOptions: {
+                some: {
+                  discountedPrice: { gte: min, lte: max }
+                }
+              }
+            }
+          ]
+        }
+      ];
     }
 
     if (sizeMl) {
-      whereClause.OR = [
-        ...(whereClause.OR || []),
-        { volumeOptions: { some: { ml: parseInt(sizeMl) } } },
-        { 'selectedVolume.ml': parseInt(sizeMl) }
+      whereClause.AND = [
+        ...(whereClause.AND || []),
+        {
+          OR: [
+            { volumeOptions: { some: { ml: parseInt(sizeMl) } } },
+            { selectedVolume: { is: { ml: parseInt(sizeMl) } } }
+          ]
+        }
       ];
     }
 
     if (colorLabel) {
-      whereClause.OR = [
-        ...(whereClause.OR || []),
+      whereClause.AND = [
+        ...(whereClause.AND || []),
         {
-          colors: {
-            some: { label: { contains: colorLabel, mode: 'insensitive' } }
-          }
-        },
-        { 'selectedColor.label': { contains: colorLabel, mode: 'insensitive' } }
+          OR: [
+            {
+              colors: {
+                some: { label: { contains: colorLabel, mode: 'insensitive' } }
+              }
+            },
+            {
+              selectedColor: {
+                is: { label: { contains: colorLabel, mode: 'insensitive' } }
+              }
+            }
+          ]
+        }
       ];
     }
 
     if (search && search.trim()) {
-      whereClause.OR = [
-        ...(whereClause.OR || []),
-        { title: { contains: search.trim(), mode: 'insensitive' } },
-        { brand: { contains: search.trim(), mode: 'insensitive' } },
-        { description: { contains: search.trim(), mode: 'insensitive' } }
+      whereClause.AND = [
+        ...(whereClause.AND || []),
+        {
+          OR: [
+            { title: { contains: search.trim(), mode: 'insensitive' } },
+            { brand: { contains: search.trim(), mode: 'insensitive' } },
+            { description: { contains: search.trim(), mode: 'insensitive' } }
+          ]
+        }
       ];
     }
 
     let orderBy = {};
 
-    if (recent === 'true' || sort === 'recent') {
-      orderBy = { createdAt: 'desc' };
-    } else {
-      switch (sort) {
-        case 'low-price':
-          orderBy = { price: 'asc' };
-          break;
-        case 'high-price':
-          orderBy = { price: 'desc' };
-          break;
-        case 'most-popular':
-          orderBy = { rating: 'desc' };
-          break;
-        case 'createdAt':
-        default:
-          orderBy = { createdAt: 'desc' };
-          break;
-      }
+    switch (sort) {
+      case 'low-price':
+        orderBy = { discountedPrice: 'asc' };
+        break;
+      case 'high-price':
+        orderBy = { discountedPrice: 'desc' };
+        break;
+      case 'most-popular':
+        orderBy = { rating: 'desc' };
+        break;
+      case 'recent':
+      case 'createdAt':
+      default:
+        orderBy = { createdAt: 'desc' };
+        break;
     }
 
     const orderByArray = [orderBy, { id: 'asc' }];

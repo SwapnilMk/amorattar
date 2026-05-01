@@ -10,51 +10,53 @@ import {
   CarouselItem
 } from '@/components/ui/carousel';
 import ProductCard from './ProductCard';
+import ProductSkeleton from './ProductSkeleton';
 import { Product } from '@/types/product.types';
 import Link from 'next/link';
-import { Skeleton } from '@/components/ui/skeleton';
 
 type ProductListSecProps = {
   title: string;
   category?: string;
   viewAllLink?: string;
   products?: Product[];
+  loading?: boolean;
 };
-
-const ProductSkeleton = () => (
-  <div className='flex aspect-auto flex-col items-start rounded-lg border border-gray-100 p-4'>
-    <div className='mb-2.5 aspect-square w-full overflow-hidden rounded-[13px] bg-[#F0EEED] lg:max-w-[295px] lg:rounded-[20px] xl:mb-4'>
-      <Skeleton className='h-full w-full' />
-    </div>
-    <Skeleton className='mb-1 h-4 w-20' />
-    <Skeleton className='mb-2 h-6 w-3/4' />
-    <Skeleton className='mb-2 h-4 w-24' />
-    <Skeleton className='mb-2 h-6 w-32' />
-    <div className='mt-auto flex w-full space-x-2'>
-      <Skeleton className='h-10 flex-1 rounded-full' />
-      <Skeleton className='h-10 w-10 rounded-full' />
-    </div>
-  </div>
-);
 
 const ProductListSec = ({
   title,
   category,
   viewAllLink,
-  products: customProducts
+  products: customProducts,
+  loading: customLoading
 }: ProductListSecProps) => {
   const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(!customProducts);
+  const [loading, setLoading] = useState(
+    customLoading !== undefined ? customLoading : !customProducts
+  );
+
+  useEffect(() => {
+    if (customLoading !== undefined) {
+      setLoading(customLoading);
+    }
+  }, [customLoading]);
 
   useEffect(() => {
     // If custom products are provided, use them instead of fetching
-    if (customProducts) {
+    if (customProducts && customProducts.length > 0) {
       setProducts(customProducts);
-      setLoading(false);
+      if (customLoading === undefined) setLoading(false);
       return;
     }
 
+    if (customProducts && customProducts.length === 0 && customLoading === undefined) {
+      // If custom products is empty but customLoading is not provided, 
+      // it might still be loading or just empty. 
+      // In the Home page, they start as [].
+    }
+
     const fetchProducts = async () => {
+      if (customProducts && customProducts.length > 0) return;
+      
       try {
         const url = category
           ? `/api/products?category=${category}`
@@ -65,12 +67,12 @@ const ProductListSec = ({
       } catch (error) {
         console.error('Error fetching products:', error);
       } finally {
-        setLoading(false);
+        if (customLoading === undefined) setLoading(false);
       }
     };
 
     fetchProducts();
-  }, [category, customProducts]);
+  }, [category, customProducts, customLoading]);
 
   return (
     <section className='mx-auto max-w-frame text-center'>

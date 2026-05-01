@@ -8,9 +8,9 @@ import SplashScreenWrapper from '@/components/SplashScreenWrapper';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://amorattar.vercel.app/'),
-  title: 'Amorattar - Premium Attar and Perfume Shop',
+  title: 'AMOR PERFUMES - Premium Perfume Shop',
   description:
-    'Discover our exclusive collection of premium attars and perfumes. Shop authentic fragrances with worldwide shipping.',
+    'Discover our exclusive collection of premium perfumes. Shop authentic fragrances with worldwide shipping.',
   manifest: '/favicon/site.webmanifest',
   icons: {
     icon: [
@@ -34,33 +34,33 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'en_US',
     url: 'https://amorattar.com',
-    siteName: 'Amorattar',
-    title: 'Amorattar - Premium Attar and Perfume Shop',
+    siteName: 'AMOR PERFUMES',
+    title: 'AMOR PERFUMES - Premium Perfume Shop',
     description:
-      'Discover our exclusive collection of premium attars and perfumes. Shop authentic fragrances with worldwide shipping.',
+      'Discover our exclusive collection of premium perfumes. Shop authentic fragrances with worldwide shipping.',
     images: [
       {
         url: '/og-image.jpg',
         width: 1200,
         height: 630,
-        alt: 'Amorattar - Premium Attar and Perfume Shop'
+        alt: 'AMOR PERFUMES - Premium Perfume Shop'
       }
     ]
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Amorattar - Premium Attar and Perfume Shop',
+    title: 'AMOR PERFUMES - Premium Perfume Shop',
     description:
-      'Discover our exclusive collection of premium attars and perfumes. Shop authentic fragrances with worldwide shipping.',
+      'Discover our exclusive collection of premium perfumes. Shop authentic fragrances with worldwide shipping.',
     images: ['/og-image.jpg'],
-    creator: '@amorattar'
+    creator: '@amorperfumes'
   },
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'Amorattar'
+    title: 'AMOR PERFUMES'
   },
-  applicationName: 'Amorattar',
+  applicationName: 'AMOR PERFUMES',
   formatDetection: {
     telephone: false
   }
@@ -82,8 +82,8 @@ export default async function RootLayout({
   const session = await getSession();
 
   return (
-    <html lang='en'>
-      <body className={satoshi.className}>
+    <html lang='en' suppressHydrationWarning>
+      <body className={satoshi.className} suppressHydrationWarning>
         <SessionProvider user={session}>
           <SplashScreenWrapper>
             <Providers>{children}</Providers>

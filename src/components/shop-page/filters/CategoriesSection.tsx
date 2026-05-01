@@ -1,55 +1,39 @@
-import Link from 'next/link';
 import React from 'react';
 import { useFilters } from './FiltersContext';
 import { MdKeyboardArrowRight } from 'react-icons/md';
-
-type Category = {
-  title: string;
-  slug: string;
-};
-
-const categoriesData: Category[] = [
-  {
-    title: 'Perfumes',
-    slug: '/shop?category=perfumes'
-  },
-  {
-    title: 'Attars',
-    slug: '/shop?category=attars'
-  },
-  {
-    title: 'Home Fragrances',
-    slug: '/shop?category=home-fragrances'
-  },
-  {
-    title: 'Body Sprays',
-    slug: '/shop?category=body-sprays'
-  },
-  {
-    title: 'Signature Attars',
-    slug: '/shop?category=signature-attars'
-  }
-];
+import { cn } from '@/lib/utils';
 
 const CategoriesSection = () => {
-  const { setCategory } = useFilters();
+  const { category: currentCategory, setCategory, availableOptions, loadingOptions } = useFilters();
+
+  if (loadingOptions || !availableOptions) {
+    return (
+      <div className='flex flex-col gap-2 pt-4'>
+        {[1, 2, 3].map((i) => (
+          <div key={i} className='h-8 w-full animate-pulse rounded bg-gray-200' />
+        ))}
+      </div>
+    );
+  }
+
   return (
     <div className='flex flex-col space-y-0.5 text-black/60'>
-      {categoriesData.map((category, idx) => (
-        <Link
+      {availableOptions.categories.map((category, idx) => (
+        <button
           key={idx}
-          href={category.slug}
-          className='flex items-center justify-between py-2 transition-colors hover:text-black'
+          type='button'
+          className={cn(
+            'flex items-center justify-between py-2 transition-colors hover:text-black',
+            currentCategory === category.toLowerCase().replace(/ /g, '-') ? 'font-bold text-black' : ''
+          )}
           onClick={() =>
             setCategory(
-              new URL(category.slug, 'http://dummy').searchParams.get(
-                'category'
-              )
+              category.toLowerCase().replace(/ /g, '-') === currentCategory ? null : category.toLowerCase().replace(/ /g, '-')
             )
           }
         >
-          {category.title} <MdKeyboardArrowRight />
-        </Link>
+          {category} <MdKeyboardArrowRight />
+        </button>
       ))}
     </div>
   );

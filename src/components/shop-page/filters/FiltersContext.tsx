@@ -1,6 +1,16 @@
-'use client';
+import React, { createContext, useContext, useMemo, useState, useEffect } from 'react';
 
-import React, { createContext, useContext, useMemo, useState } from 'react';
+type PriceRange = {
+  min: number;
+  max: number;
+};
+
+type ColorOption = {
+  id: string;
+  label: string;
+  value: string;
+  color: string;
+};
 
 type FiltersState = {
   category: string | null;
@@ -15,6 +25,15 @@ type FiltersState = {
   setSizeMl: (value: number | null) => void;
   colorLabel: string | null;
   setColorLabel: (value: string | null) => void;
+  // Available options
+  availableOptions: {
+    priceRange: PriceRange;
+    sizes: number[];
+    colors: ColorOption[];
+    fragrances: string[];
+    categories: string[];
+  } | null;
+  loadingOptions: boolean;
 };
 
 const FiltersContext = createContext<FiltersState | undefined>(undefined);
@@ -31,6 +50,30 @@ export const FiltersProvider = ({
   const [sizeMl, setSizeMl] = useState<number | null>(null);
   const [colorLabel, setColorLabel] = useState<string | null>(null);
 
+  const [availableOptions, setAvailableOptions] = useState<FiltersState['availableOptions']>(null);
+  const [loadingOptions, setLoadingOptions] = useState(true);
+
+  useEffect(() => {
+    const fetchOptions = async () => {
+      try {
+        const response = await fetch('/api/products/filters');
+        const data = await response.json();
+        setAvailableOptions(data);
+        // Set initial price range if not set
+        if (data.priceRange) {
+          // setMinPrice(data.priceRange.min);
+          // setMaxPrice(data.priceRange.max);
+        }
+      } catch (error) {
+        console.error('Failed to fetch filter options:', error);
+      } finally {
+        setLoadingOptions(false);
+      }
+    };
+
+    fetchOptions();
+  }, []);
+
   const value = useMemo(
     () => ({
       category,
@@ -44,9 +87,11 @@ export const FiltersProvider = ({
       sizeMl,
       setSizeMl,
       colorLabel,
-      setColorLabel
+      setColorLabel,
+      availableOptions,
+      loadingOptions
     }),
-    [category, style, minPrice, maxPrice, sizeMl, colorLabel]
+    [category, style, minPrice, maxPrice, sizeMl, colorLabel, availableOptions, loadingOptions]
   );
 
   return (

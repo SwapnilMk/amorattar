@@ -65,17 +65,18 @@ const Footer = () => {
         <div className='mx-auto max-w-frame'>
           <nav className='mb-8 lg:grid lg:grid-cols-12'>
             <div className='flex flex-col lg:col-span-3 lg:max-w-[248px]'>
-              <h1
-                className={cn([
-                  dancingScript.className,
-                  'mb-6 text-[28px] lg:text-[32px]'
-                ])}
-              >
-                Amorattar
-              </h1>
+              <Link href='/' className='mb-6 flex flex-col items-start'>
+                <Image
+                  src='/logo/amorperfumes.png'
+                  height={60}
+                  width={60}
+                  alt='logo'
+                  className='mb-2 max-h-[50px] max-w-[50px] object-contain'
+                />
+              </Link>
               <p className='mb-9 text-sm text-black/60'>
                 Discover the art of fragrance with our curated collection of
-                attars and perfumes, crafted to elevate your senses.
+                exclusive perfumes, crafted to elevate your senses.
               </p>
               <div className='flex items-center'>
                 {socialsData.map((social) => (
@@ -100,7 +101,7 @@ const Footer = () => {
           <hr className='mb-6 h-[1px] border-t-black/10' />
           <div className='mb-2 flex flex-col items-center justify-center sm:flex-row sm:justify-between'>
             <p className='mb-4 text-center text-sm text-black/60 sm:mb-0 sm:mr-1 sm:text-left'>
-              © {new Date().getFullYear()} AMORATTAR. Designed and Developed by{' '}
+              © {new Date().getFullYear()} AMOR PERFUMES. Designed and Developed by{' '}
               <Link
                 href='https://github.com/swapnilMk/'
                 target='_blank'

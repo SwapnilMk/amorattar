@@ -13,8 +13,7 @@ import { FiSliders } from 'react-icons/fi';
 import Filters from '.';
 import { useFilters } from './FiltersContext';
 
-const MobileFilters = () => {
-  const filters = useFilters();
+const MobileFilters = ({ onApply }: { onApply?: () => void }) => {
   return (
     <>
       <Drawer>
@@ -36,7 +35,15 @@ const MobileFilters = () => {
             <DrawerDescription className='hidden'>filters</DrawerDescription>
           </DrawerHeader>
           <div className='max-h-[90%] w-full space-y-5 overflow-y-auto px-5 py-5 md:space-y-6 md:px-6'>
-            <Filters onApply={() => {}} />
+            <DrawerClose asChild>
+              <div>
+                <Filters
+                  onApply={() => {
+                    if (onApply) onApply();
+                  }}
+                />
+              </div>
+            </DrawerClose>
           </div>
         </DrawerContent>
       </Drawer>

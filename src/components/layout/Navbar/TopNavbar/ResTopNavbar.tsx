@@ -92,21 +92,15 @@ const ResTopNavbar = ({ data }: { data: NavMenu }) => {
             <SheetClose asChild>
               <Link
                 href='/'
-                className={cn([
-                  dancingScript.className,
-                  'flex flex-col items-center'
-                ])}
+                className='flex flex-col items-center'
               >
                 <Image
-                  src='/logo/amorattar.jpg'
+                  src='/logo/amorperfumes.png'
                   height={100}
                   width={100}
                   alt='logo'
-                  className='mb-2 max-h-[60px] max-w-[60px] rounded-full'
+                  className='mb-2 max-h-[60px] max-w-[60px] object-contain'
                 />
-                <div className='text-[30px] font-bold leading-none text-[#1A1A1A]'>
-                  Amorattar
-                </div>
               </Link>
             </SheetClose>
           </SheetTitle>
@@ -127,7 +121,7 @@ const ResTopNavbar = ({ data }: { data: NavMenu }) => {
             <InputGroup.Input
               type='search'
               name='search'
-              placeholder='Search for perfumes and attar...'
+              placeholder='Search for perfumes...'
               className='bg-transparent placeholder:text-black/40'
               value={searchQuery}
               onChange={(e) => {

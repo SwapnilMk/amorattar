@@ -2,7 +2,8 @@ import { PrismaClient } from '@prisma/client';
 
 const prismaClientSingleton = () => {
   return new PrismaClient({
-    log: ['error', 'warn']
+    log: ['error', 'warn'],
+    datasourceUrl: process.env.DATABASE_URL
   });
 };
 

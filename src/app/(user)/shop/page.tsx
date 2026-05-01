@@ -19,21 +19,52 @@ import {
 } from '@/components/shop-page/filters/FiltersContext';
 import { FiSliders } from 'react-icons/fi';
 import ProductCard from '@/components/common/ProductCard';
-import { useSearchParams } from 'next/navigation';
+import ProductSkeleton from '@/components/common/ProductSkeleton';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 
 function ShopContent() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const recentParam = searchParams.get('recent');
   const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [sortBy, setSortBy] = useState('most-popular');
+  const [sortBy, setSortBy] = useState(
+    searchParams.get('sort') || 'most-popular'
+  );
   const [hasMore, setHasMore] = useState(true);
   const [nextCursor, setNextCursor] = useState<string | null>(null);
   const [initialLoading, setInitialLoading] = useState(true);
-  const { category, style, minPrice, maxPrice, sizeMl, colorLabel } =
-    useFilters();
+  const {
+    category,
+    setCategory,
+    style,
+    minPrice,
+    maxPrice,
+    sizeMl,
+    colorLabel
+  } = useFilters();
+
+  // Sync URL params with context and state
+  useEffect(() => {
+    const urlCategory = searchParams.get('category');
+    if (urlCategory && urlCategory !== category) {
+      setCategory(urlCategory);
+    }
+
+    const urlSort = searchParams.get('sort');
+    if (urlSort && urlSort !== sortBy) {
+      setSortBy(urlSort);
+    }
+  }, [searchParams, category, setCategory, sortBy]);
+
+  const handleSortChange = (value: string) => {
+    setSortBy(value);
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('sort', value);
+    router.push(`/shop?${params.toString()}`, { scroll: false });
+  };
 
   const fetchProducts = useCallback(
     async (isInitial = false) => {
@@ -149,14 +180,6 @@ function ShopContent() {
     loading
   });
 
-  if (initialLoading) {
-    return (
-      <div className='flex min-h-screen items-center justify-center'>
-        <div className='h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent'></div>
-      </div>
-    );
-  }
-
   if (error) {
     return (
       <div className='flex min-h-screen items-center justify-center'>
@@ -169,19 +192,21 @@ function ShopContent() {
     <main className='pb-20'>
       <div className='mx-auto max-w-frame px-4 xl:px-0'>
         <hr className='mb-5 h-[1px] border-t-black/10 sm:mb-6' />
+        
         <BreadcrumbShop
           title={recentParam === 'true' ? 'Recent Products' : 'Shop'}
         />
-        <div className='flex items-start md:space-x-5'>
+
+        <div className='mt-6 flex md:space-x-5'>
+          {/* Sidebar Filters */}
           <div className='hidden min-w-[295px] max-w-[295px] md:block'>
-            <div className='top-4 space-y-5 rounded-[20px] border border-black/10 bg-white px-5 py-5 shadow-sm md:space-y-6 md:px-6'>
+            <div className='sticky top-[100px] space-y-5 rounded-[20px] border border-black/10 bg-white px-5 py-5 shadow-sm md:space-y-6 md:px-6'>
               <div className='flex items-center justify-between'>
                 <span className='text-xl font-bold text-black'>Filters</span>
                 <FiSliders className='text-2xl text-black/40' />
               </div>
               <Filters
                 onApply={() => {
-                  // Reset list for new filters
                   setProducts([]);
                   setNextCursor(null);
                   setHasMore(true);
@@ -190,34 +215,36 @@ function ShopContent() {
               />
             </div>
           </div>
-          <div className='flex w-full flex-col space-y-5'>
-            <div className='top-0 border-b border-gray-100 bg-white/95 pb-4 pt-2 backdrop-blur-sm'>
-              <div className='flex flex-col lg:flex-row lg:justify-between'>
-                <div className='flex items-center justify-between'>
+
+          <div className='flex w-full flex-col'>
+            {/* Sticky Header Row for Title and Sort */}
+            <div className='sticky top-[80px] z-20 mb-5 bg-white pb-4 pt-2 sm:top-[90px] md:top-[100px] md:mb-8'>
+              <div className='flex flex-col lg:flex-row lg:justify-between lg:items-center'>
+                <div className='flex items-center justify-between w-full lg:w-auto'>
                   <h1 className='text-2xl font-bold md:text-[32px]'>
-                    {recentParam === 'true'
-                      ? 'Recent Products'
-                      : 'All Products'}
+                    {recentParam === 'true' ? 'Recent Products' : 'All Products'}
                   </h1>
-                  <MobileFilters />
+                  <MobileFilters
+                    onApply={() => {
+                      setProducts([]);
+                      setNextCursor(null);
+                      setHasMore(true);
+                      fetchProducts(true);
+                    }}
+                  />
                 </div>
-                <div className='flex flex-col sm:flex-row sm:items-center'>
+                <div className='flex flex-col sm:flex-row sm:items-center w-full lg:w-auto justify-between lg:justify-end mt-4 lg:mt-0'>
                   <span className='mr-3 text-sm text-black/60 md:text-base'>
-                    Showing {products.length} Products
+                    Showing {initialLoading ? '...' : products.length} Products
                   </span>
-                  <div className='flex items-center'>
-                    Sort by:{' '}
-                    <Select
-                      value={sortBy}
-                      onValueChange={(value) => setSortBy(value)}
-                    >
+                  <div className='flex items-center mt-2 sm:mt-0'>
+                    <span className='mr-2 text-sm text-black/60 md:text-base whitespace-nowrap'>Sort by:</span>
+                    <Select value={sortBy} onValueChange={handleSortChange}>
                       <SelectTrigger className='w-fit border-none bg-transparent px-1.5 text-sm font-medium text-black shadow-none sm:text-base'>
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value='most-popular'>
-                          Most Popular
-                        </SelectItem>
+                        <SelectItem value='most-popular'>Most Popular</SelectItem>
                         <SelectItem value='low-price'>Low Price</SelectItem>
                         <SelectItem value='high-price'>High Price</SelectItem>
                         <SelectItem value='recent'>Recently Added</SelectItem>
@@ -227,29 +254,34 @@ function ShopContent() {
                 </div>
               </div>
             </div>
+
             <div className='grid w-full grid-cols-1 gap-4 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-3 lg:gap-5'>
-              {products.map((product, index) => (
-                <div key={product.id}>
-                  {index === products.length - 1 ? (
-                    <div ref={lastElementRef}>
-                      <ProductCard data={product} />
+              {initialLoading
+                ? Array.from({ length: 9 }).map((_, index) => (
+                    <ProductSkeleton key={index} />
+                  ))
+                : products.map((product, index) => (
+                    <div key={product.id}>
+                      {index === products.length - 1 ? (
+                        <div ref={lastElementRef}>
+                          <ProductCard data={product} />
+                        </div>
+                      ) : (
+                        <ProductCard data={product} />
+                      )}
                     </div>
-                  ) : (
-                    <ProductCard data={product} />
-                  )}
-                </div>
-              ))}
+                  ))}
+              {loading && !initialLoading && (
+                <>
+                  {[...Array(6)].map((_, i) => (
+                    <ProductSkeleton key={i} />
+                  ))}
+                </>
+              )}
             </div>
 
-            {/* Loading indicator for infinite scroll */}
-            {loading && (
-              <div className='flex justify-center py-8'>
-                <div className='h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent'></div>
-              </div>
-            )}
-
             {/* End of products indicator */}
-            {!hasMore && products.length > 0 && (
+            {!hasMore && !initialLoading && products.length > 0 && (
               <div className='py-4 text-center text-gray-500'>
                 <p>You've reached the end of all products</p>
               </div>

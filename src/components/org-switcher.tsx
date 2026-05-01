@@ -18,16 +18,15 @@ export function OrgSwitcher() {
         >
           <div className='y flex aspect-square size-8 items-center justify-center rounded-lg text-sidebar-primary-foreground'>
             <Image
-              src='/logo/amorattar.jpg'
-              alt='Amorattar logo'
+              src='/logo/amorperfumes.png'
+              alt='logo'
               width={32}
               height={32}
               className='object-contain'
             />
           </div>
           <div className='flex flex-col gap-0.5 leading-none'>
-            <span className='font-semibold'>AMORATTAR</span>
-            <span className=''>Admin Panel</span>
+            <span className='font-semibold'>Admin Panel</span>
           </div>
         </SidebarMenuButton>
       </SidebarMenuItem>

@@ -15,10 +15,12 @@ export default function Home() {
   const [newArrivals, setNewArrivals] = useState<Product[]>([]);
   const [topSelling, setTopSelling] = useState<Product[]>([]);
   const [recentProducts, setRecentProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setLoading(true);
         const [newArrivalsRes, topSellingRes, recentProductsRes] =
           await Promise.all([
             fetch('/api/products?limit=10'), // Remove category filter for new arrivals
@@ -38,6 +40,8 @@ export default function Home() {
         setRecentProducts(recentProductsData.products);
       } catch (error) {
         console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -57,6 +61,7 @@ export default function Home() {
           category='New Arrivals'
           viewAllLink='/shop#new-arrivals'
           products={newArrivals}
+          loading={loading}
         />
         <div className='mx-auto max-w-frame px-4 py-10 xl:px-0'>
           <ReleaseBanner />
@@ -67,6 +72,7 @@ export default function Home() {
             category='Best Sellers'
             viewAllLink='/shop#best-sellers'
             products={topSelling}
+            loading={loading}
           />
         </div>
         <div className='mx-auto max-w-frame px-4 py-10 xl:px-0'>
@@ -78,6 +84,7 @@ export default function Home() {
             category='Recent Products'
             viewAllLink='/shop?recent=true'
             products={recentProducts}
+            loading={loading}
           />
         </div>
         <div className='mx-auto max-w-frame px-4 py-6 xl:px-0'>

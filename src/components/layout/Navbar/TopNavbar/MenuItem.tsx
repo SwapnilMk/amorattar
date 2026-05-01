@@ -15,13 +15,14 @@ type MenuItemProps = {
 export function MenuItem({ label, url }: MenuItemProps) {
   return (
     <NavigationMenuItem>
-      <Link href={url ?? '/'} legacyBehavior passHref>
-        <NavigationMenuLink
+      <NavigationMenuLink asChild>
+        <Link
+          href={url ?? '/'}
           className={cn([navigationMenuTriggerStyle(), 'px-3 font-normal'])}
         >
           {label}
-        </NavigationMenuLink>
-      </Link>
+        </Link>
+      </NavigationMenuLink>
     </NavigationMenuItem>
   );
 }

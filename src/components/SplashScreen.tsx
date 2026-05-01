@@ -30,56 +30,28 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.5 }}
-          className='fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-amber-50 via-amber-100 to-amber-50'
+          className='fixed inset-0 z-50 flex items-center justify-center bg-[#F9F7F2]'
         >
-          <div className='flex flex-col items-center space-y-8'>
-            {/* Logo with scale and bounce animation */}
+          <div className='flex flex-col items-center'>
             <motion.div
               initial={{ scale: 0.5, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
+              animate={{ scale: 1.5, opacity: 1 }}
               transition={{
                 type: 'spring',
                 stiffness: 200,
                 damping: 15,
-                duration: 0.8
+                duration: 1.5
               }}
+              className="mb-6"
             >
               <Image
-                src='/logo/amorattar.jpg'
-                alt='Amorattar'
-                width={140}
-                height={140}
-                className='rounded-full shadow-2xl'
+                src='/logo/amorperfumes.png'
+                alt='Amor Emblem'
+                width={200}
+                height={200}
+                className='object-contain'
                 priority
               />
-            </motion.div>
-
-            {/* Brand name with fade-in and slide-up animation */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{
-                duration: 0.8,
-                delay: 0.3,
-                ease: 'easeOut'
-              }}
-              className={`${dancingScript.className} text-center text-6xl font-bold text-amber-900`}
-            >
-              Amorattar
-            </motion.div>
-
-            {/* Tagline with fade-in animation */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{
-                duration: 0.8,
-                delay: 0.6,
-                ease: 'easeOut'
-              }}
-              className='max-w-md text-center text-lg font-medium leading-relaxed text-amber-700'
-            >
-              Premium Attar & Perfume Shop
             </motion.div>
           </div>
         </motion.div>

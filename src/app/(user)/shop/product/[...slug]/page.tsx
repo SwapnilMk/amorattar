@@ -12,12 +12,14 @@ import {
   AvailabilityStatus
 } from '@/types/product.types';
 import { notFound } from 'next/navigation';
+import ProductDetailSkeleton from '@/components/product-page/ProductDetailSkeleton';
 
 export default function ProductPage({
   params
 }: {
-  params: { slug: string[] };
+  params: Promise<{ slug: string[] }>;
 }) {
+  const { slug } = React.use(params);
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -25,7 +27,7 @@ export default function ProductPage({
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const productId = params.slug[0];
+        const productId = slug[0];
         if (!productId) {
           throw new Error('Product ID is required');
         }
@@ -70,14 +72,10 @@ export default function ProductPage({
     };
 
     fetchProduct();
-  }, [params.slug]);
+  }, [slug]);
 
   if (loading) {
-    return (
-      <div className='flex min-h-screen items-center justify-center'>
-        <div className='h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent'></div>
-      </div>
-    );
+    return <ProductDetailSkeleton />;
   }
 
   if (error || !product) {

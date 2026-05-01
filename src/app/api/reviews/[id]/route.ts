@@ -7,16 +7,17 @@ import { getSession } from '@/lib/auth';
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const session = await getSession();
     if (!session || session.role !== 'admin') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const review = await prisma.review.findUnique({
-      where: { id: params.id }
+      where: { id: id }
     });
 
     if (!review) {
@@ -24,7 +25,7 @@ export async function DELETE(
     }
 
     await prisma.review.delete({
-      where: { id: params.id }
+      where: { id: id }
     });
 
     return NextResponse.json({ success: true });
@@ -39,9 +40,10 @@ export async function DELETE(
 
 export async function PUT(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const session = await getSession();
     if (!session || session.role !== 'admin') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -61,7 +63,7 @@ export async function PUT(
       const validatedData = reviewSchema.parse({ rating, content });
 
       const review = await prisma.review.findUnique({
-        where: { id: params.id }
+        where: { id: id }
       });
 
       if (!review) {
@@ -73,7 +75,7 @@ export async function PUT(
 
       // Update the review using Prisma's update method
       const updatedReview = await prisma.review.update({
-        where: { id: params.id },
+        where: { id: id },
         data: {
           name,
           rating: validatedData.rating,

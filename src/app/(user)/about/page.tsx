@@ -14,11 +14,11 @@ export default function AboutPage() {
           className='mb-12 text-center'
         >
           <h1 className='mb-4 text-4xl font-bold md:text-5xl'>
-            About Amorattar
+            About AMOR PERFUMES
           </h1>
           <p className='mx-auto max-w-2xl text-lg text-gray-600'>
-            Discover the essence of luxury and tradition with our premium
-            collection of attars and perfumes.
+            Discover the essence of luxury and modern elegance with our premium
+            collection of exclusive perfumes.
           </p>
         </motion.div>
 
@@ -33,7 +33,7 @@ export default function AboutPage() {
             <h3 className='mb-2 text-xl font-semibold'>Our Passion</h3>
             <p className='text-gray-600'>
               We are dedicated to bringing you the finest fragrances that
-              capture the essence of traditional attars.
+              capture the essence of modern luxury and timeless elegance.
             </p>
           </motion.div>
 
@@ -46,8 +46,8 @@ export default function AboutPage() {
             <FaLeaf className='mb-4 text-4xl text-green-500' />
             <h3 className='mb-2 text-xl font-semibold'>Natural Ingredients</h3>
             <p className='text-gray-600'>
-              Our products are crafted using only the finest natural
-              ingredients, ensuring authentic and long-lasting fragrances.
+              Our products are crafted using only the finest ingredients, 
+              ensuring authentic and long-lasting fragrances that stand out.
             </p>
           </motion.div>
 
@@ -74,8 +74,8 @@ export default function AboutPage() {
         >
           <h2 className='mb-4 text-2xl font-bold'>Our Story</h2>
           <p className='mb-4 text-gray-600'>
-            Amorattar was founded with a vision to bring the rich tradition of
-            attars to the modern world. Our journey began with a simple passion
+            AMOR PERFUMES was founded with a vision to bring the rich tradition of
+            perfumery to the modern world. Our journey began with a simple passion
             for authentic fragrances and has grown into a commitment to
             excellence in every aspect of our business.
           </p>

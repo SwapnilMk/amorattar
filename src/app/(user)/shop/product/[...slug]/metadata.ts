@@ -4,9 +4,10 @@ import { prisma } from '@/lib/prisma';
 export async function generateMetadata({
   params
 }: {
-  params: { slug: string[] };
+  params: Promise<{ slug: string[] }>;
 }): Promise<Metadata> {
-  const productId = params.slug[0];
+  const { slug } = await params;
+  const productId = slug[0];
   if (!productId) {
     return {
       title: 'Product Not Found',
@@ -32,10 +33,10 @@ export async function generateMetadata({
     };
   }
 
-  const title = `${product.title} - Amorattar`;
+  const title = `${product.title} - AMOR PERFUMES`;
   const description =
     product.description ||
-    `Shop ${product.title} at Amorattar. Premium attar and perfume collection.`;
+    `Shop ${product.title} at AMOR PERFUMES. Premium perfume collection.`;
   const price =
     product.discount > 0
       ? Math.round(product.price * (1 - product.discount / 100))
@@ -48,7 +49,7 @@ export async function generateMetadata({
       title,
       description,
       type: 'website',
-      url: `https://amorattar.com/shop/product/${product.id}/${product.title.split(' ').join('-')}`,
+      url: `https://amorperfumes.com/shop/product/${product.id}/${product.title.split(' ').join('-')}`,
       images: [
         {
           url: product.srcUrl,
@@ -57,7 +58,7 @@ export async function generateMetadata({
           alt: product.title
         }
       ],
-      siteName: 'Amorattar',
+      siteName: 'AMOR PERFUMES',
       locale: 'en_US'
     },
     twitter: {
@@ -65,7 +66,7 @@ export async function generateMetadata({
       title,
       description,
       images: [product.srcUrl],
-      creator: '@amorattar'
+      creator: '@amorperfumes'
     }
   };
 }

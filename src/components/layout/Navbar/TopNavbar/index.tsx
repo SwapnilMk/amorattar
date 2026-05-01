@@ -167,19 +167,15 @@ const TopNavbar = () => {
           <div className='flex flex-grow justify-center'>
             <Link
               href='/'
-              className={cn([
-                dancingScript.className,
-                'mr-3 flex items-center gap-2 text-2xl font-bold lg:mr-10 lg:text-[43px]'
-              ])}
+              className='flex flex-col items-center'
             >
               <Image
-                src='/logo/amorattar.jpg'
-                height={100}
-                width={100}
+                src='/logo/amorperfumes.png'
+                height={120}
+                width={120}
                 alt='logo'
-                className='max-h-[50px] max-w-[50px] rounded-full'
+                className='max-h-[90px] max-w-[90px] object-contain'
               />
-              <span>Amorattar</span>
             </Link>
           </div>
 
@@ -194,19 +190,15 @@ const TopNavbar = () => {
           <div className='flex items-center'>
             <Link
               href='/'
-              className={cn([
-                dancingScript.className,
-                'mb-2 mr-3 flex items-center gap-2 text-2xl font-bold lg:mr-10 lg:text-[43px]'
-              ])}
+              className='mr-10 flex items-center gap-3'
             >
               <Image
-                src='/logo/amorattar.jpg'
-                height={100}
-                width={100}
+                src='/logo/amorperfumes.png'
+                height={160}
+                width={160}
                 alt='logo'
-                className='max-h-[65px] max-w-[65px] rounded-full'
+                className='max-h-[120px] max-w-[120px] object-contain'
               />
-              <span>Amorattar</span>
             </Link>
             <NavigationMenu className='mr-2 lg:mr-7'>
               <NavigationMenuList>
@@ -239,7 +231,7 @@ const TopNavbar = () => {
                 <InputGroup.Input
                   type='search'
                   name='search'
-                  placeholder='Search for perfumes and attar...'
+                  placeholder='Search for perfumes...'
                   className='bg-transparent placeholder:text-black/40'
                   value={searchQuery}
                   onChange={(e) => {

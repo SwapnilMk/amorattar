@@ -33,11 +33,7 @@ const FiltersContent = ({ onApply }: { onApply?: () => void }) => {
 };
 
 const Filters = ({ onApply }: { onApply?: () => void }) => {
-  return (
-    <FiltersProvider>
-      <FiltersContent onApply={onApply} />
-    </FiltersProvider>
-  );
+  return <FiltersContent onApply={onApply} />;
 };
 
 export default Filters;
