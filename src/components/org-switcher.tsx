@@ -1,6 +1,5 @@
 'use client';
 
-import * as React from 'react';
 import {
   SidebarMenu,
   SidebarMenuButton,
@@ -16,16 +15,16 @@ export function OrgSwitcher() {
           size='lg'
           className='data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground'
         >
-          <div className='y flex aspect-square size-8 items-center justify-center rounded-lg text-sidebar-primary-foreground'>
+          <div className='flex aspect-square size-8 items-center justify-center rounded-lg bg-white p-1'>
             <Image
               src='/logo/amorperfumes.png'
-              alt='logo'
+              alt='Amor Perfumes'
               width={32}
               height={32}
               className='object-contain'
             />
           </div>
-          <div className='flex flex-col gap-0.5 leading-none'>
+          <div className='flex flex-col gap-0.5 leading-none group-data-[collapsible=icon]:hidden'>
             <span className='font-semibold'>Admin Panel</span>
           </div>
         </SidebarMenuButton>

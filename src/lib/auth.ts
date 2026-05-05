@@ -18,8 +18,9 @@ export async function getSession() {
       id: true,
       name: true,
       email: true,
+      image: true,
       role: true
-    }
+    } as any
   });
 
   return user;
@@ -47,11 +48,18 @@ export async function login(email: string, password: string) {
     maxAge: 30 * 24 * 60 * 60 // 30 days
   });
 
+  const role =
+    user.email === 'saamiyahkazi1000@gmail.com' ||
+    user.email === 'mswapnil218@gmail.com'
+      ? 'admin'
+      : user.role;
+
   return {
     id: user.id,
     name: user.name,
     email: user.email,
-    role: user.role
+    image: user.image,
+    role: role
   };
 }
 
@@ -74,14 +82,19 @@ export async function register(data: {
       name: data.name,
       email: data.email,
       password: hashedPassword,
-      role: 'admin'
+      role:
+        data.email === 'saamiyahkazi1000@gmail.com' ||
+        data.email === 'mswapnil218@gmail.com'
+          ? 'admin'
+          : 'user'
     },
     select: {
       id: true,
       name: true,
       email: true,
+      image: true,
       role: true
-    }
+    } as any
   });
 
   return user;

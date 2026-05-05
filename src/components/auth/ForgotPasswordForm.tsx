@@ -92,7 +92,7 @@ export default function ForgotPasswordForm() {
       }
 
       toast.success('Password reset successful');
-      router.push('/sign-in');
+      router.push('/?login=true');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong');
     } finally {
@@ -108,7 +108,7 @@ export default function ForgotPasswordForm() {
           onClick={() => router.push('/')}
         >
           <Image
-            src='/logo/amorattar.jpg'
+            src='/logo/amorperfumes.png'
             alt='Amor Perfumes logo'
             width={96}
             height={96}
@@ -159,7 +159,7 @@ export default function ForgotPasswordForm() {
 
             <div className='text-center'>
               <Link
-                href='/sign-in'
+                href='/?login=true'
                 className='flex items-center justify-center gap-2 text-sm text-blue-600 hover:text-blue-800 hover:underline'
               >
                 <ArrowLeft className='h-4 w-4' />
@@ -231,7 +231,7 @@ export default function ForgotPasswordForm() {
 
             <div className='text-center'>
               <Link
-                href='/sign-in'
+                href='/?login=true'
                 className='flex items-center justify-center gap-2 text-sm text-blue-600 hover:text-blue-800 hover:underline'
               >
                 <ArrowLeft className='h-4 w-4' />

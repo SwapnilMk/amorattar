@@ -18,6 +18,11 @@ import CartBtn from './CartBtn';
 import SearchResults from './SearchResults';
 import { useDebounce } from '@/hooks/useDebounce';
 import { useRouter } from 'next/navigation';
+import { useSession } from '@/components/providers/SessionProvider';
+import { UserNav } from '@/components/user-nav';
+import AuthModal from '@/components/auth/AuthModal';
+import { Button } from '@/components/ui/button';
+import { User } from 'lucide-react';
 
 const data: NavMenu = [
   {
@@ -95,6 +100,7 @@ const TopNavbar = () => {
   const searchContainerRef = useRef<HTMLDivElement>(null);
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
   const router = useRouter();
+  const { user } = useSession();
 
   const handleSearch = useCallback(async (query: string) => {
     if (!query.trim()) {
@@ -179,8 +185,17 @@ const TopNavbar = () => {
             </Link>
           </div>
 
-          {/* Right: Cart Button */}
-          <div className='flex items-center'>
+          {/* Right: User/Auth and Cart */}
+          <div className='flex items-center gap-2'>
+            {user ? (
+              <UserNav />
+            ) : (
+              <AuthModal>
+                <Button variant="ghost" size="icon" className="h-8 w-8">
+                  <User size={20} />
+                </Button>
+              </AuthModal>
+            )}
             <CartBtn />
           </div>
         </div>
@@ -250,7 +265,19 @@ const TopNavbar = () => {
                 />
               )}
             </div>
-            <CartBtn />
+            <div className="flex items-center gap-3">
+              {user ? (
+                <UserNav />
+              ) : (
+                <AuthModal>
+                  <Button variant="ghost" className="flex items-center gap-2 font-medium">
+                    <User size={18} />
+                    <span>Sign In</span>
+                  </Button>
+                </AuthModal>
+              )}
+              <CartBtn />
+            </div>
           </div>
         </div>
       </div>

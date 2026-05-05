@@ -12,7 +12,7 @@ export default async function AdminLayout({
   const session = await getSession();
 
   if (!session) {
-    redirect('/sign-in');
+    redirect('/?login=true');
   }
 
   return (

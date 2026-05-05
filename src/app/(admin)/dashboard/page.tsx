@@ -53,9 +53,11 @@ export default function Dashboard() {
   };
 
   return (
-    <PageContainer>
-      <div className='flex w-full flex-col gap-4'>
-        <h1 className='text-2xl font-bold'>Dashboard Overview</h1>
+    <PageContainer padding={false}>
+      <div className='flex flex-1 flex-col gap-4'>
+        <div className='flex items-center justify-between px-4 pt-4 md:px-6 md:pt-6'>
+          <h1 className='text-2xl font-bold'>Dashboard Overview</h1>
+        </div>
 
         {error && (
           <div className='rounded-md bg-destructive/15 p-3 text-sm text-destructive'>
@@ -63,8 +65,8 @@ export default function Dashboard() {
           </div>
         )}
 
-        <div className='grid w-full gap-4 md:grid-cols-2 lg:grid-cols-4'>
-          <Card className='w-full'>
+        <div className='grid auto-rows-min gap-4 px-4 md:grid-cols-2 md:px-6 lg:grid-cols-4'>
+          <Card className='w-full rounded-[20px] border-gray-100 shadow-sm transition-all ease-premium hover:shadow-md'>
             <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
               <CardTitle className='text-sm font-medium'>
                 Total Products
@@ -81,7 +83,7 @@ export default function Dashboard() {
             </CardContent>
           </Card>
 
-          <Card className='w-full'>
+          <Card className='w-full rounded-[20px] border-gray-100 shadow-sm transition-all ease-premium hover:shadow-md'>
             <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
               <CardTitle className='text-sm font-medium'>
                 Total Reviews
@@ -96,7 +98,7 @@ export default function Dashboard() {
             </CardContent>
           </Card>
 
-          <Card className='w-full'>
+          <Card className='w-full rounded-[20px] border-gray-100 shadow-sm transition-all ease-premium hover:shadow-md'>
             <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
               <CardTitle className='text-sm font-medium'>
                 Total Categories
@@ -113,7 +115,7 @@ export default function Dashboard() {
             </CardContent>
           </Card>
 
-          <Card className='w-full'>
+          <Card className='w-full rounded-[20px] border-gray-100 shadow-sm transition-all ease-premium hover:shadow-md'>
             <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
               <CardTitle className='text-sm font-medium'>Total Users</CardTitle>
               <Users className='h-4 w-4 text-muted-foreground' />
@@ -126,6 +128,7 @@ export default function Dashboard() {
             </CardContent>
           </Card>
         </div>
+        <div className='min-h-[100vh] flex-1 rounded-xl bg-muted/20 md:min-h-min' />
       </div>
     </PageContainer>
   );
