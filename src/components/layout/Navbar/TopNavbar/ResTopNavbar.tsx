@@ -22,6 +22,11 @@ import InputGroup from '@/components/ui/input-group';
 import { useRouter } from 'next/navigation';
 import { useDebounce } from '@/hooks/useDebounce';
 import SearchResults from './SearchResults';
+import { useSession } from '@/components/providers/SessionProvider';
+import { UserNav } from '@/components/user-nav';
+import AuthModal from '@/components/auth/AuthModal';
+import { Button } from '@/components/ui/button';
+import { User } from 'lucide-react';
 
 const ResTopNavbar = ({ data }: { data: NavMenu }) => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -30,6 +35,7 @@ const ResTopNavbar = ({ data }: { data: NavMenu }) => {
   const [showResults, setShowResults] = useState(false);
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
   const router = useRouter();
+  const { user } = useSession();
 
   const handleSearch = useCallback(async (query: string) => {
     if (!query.trim()) {
@@ -159,6 +165,25 @@ const ResTopNavbar = ({ data }: { data: NavMenu }) => {
               )}
             </React.Fragment>
           ))}
+
+          {/* User/Auth Section */}
+          <div className='mt-4 w-full border-t pt-6'>
+            {user ? (
+              <div className='flex items-center gap-3'>
+                <UserNav />
+                <span className='text-base font-medium'>{user.name || 'Account'}</span>
+              </div>
+            ) : (
+              <AuthModal>
+                <SheetClose asChild>
+                  <Button variant='ghost' className='flex w-full items-center justify-start gap-3 p-0 text-base font-normal hover:bg-transparent'>
+                    <User size={20} />
+                    <span>Sign In / Register</span>
+                  </Button>
+                </SheetClose>
+              </AuthModal>
+            )}
+          </div>
         </div>
       </SheetContent>
     </Sheet>

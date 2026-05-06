@@ -185,17 +185,8 @@ const TopNavbar = () => {
             </Link>
           </div>
 
-          {/* Right: User/Auth and Cart */}
-          <div className='flex items-center gap-2'>
-            {user ? (
-              <UserNav />
-            ) : (
-              <AuthModal>
-                <Button variant="ghost" size="icon" className="h-8 w-8">
-                  <User size={20} />
-                </Button>
-              </AuthModal>
-            )}
+          {/* Right: Cart */}
+          <div className='flex items-center'>
             <CartBtn />
           </div>
         </div>
