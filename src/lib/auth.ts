@@ -20,10 +20,16 @@ export async function getSession() {
       email: true,
       image: true,
       role: true
-    } as any
+    }
   });
 
-  return user;
+  return user as {
+    id: string;
+    name: string | null;
+    email: string | null;
+    image: string | null;
+    role: string;
+  } | null;
 }
 
 export async function login(email: string, password: string) {
@@ -94,10 +100,16 @@ export async function register(data: {
       email: true,
       image: true,
       role: true
-    } as any
+    }
   });
 
-  return user;
+  return user as {
+    id: string;
+    name: string | null;
+    email: string | null;
+    image: string | null;
+    role: string;
+  };
 }
 
 export async function logout() {
