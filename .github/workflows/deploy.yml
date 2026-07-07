@@ -1,4 +1,5 @@
 name: Deploy Amorattar to EC2 (Optimized)
+
 on:
   push:
     branches:
